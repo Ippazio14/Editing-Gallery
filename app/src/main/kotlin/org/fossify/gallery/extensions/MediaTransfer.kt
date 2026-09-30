@@ -8,7 +8,6 @@ import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
 import org.fossify.commons.activities.BaseSimpleActivity
-import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getParentPath
 import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.toast
@@ -67,7 +66,7 @@ fun BaseSimpleActivity.pasteMediaTransfer(destination: String, finished: () -> U
     }
     ensureBackgroundThread {
         val failed = ArrayList<String>()
-        val completed = ArrayList<Pair<String, Uri>>()
+        val completed = ArrayList<Triple<String, Uri, String>>()
         val newPaths = ArrayList<String>()
         try {
             val volume = getSystemService(StorageManager::class.java).storageVolumes.firstOrNull {
@@ -90,8 +89,8 @@ fun BaseSimpleActivity.pasteMediaTransfer(destination: String, finished: () -> U
                     } ?: error("Source is unavailable")
                     val mime = requireNotNull(source.second ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(File(path).extension.lowercase()))
                     val collection = when {
-                        mime.startsWith("image/") == true -> MediaStore.Images.Media.getContentUri(volumeName)
-                        mime.startsWith("video/") == true -> MediaStore.Video.Media.getContentUri(volumeName)
+                        mime.startsWith("image/") -> MediaStore.Images.Media.getContentUri(volumeName)
+                        mime.startsWith("video/") -> MediaStore.Video.Media.getContentUri(volumeName)
                         else -> error("Unsupported media type")
                     }
                     val sourceCollection = if (mime.startsWith("image/")) MediaStore.Images.Media.EXTERNAL_CONTENT_URI else MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -124,7 +123,7 @@ fun BaseSimpleActivity.pasteMediaTransfer(destination: String, finished: () -> U
                         put(MediaStore.MediaColumns.IS_PENDING, 0)
                     }, null, null) == 1)
                     newPaths.add("$destination/$name")
-                    completed.add(path to sourceUri)
+                    completed.add(Triple(path, sourceUri, "$destination/$name"))
                     pending = null
                 } catch (_: Exception) {
                     pending?.let { runCatching { contentResolver.delete(it, null, null) } }
@@ -160,7 +159,13 @@ fun BaseSimpleActivity.pasteMediaTransfer(destination: String, finished: () -> U
                             // Preflight also ensures failures release the transfer lock.
                             MediaStore.createDeleteRequest(contentResolver, batches[index])
                             deleteSDK30Uris(batches[index]) { approved ->
-                                if (approved) deleteBatch(index + 1) else finishTransfer(false)
+                                if (approved) {
+                                    val moved = completed.drop(index * 2000).take(2000)
+                                    ensureBackgroundThread {
+                                        moved.forEach { applicationContext.updateDBMediaPath(it.first, it.third) }
+                                        runOnUiThread { deleteBatch(index + 1) }
+                                    }
+                                } else finishTransfer(false)
                             }
                         } catch (_: Exception) {
                             finishTransfer(false)
