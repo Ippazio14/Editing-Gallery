@@ -185,20 +185,7 @@ fun BaseSimpleActivity.handleMediaManagementPrompt(callback: () -> Unit) {
 }
 
 fun BaseSimpleActivity.launchGrantAllFilesIntent() {
-    try {
-        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-        intent.addCategory("android.intent.category.DEFAULT")
-        intent.data = "package:$packageName".toUri()
-        startActivity(intent)
-    } catch (e: Exception) {
-        val intent = Intent()
-        intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-        try {
-            startActivity(intent)
-        } catch (e: Exception) {
-            showErrorToast(e)
-        }
-    }
+    toast(org.fossify.commons.R.string.no_permission)
 }
 
 fun AppCompatActivity.showSystemUI() {

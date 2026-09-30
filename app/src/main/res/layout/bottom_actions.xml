@@ -223,7 +223,7 @@
         android:layout_height="@dimen/list_touch_target_min"
         android:layout_marginBottom="@dimen/normal_margin"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/move"
+        android:contentDescription="@string/transfer_cut"
         android:padding="@dimen/normal_margin"
         android:src="@drawable/ic_move_vector"
         app:layout_constraintBottom_toBottomOf="parent"

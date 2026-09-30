@@ -1,0 +1,12 @@
+<resources>
+    <string name="transfer_copy">Copia</string>
+    <string name="transfer_cut">Taglia</string>
+    <string name="transfer_paste">Incolla</string>
+    <string name="transfer_cancel">Annulla trasferimento</string>
+    <string name="transfer_ready">%1$d file pronti da incollare</string>
+    <string name="transfer_done">Trasferimento completato</string>
+    <string name="transfer_failed">Alcuni file non sono stati trasferiti. Puoi riprovare.</string>
+    <string name="transfer_kept">Copie salvate. Originali conservati perché la rimozione non è stata autorizzata.</string>
+    <string name="transfer_busy">Trasferimento in corso</string>
+    <string name="transfer_invalid">Questa cartella non può ricevere file</string>
+</resources>

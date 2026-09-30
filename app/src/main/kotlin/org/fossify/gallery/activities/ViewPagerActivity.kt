@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
+import org.fossify.gallery.helpers.MediaTransferClipboard
 import android.content.Intent
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -773,30 +774,10 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     }
 
     private fun checkMediaManagementAndCopy(isCopyOperation: Boolean) {
-        handleMediaManagementPrompt {
-            copyMoveTo(isCopyOperation)
-        }
-    }
-
-    private fun copyMoveTo(isCopyOperation: Boolean) {
-        val currPath = getCurrentPath()
-        if (!isCopyOperation && currPath.startsWith(recycleBinPath)) {
-            toast(org.fossify.commons.R.string.moving_recycle_bin_items_disabled, Toast.LENGTH_LONG)
-            return
-        }
-
-        val fileDirItems = arrayListOf(FileDirItem(currPath, currPath.getFilenameFromPath()))
-        tryCopyMoveFilesTo(fileDirItems, isCopyOperation) {
-            val newPath = "$it/${currPath.getFilenameFromPath()}"
-            rescanPaths(arrayListOf(newPath)) {
-                fixDateTaken(arrayListOf(newPath), false)
-            }
-
-            config.tempFolderPath = ""
-            if (!isCopyOperation) {
-                refreshViewPager()
-                updateFavoritePaths(fileDirItems, it)
-            }
+        val path = getCurrentPath()
+        if (path.startsWith(recycleBinPath)) return
+        if (MediaTransferClipboard.set(listOf(path), isCopyOperation)) {
+            toast(getString(R.string.transfer_ready, 1))
         }
     }
 

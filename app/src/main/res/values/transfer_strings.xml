@@ -1,0 +1,12 @@
+<resources>
+    <string name="transfer_copy">Copy</string>
+    <string name="transfer_cut">Cut</string>
+    <string name="transfer_paste">Paste</string>
+    <string name="transfer_cancel">Cancel transfer</string>
+    <string name="transfer_ready">%1$d items ready to paste</string>
+    <string name="transfer_done">Transfer completed</string>
+    <string name="transfer_failed">Some files could not be transferred. You can retry.</string>
+    <string name="transfer_kept">Copies saved. Originals kept because deletion was not approved.</string>
+    <string name="transfer_busy">Transfer in progress</string>
+    <string name="transfer_invalid">This folder cannot receive files</string>
+</resources>

@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="AppCompatResource">
+    <item android:id="@+id/transfer_paste" android:title="@string/transfer_paste" app:showAsAction="always" />
+    <item android:id="@+id/transfer_cancel" android:title="@string/transfer_cancel" app:showAsAction="never" />
     <item
         android:id="@+id/toggle_filename"
         android:icon="@drawable/ic_label_vector"

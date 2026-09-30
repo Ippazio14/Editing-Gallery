@@ -1,6 +1,8 @@
 package org.fossify.gallery.activities
 
 import android.app.WallpaperManager
+import org.fossify.gallery.helpers.MediaTransferClipboard
+import org.fossify.gallery.extensions.pasteMediaTransfer
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -328,6 +330,8 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         super.onActivityResult(requestCode, resultCode, resultData)
     }
 
+    fun refreshTransferMenu() = refreshMenuItems()
+
     private fun refreshMenuItems() {
         val isDefaultFolder = !config.defaultFolder.isEmpty()
                 && File(config.defaultFolder).compareTo(File(mPath)) == 0
@@ -337,6 +341,9 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
             findItem(R.id.empty_recycle_bin).isVisible = mPath == RECYCLE_BIN
             findItem(R.id.empty_disable_recycle_bin).isVisible = mPath == RECYCLE_BIN
+            findItem(R.id.transfer_paste).isVisible = MediaTransferClipboard.hasItems && !mShowAll && mPath != RECYCLE_BIN && mPath != FAVORITES
+            findItem(R.id.transfer_paste).isEnabled = !MediaTransferClipboard.busy
+            findItem(R.id.transfer_cancel).isVisible = MediaTransferClipboard.hasItems && !MediaTransferClipboard.busy
             findItem(R.id.restore_all_files).isVisible = mPath == RECYCLE_BIN
 
             findItem(R.id.folder_view).isVisible = mShowAll
@@ -372,6 +379,8 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
         binding.mediaMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
+                R.id.transfer_paste -> pasteMediaTransfer(mPath) { refreshItems(); refreshMenuItems() }
+                R.id.transfer_cancel -> { MediaTransferClipboard.clear(); refreshMenuItems() }
                 R.id.sort -> showSortingDialog()
                 R.id.filter -> showFilterMediaDialog()
                 R.id.empty_recycle_bin -> emptyRecycleBin()

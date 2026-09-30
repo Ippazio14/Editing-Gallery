@@ -1,5 +1,6 @@
 package org.fossify.gallery.adapters
 
+import org.fossify.gallery.helpers.MediaTransferClipboard
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -455,42 +456,11 @@ class MediaAdapter(
     }
 
     private fun checkMediaManagementAndCopy(isCopyOperation: Boolean) {
-        activity.handleMediaManagementPrompt {
-            copyMoveTo(isCopyOperation)
-        }
-    }
-
-    private fun copyMoveTo(isCopyOperation: Boolean) {
-        val paths = getSelectedPaths()
-
-        val recycleBinPath = activity.recycleBinPath
-        val fileDirItems = paths.asSequence().filter { isCopyOperation || !it.startsWith(recycleBinPath) }.map {
-            FileDirItem(it, it.getFilenameFromPath())
-        }.toMutableList() as ArrayList
-
-        if (!isCopyOperation && paths.any { it.startsWith(recycleBinPath) }) {
-            activity.toast(org.fossify.commons.R.string.moving_recycle_bin_items_disabled, Toast.LENGTH_LONG)
-        }
-
-        if (fileDirItems.isEmpty()) {
-            return
-        }
-
-        activity.tryCopyMoveFilesTo(fileDirItems, isCopyOperation) {
-            val destinationPath = it
-            config.tempFolderPath = ""
-            activity.applicationContext.rescanFolderMedia(destinationPath)
-            activity.applicationContext.rescanFolderMedia(fileDirItems.first().getParentPath())
-
-            val newPaths = fileDirItems.map { "$destinationPath/${it.name}" }.toMutableList() as ArrayList<String>
-            activity.rescanPaths(newPaths) {
-                activity.fixDateTaken(newPaths, false)
-            }
-
-            if (!isCopyOperation) {
-                listener?.refreshItems()
-                activity.updateFavoritePaths(fileDirItems, destinationPath)
-            }
+        val paths = getSelectedPaths().filter { !it.startsWith(activity.recycleBinPath) }
+        if (paths.isNotEmpty() && MediaTransferClipboard.set(paths, isCopyOperation)) {
+            activity.toast(activity.getString(R.string.transfer_ready, paths.size))
+            finishActMode()
+            (activity as? org.fossify.gallery.activities.MediaActivity)?.refreshTransferMenu()
         }
     }
 
