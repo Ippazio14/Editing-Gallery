@@ -84,7 +84,6 @@ class SettingsActivity : SimpleActivity() {
         setupAllowDownGesture()
         setupAllowRotatingWithGestures()
         setupShowNotch()
-        setupBottomActions()
         setupFileThumbnailStyle()
         setupFolderThumbnailStyle()
         setupKeepLastModified()
@@ -97,7 +96,6 @@ class SettingsActivity : SimpleActivity() {
         setupHideExtendedDetails()
         setupManageExtendedDetails()
         setupSkipDeleteConfirmation()
-        setupManageBottomActions()
         setupUseRecycleBin()
         setupShowRecycleBin()
         setupShowRecycleBinLast()
@@ -118,7 +116,6 @@ class SettingsActivity : SimpleActivity() {
             binding.settingsExtendedDetailsLabel,
             binding.settingsSecurityLabel,
             binding.settingsFileOperationsLabel,
-            binding.settingsBottomActionsLabel,
             binding.settingsRecycleBinLabel,
             binding.settingsMigratingLabel
         ).forEach {
@@ -670,27 +667,9 @@ class SettingsActivity : SimpleActivity() {
         }
     )
 
-    private fun setupBottomActions() {
-        binding.settingsBottomActionsCheckbox.isChecked = config.bottomActions
-        binding.settingsManageBottomActionsHolder.beVisibleIf(config.bottomActions)
-        binding.settingsBottomActionsCheckboxHolder.setOnClickListener {
-            binding.settingsBottomActionsCheckbox.toggle()
-            config.bottomActions = binding.settingsBottomActionsCheckbox.isChecked
-            binding.settingsManageBottomActionsHolder.beVisibleIf(config.bottomActions)
-        }
-    }
 
-    private fun setupManageBottomActions() {
-        binding.settingsManageBottomActionsHolder.setOnClickListener {
-            ManageBottomActionsDialog(this) {
-                if (config.visibleBottomActions == 0) {
-                    binding.settingsBottomActionsCheckboxHolder.callOnClick()
-                    config.bottomActions = false
-                    config.visibleBottomActions = DEFAULT_BOTTOM_ACTIONS
-                }
-            }
-        }
-    }
+
+
 
     private fun setupUseRecycleBin() {
         updateRecycleBinButtons()

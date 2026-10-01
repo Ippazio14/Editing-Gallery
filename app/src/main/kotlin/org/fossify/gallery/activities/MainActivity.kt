@@ -200,6 +200,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         super.onCreate(savedInstanceState)
         if (config.defaultFolder == "favorites") config.defaultFolder = ""
         config.removePinnedFolders(hashSetOf("favorites"))
+        config.everShownFolders = config.everShownFolders - "favorites"
         setContentView(binding.root)
         appLaunched(BuildConfig.APPLICATION_ID)
 
