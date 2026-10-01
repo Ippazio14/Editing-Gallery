@@ -2,12 +2,10 @@ package org.fossify.gallery.asynctasks
 
 import android.content.Context
 import android.os.AsyncTask
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.SORT_BY_DATE_MODIFIED
 import org.fossify.commons.helpers.SORT_BY_DATE_TAKEN
 import org.fossify.commons.helpers.SORT_BY_SIZE
 import org.fossify.gallery.extensions.config
-import org.fossify.gallery.extensions.getFavoritePaths
 import org.fossify.gallery.helpers.*
 import org.fossify.gallery.models.Medium
 import org.fossify.gallery.models.ThumbnailItem
@@ -32,18 +30,17 @@ class GetMediaAsynctask(
             folderGrouping and GROUP_BY_LAST_MODIFIED_MONTHLY != 0
 
         val getProperFileSize = folderSorting and SORT_BY_SIZE != 0
-        val favoritePaths = context.getFavoritePaths()
         val getVideoDurations = context.config.showThumbnailVideoDuration
         val lastModifieds = if (getProperLastModified) mediaFetcher.getLastModifieds() else HashMap()
         val dateTakens = if (getProperDateTaken) mediaFetcher.getDateTakens() else HashMap()
 
         val media = if (showAll) {
-            val foldersToScan = mediaFetcher.getFoldersToScan().filter { it != RECYCLE_BIN && it != FAVORITES && !context.config.isFolderProtected(it) }
+            val foldersToScan = mediaFetcher.getFoldersToScan().filter { it != RECYCLE_BIN && !context.config.isFolderProtected(it) }
             val media = ArrayList<Medium>()
             foldersToScan.forEach {
                 val newMedia = mediaFetcher.getFilesFrom(
                     it, isPickImage, isPickVideo, getProperDateTaken, getProperLastModified, getProperFileSize,
-                    favoritePaths, getVideoDurations, lastModifieds, dateTakens.clone() as HashMap<String, Long>, null
+                    getVideoDurations, lastModifieds, dateTakens.clone() as HashMap<String, Long>, null
                 )
                 media.addAll(newMedia)
             }
@@ -52,7 +49,7 @@ class GetMediaAsynctask(
             media
         } else {
             mediaFetcher.getFilesFrom(
-                mPath, isPickImage, isPickVideo, getProperDateTaken, getProperLastModified, getProperFileSize, favoritePaths,
+                mPath, isPickImage, isPickVideo, getProperDateTaken, getProperLastModified, getProperFileSize,
                 getVideoDurations, lastModifieds, dateTakens, null
             )
         }

@@ -164,7 +164,7 @@
     <string name="allow_zooming_videos">Perbolehkan zoom video dengan mengetuk dua kali</string>
     <string name="folder_thumbnail_style">Gaya thumbnail folder</string>
     <string name="file_thumbnail_style">Gaya thumbnail file</string>
-    <string name="mark_favorite_items">Tandai item favorit</string>
+
     <string name="thumbnail_spacing">Spasi thumbnail</string>
     <string name="show_file_count_line">Tampilkan jumlah file di baris terpisah</string>
     <string name="show_file_count_brackets">Tampilkah jumlah file di dalam kurung</string>
@@ -172,8 +172,8 @@
     <string name="limit_folder_title">Batasi judul folder panjang ke 1 baris</string>
     <string name="square">Kotak</string>
     <string name="rounded_corners">Sudut bulat</string>
-    <string name="export_favorite_paths">Ekspor favorit</string>
-    <string name="import_favorite_paths">Impor favorit</string>
+
+
     <string name="paths_imported_successfully">Jalur berhasil diimpor</string>
     <string name="media_management_prompt">Untuk memastikan semua operasi file bekerja dengan andal, mohon jadikan aplikasi ini sebagai aplikasi utama untuk mengelola Media di pengaturan perangkat Anda.</string>
     <string name="password_protect_excluded">Lindungi visibiltas folder yang tidak disertakan dengan kata sandi</string>
@@ -190,7 +190,7 @@
     <string name="extended_details">Detail tambahan</string>
     <string name="bottom_actions">Tindakan bawah</string>
     <string name="manage_bottom_actions">Kelola tombol tindakan bawah</string>
-    <string name="toggle_favorite">Alih favorit</string>
+
     <string name="toggle_file_visibility">Ubah visibilitas file</string>
     <string name="faq_2_title">Saya mengunci aplikasi dengan sandi, tapi saya lupa. Apa yang harus dilakukan\?</string>
     <string name="faq_2_text">Anda bisa menyelesaikannya dengan 2 cara. Anda bisa pasang ulang aplikasi, atau cari aplikasi ini di Pengaturan perangkat dan pilih \"Hapus data\". Ini akan menyetel ulang semua pengaturan anda, dan tidak akan menghapus file media apapun.</string>

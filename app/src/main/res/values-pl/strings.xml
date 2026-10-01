@@ -190,7 +190,7 @@
     <string name="allow_zooming_videos">Zezwalaj na powiększanie wideo przez dwukrotne ich naciśnięcie</string>
     <string name="folder_thumbnail_style">Styl miniaturek folderów</string>
     <string name="file_thumbnail_style">Styl miniaturek plików</string>
-    <string name="mark_favorite_items">Oznaczaj ulubione elementy</string>
+
     <string name="thumbnail_spacing">Odstępy między miniaturkami</string>
     <string name="show_file_count_line">Pokazuj liczbę plików w osobnej linii</string>
     <string name="show_file_count_brackets">Pokazuj liczbę plików w nawiasach</string>
@@ -198,8 +198,8 @@
     <string name="limit_folder_title">Ograniczaj długie nazwy folderów do 1 linii</string>
     <string name="square">Kwadrat</string>
     <string name="rounded_corners">Zaokrąglone rogi</string>
-    <string name="export_favorite_paths">Eksportuj ulubione</string>
-    <string name="import_favorite_paths">Importuj ulubione</string>
+
+
     <string name="paths_imported_successfully">Ścieżki zostały zaimportowane</string>
     <string name="media_management_prompt">Aby mieć pewność, że wszystkie operacje na plikach działają niezawodnie, ustaw tę aplikację jako aplikację do zarządzania multimediami w ustawieniach urządzenia.</string>
     <string name="password_protect_excluded">Chroń hasłem widoczność wykluczonych folderów</string>
@@ -216,7 +216,7 @@
     <string name="extended_details">Dodatkowe szczegóły</string>
     <string name="bottom_actions">Dolne przyciski akcji</string>
     <string name="manage_bottom_actions">Zarządzaj widocznością dolnych przycisków akcji</string>
-    <string name="toggle_favorite">Ulubione</string>
+
     <string name="toggle_file_visibility">Zmień widoczność pliku</string>
     <string name="faq_1_title">Jak mogę ustawić Fossify Gallery jako domyślną galerię urządzenia?</string>
     <string name="faq_1_text">Najpierw znajdź aktualnie domyślną galerię urządzenia w ustawieniach urządzenia (sekcja „Aplikacje”). Na ekranie z informacjami o niej wybierz „Otwórz domyślnie”, a następnie „Wyczyść domyślne”. Gdy podczas następnej próby otwarcia obrazu czy wideo system zapyta Cię, którą aplikacją to zrobić, wybierz Fossify Gallery i opcję zapamiętania tego wyboru.</string>

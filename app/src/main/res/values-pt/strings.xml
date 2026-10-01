@@ -180,7 +180,7 @@
     <string name="allow_zooming_videos">Permitir ampliação de vídeos com dois toques</string>
     <string name="folder_thumbnail_style">Estilo de miniatura das pastas</string>
     <string name="file_thumbnail_style">Estilo de miniaturas dos ficheiros</string>
-    <string name="mark_favorite_items">Marcar itens favoritos</string>
+
     <string name="thumbnail_spacing">Espaçamento entre miniaturas</string>
     <string name="show_file_count_line">Mostrar número de ficheiros em linha distinta</string>
     <string name="show_file_count_brackets">Mostrar número de ficheiros em chavetas</string>
@@ -188,8 +188,8 @@
     <string name="limit_folder_title">Restringir título das pastas a 1 linha</string>
     <string name="square">Quadrado</string>
     <string name="rounded_corners">Cantos arredondados</string>
-    <string name="export_favorite_paths">Exportar favoritos</string>
-    <string name="import_favorite_paths">Importar favoritos</string>
+
+
     <string name="paths_imported_successfully">Caminhos importados com sucesso</string>
     <string name="media_management_prompt">Para garantir que todas as operações de ficheiros funcionem corretamente, torne esta a aplicação padrão para gerir os ficheiros multimédia.</string>
     <string name="password_protect_excluded">Proteger exibição das pastas excluídas com palavra-passe</string>
@@ -206,7 +206,7 @@
     <string name="extended_details">Mais detalhes</string>
     <string name="bottom_actions">Ações em baixo</string>
     <string name="manage_bottom_actions">Gerir exibição dos botões de ação</string>
-    <string name="toggle_favorite">Alternar favorito</string>
+
     <string name="toggle_file_visibility">Alternar visibilidade dos ficheiros</string>
     <string name="faq_2_title">Bloqueei a aplicação com palavra-passe mas agora esqueci-me dela. O que posso fazer?</string>
     <string name="faq_2_text">Existem duas soluções. Reinstale a aplicação ou nas Definiçõe –&gt; Gerir aplicações –&gt; Informações da aplicação, selecione Limpar dados. Reiniciará assim todas as suas definições na aplicação mas não apagará os seus ficheiros multimedia.</string>

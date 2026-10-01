@@ -39,7 +39,6 @@ data class Directory(
         else -> taken.formatDate(context)
     }
 
-    fun areFavorites() = path == FAVORITES
 
     fun isRecycleBin() = path == RECYCLE_BIN
 

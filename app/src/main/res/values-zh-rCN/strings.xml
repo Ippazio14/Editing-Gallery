@@ -187,7 +187,7 @@
     <string name="allow_zooming_videos">允许双击放大视频</string>
     <string name="folder_thumbnail_style">文件夹缩略图样式</string>
     <string name="file_thumbnail_style">文件缩略图样式</string>
-    <string name="mark_favorite_items">标记收藏项目</string>
+
     <string name="thumbnail_spacing">缩略图间距</string>
     <string name="show_file_count_line">单独一行显示文件数</string>
     <string name="show_file_count_brackets">在括号中显示文件数</string>
@@ -195,8 +195,8 @@
     <string name="limit_folder_title">单行显示超长的文件夹名称</string>
     <string name="square">方形</string>
     <string name="rounded_corners">圆角</string>
-    <string name="export_favorite_paths">导出收藏</string>
-    <string name="import_favorite_paths">导入收藏</string>
+
+
     <string name="paths_imported_successfully">路径导入成功</string>
     <string name="media_management_prompt">为了确保文件操作的可靠性，请在本设备的设置页面中将本应用设为媒体管理应用。</string>
     <string name="password_protect_excluded">用密码保护已排除文件夹的可见性</string>
@@ -213,7 +213,7 @@
     <string name="extended_details">更多详细信息</string>
     <string name="bottom_actions">底部按钮</string>
     <string name="manage_bottom_actions">管理底部按钮</string>
-    <string name="toggle_favorite">收藏/取消收藏</string>
+
     <string name="toggle_file_visibility">隐藏/取消隐藏文件</string>
     <string name="faq_1_title">如何将 Fossify 相册设置为本设备的默认相册应用？</string>
     <string name="faq_1_text">首先请前往本设备的设置页面，在“应用”之类的栏目中找到类似“默认应用”的按钮，点击它，再选择“清除默认应用”。然后在下次你打开图像或者视频时，系统将让您选择使用哪款应用打开，您可以从中选择 Fossify 相册，并将它设置为默认应用。</string>

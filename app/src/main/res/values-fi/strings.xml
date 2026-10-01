@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Lähennä videoita tuplanapautuksella</string>
     <string name="folder_thumbnail_style">Kansion pienoiskuvan tyyli</string>
     <string name="file_thumbnail_style">Tiedoston pienoiskuvan tyyli</string>
-    <string name="mark_favorite_items">Merkitse suosikkikohteet</string>
+
     <string name="thumbnail_spacing">Pienoiskuvan asettelu</string>
     <string name="show_file_count_line">Näytä tiedostojen lukumäärä erillisellä rivillä</string>
     <string name="show_file_count_brackets">Näytä tiedostojen lukumäärä suluissa</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Rajoita pitkät kansioiden nimet yhdelle riville</string>
     <string name="square">Neliö</string>
     <string name="rounded_corners">Pyöristetyt kulmat</string>
-    <string name="export_favorite_paths">Vie suosikit</string>
-    <string name="import_favorite_paths">Tuo suosikit</string>
+
+
     <string name="paths_imported_successfully">Sijaintien tuonti onnistui</string>
     <string name="media_management_prompt">Varmistaaksesi, että kaikki tiedostotoiminnot toimivat luotettavasti, tee tästä sovelluksesta medianhallintasovellus laitteen asetuksissa.</string>
     <string name="password_protect_excluded">Suojaa salasanalla pois suljettujen kansioiden näkyvyys</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Yksityiskohtaiset tiedot</string>
     <string name="bottom_actions">Alareunan toiminnot</string>
     <string name="manage_bottom_actions">Hallitse näkyviä alarivin toimintoja</string>
-    <string name="toggle_favorite">Vaihda suosikki</string>
+
     <string name="toggle_file_visibility">Tiedoston näkyvyyden muutos</string>
     <string name="faq_2_title">Lukitsin sovelluksen salasanalla, jonka unohdin. Mitä voin tehdä\?</string>
     <string name="faq_2_text">Tähän on kaksi ratkaisua. Voit joko asentaa sovelluksen uudelleen tai etsiä sovelluksen laitteen asetuksista ja tyhjentää sovelluksen tiedot. Sovelluksen asetukset nollautuvat, mutta mediatiedostoja ei poisteta.</string>

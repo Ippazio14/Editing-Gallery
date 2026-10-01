@@ -13,7 +13,6 @@ class ManageBottomActionsDialog(val activity: BaseSimpleActivity, val callback: 
     init {
         val actions = activity.config.visibleBottomActions
         binding.apply {
-            manageBottomActionsToggleFavorite.isChecked = actions and BOTTOM_ACTION_TOGGLE_FAVORITE != 0
             manageBottomActionsEdit.isChecked = actions and BOTTOM_ACTION_EDIT != 0
             manageBottomActionsShare.isChecked = actions and BOTTOM_ACTION_SHARE != 0
             manageBottomActionsDelete.isChecked = actions and BOTTOM_ACTION_DELETE != 0
@@ -41,8 +40,6 @@ class ManageBottomActionsDialog(val activity: BaseSimpleActivity, val callback: 
     private fun dialogConfirmed() {
         var result = 0
         binding.apply {
-            if (manageBottomActionsToggleFavorite.isChecked)
-                result += BOTTOM_ACTION_TOGGLE_FAVORITE
             if (manageBottomActionsEdit.isChecked)
                 result += BOTTOM_ACTION_EDIT
             if (manageBottomActionsShare.isChecked)

@@ -232,7 +232,7 @@
 
         <activity
             android:name="org.fossify.gallery.activities.EditActivity"
-            android:configChanges="orientation"
+            android:configChanges="orientation|screenSize|keyboardHidden|uiMode"
             android:exported="true"
             android:label="@string/basic_editor">
 

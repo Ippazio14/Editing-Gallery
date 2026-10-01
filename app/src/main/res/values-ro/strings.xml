@@ -160,7 +160,7 @@
     <string name="allow_zooming_videos">Permite mărirea clipurilor video prin dubla atingere a acestora</string>
     <string name="folder_thumbnail_style">Stilul miniaturii dosarului</string>
     <string name="file_thumbnail_style">Stilul miniaturii fișierului</string>
-    <string name="mark_favorite_items">Marcați elementele favorite</string>
+
     <string name="thumbnail_spacing">Spațierea miniaturilor</string>
     <string name="show_file_count_line">Afișează numărul de fișiere pe o linie separată</string>
     <string name="show_file_count_brackets">Afișează numărul de fișiere în paranteze</string>
@@ -168,7 +168,7 @@
     <string name="limit_folder_title">Limitează titlurile lungi ale dosarelor la 1 rând</string>
     <string name="square">Pătrat</string>
     <string name="rounded_corners">Colțuri rotunjite</string>
-    <string name="export_favorite_paths">Exportă căile de acces ale fișierelor favorite</string>
+
     <string name="media_management_prompt">Pentru a vă asigura că toate operațiunile cu fișiere funcționează în mod fiabil, vă rugăm să selectați această aplicație ca aplicație de gestionare a mediilor în setările dispozitivului.</string>
     <string name="password_protect_excluded">Protejați cu parolă vizibilitatea dosarelor excluse</string>
     <string name="media_management_manual">Ceva nu a mers bine, vă rugăm să accesați Setări - Aplicații - Acces special la aplicații - Aplicații de gestionare media și permiteți acestei aplicații să gestioneze media.</string>
@@ -179,7 +179,7 @@
     <string name="extended_details">Detalii extinse</string>
     <string name="bottom_actions">Acţiunile disponibile în partea de jos a ecranului</string>
     <string name="manage_bottom_actions">Gestionează acțiunile vizibile în partea de jos a ecranului</string>
-    <string name="toggle_favorite">Comutați favoritele</string>
+
     <string name="toggle_file_visibility">Schimbă vizibilitatea fișierului</string>
     <string name="faq_2_title">Am blocat aplicația cu o parolă, dar am uitat-o. Ce pot să fac\?</string>
     <string name="faq_2_text">Puteți rezolva acest lucru în 2 moduri. Puteți fie reinstala aplicația, fie găsiți aplicația în setările dispozitivului și în secţiunea de stocare a aplicaţiei selectați \"Golire date\". Aceasta va reseta toate setările, dar nu va elimina niciun fișier media.</string>
@@ -230,7 +230,7 @@
     <string name="flip">Răstoarnă</string>
     <string name="wallpaper">Imagine de fundal</string>
     <string name="interval">Interval</string>
-    <string name="import_favorite_paths">Importă favorite</string>
+
     <string name="paths_imported_successfully">Căi importate cu succes</string>
     <string name="search_all_files">Caută toate fișierele nu doar dosarele de pe ecran</string>
     <string name="faq_1_title">Cum pot face ca Galeria Fossify să fie galeria implicită a dispozitivului?</string>

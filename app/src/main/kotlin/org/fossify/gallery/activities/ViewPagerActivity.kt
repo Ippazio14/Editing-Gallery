@@ -83,7 +83,6 @@ import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.tryGenericMimeType
 import org.fossify.commons.extensions.updateBrightness
 import org.fossify.commons.extensions.viewBinding
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.IS_FROM_GALLERY
 import org.fossify.commons.helpers.NOMEDIA
 import org.fossify.commons.helpers.REAL_FILE_PATH
@@ -102,9 +101,7 @@ import org.fossify.gallery.dialogs.DeleteWithRememberDialog
 import org.fossify.gallery.dialogs.SaveAsDialog
 import org.fossify.gallery.dialogs.SlideshowDialog
 import org.fossify.gallery.extensions.config
-import org.fossify.gallery.extensions.favoritesDB
 import org.fossify.gallery.extensions.fixDateTaken
-import org.fossify.gallery.extensions.getFavoritePaths
 import org.fossify.gallery.extensions.getShortcutImage
 import org.fossify.gallery.extensions.handleMediaManagementPrompt
 import org.fossify.gallery.extensions.hideSystemUI
@@ -125,8 +122,7 @@ import org.fossify.gallery.extensions.toggleFileVisibility
 import org.fossify.gallery.extensions.tryCopyMoveFilesTo
 import org.fossify.gallery.extensions.tryDeleteFileDirItem
 import org.fossify.gallery.extensions.updateDBMediaPath
-import org.fossify.gallery.extensions.updateFavorite
-import org.fossify.gallery.extensions.updateFavoritePaths
+import org.fossify.gallery.extensions.updateMovedMediaPaths
 import org.fossify.gallery.fragments.PhotoFragment
 import org.fossify.gallery.fragments.VideoFragment
 import org.fossify.gallery.fragments.ViewPagerFragment
@@ -143,7 +139,6 @@ import org.fossify.gallery.helpers.BOTTOM_ACTION_SET_AS
 import org.fossify.gallery.helpers.BOTTOM_ACTION_SHARE
 import org.fossify.gallery.helpers.BOTTOM_ACTION_SHOW_ON_MAP
 import org.fossify.gallery.helpers.BOTTOM_ACTION_SLIDESHOW
-import org.fossify.gallery.helpers.BOTTOM_ACTION_TOGGLE_FAVORITE
 import org.fossify.gallery.helpers.BOTTOM_ACTION_TOGGLE_VISIBILITY
 import org.fossify.gallery.helpers.ColorModeHelper
 import org.fossify.gallery.helpers.DefaultPageTransformer
@@ -160,7 +155,6 @@ import org.fossify.gallery.helpers.ROTATE_BY_ASPECT_RATIO
 import org.fossify.gallery.helpers.ROTATE_BY_DEVICE_ROTATION
 import org.fossify.gallery.helpers.ROTATE_BY_SYSTEM_SETTING
 import org.fossify.gallery.helpers.SHOW_ALL
-import org.fossify.gallery.helpers.SHOW_FAVORITES
 import org.fossify.gallery.helpers.SHOW_NEXT_ITEM
 import org.fossify.gallery.helpers.SHOW_PREV_ITEM
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
@@ -209,7 +203,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private var mIsOrientationLocked = false
 
     private var mMediaFiles = ArrayList<Medium>()
-    private var mFavoritePaths = ArrayList<String>()
     private var mIgnoredPaths = ArrayList<String>()
     private var mOriginalBrightness: Float? = null
 
@@ -240,7 +233,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             )
         }
 
-        initFavorites()
     }
 
     override fun onResume() {
@@ -283,7 +275,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     fun refreshMenuItems() {
         val currentMedium = getCurrentMedium() ?: return
-        currentMedium.isFavorite = mFavoritePaths.contains(currentMedium.path)
         val visibleBottomActions = if (config.bottomActions) config.visibleBottomActions else 0
 
         runOnUiThread {
@@ -310,11 +301,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
                 findItem(R.id.menu_unhide).isVisible =
                     (!isRPlus() || isExternalStorageManager()) && currentMedium.isHidden() && visibleBottomActions and BOTTOM_ACTION_TOGGLE_VISIBILITY == 0 && !currentMedium.getIsInRecycleBin()
 
-                findItem(R.id.menu_add_to_favorites).isVisible =
-                    !currentMedium.isFavorite && visibleBottomActions and BOTTOM_ACTION_TOGGLE_FAVORITE == 0 && !currentMedium.getIsInRecycleBin()
 
-                findItem(R.id.menu_remove_from_favorites).isVisible =
-                    currentMedium.isFavorite && visibleBottomActions and BOTTOM_ACTION_TOGGLE_FAVORITE == 0 && !currentMedium.getIsInRecycleBin()
 
                 findItem(R.id.menu_restore_file).isVisible = currentMedium.path.startsWith(recycleBinPath)
                 findItem(R.id.menu_create_shortcut).isVisible = true
@@ -365,8 +352,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
                 R.id.menu_rotate_right -> rotateImage(90)
                 R.id.menu_rotate_left -> rotateImage(-90)
                 R.id.menu_rotate_one_eighty -> rotateImage(180)
-                R.id.menu_add_to_favorites -> toggleFavorite()
-                R.id.menu_remove_from_favorites -> toggleFavorite()
                 R.id.menu_restore_file -> restoreFile()
                 R.id.menu_force_portrait -> toggleOrientation(SCREEN_ORIENTATION_PORTRAIT)
                 R.id.menu_force_landscape -> toggleOrientation(SCREEN_ORIENTATION_LANDSCAPE)
@@ -483,10 +468,8 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             config.isThirdPartyIntent = true
         }
 
-        val isShowingFavorites = intent.getBooleanExtra(SHOW_FAVORITES, false)
         val isShowingRecycleBin = intent.getBooleanExtra(SHOW_RECYCLE_BIN, false)
         mDirectory = when {
-            isShowingFavorites -> FAVORITES
             isShowingRecycleBin -> RECYCLE_BIN
             else -> mPath.getParentPath()
         }
@@ -502,11 +485,11 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
 
         // show the selected image asap, while loading the rest in the background to allow swiping between them. Might be needed at third party intents
-        if (mMediaFiles.isEmpty() && mPath.isNotEmpty() && mDirectory != FAVORITES) {
+        if (mMediaFiles.isEmpty() && mPath.isNotEmpty()) {
             val filename = mPath.getFilenameFromPath()
             val folder = mPath.getParentPath()
             val type = getTypeFromPath(mPath)
-            val medium = Medium(null, filename, mPath, folder, 0, 0, 0, type, 0, false, 0L, 0L)
+            val medium = Medium(null, filename, mPath, folder, 0, 0, 0, type, 0, 0L, 0L)
             mMediaFiles.add(medium)
             gotMedia(mMediaFiles as ArrayList<ThumbnailItem>, refetchViewPagerPosition = true)
         }
@@ -536,10 +519,9 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
                     val filename = mPath.getFilenameFromPath()
                     val parent = mPath.getParentPath()
                     val type = getTypeFromPath(mPath)
-                    val isFavorite = favoritesDB.isFavorite(mPath)
                     val duration = if (type == TYPE_VIDEOS) getDuration(mPath) ?: 0 else 0
                     val ts = System.currentTimeMillis()
-                    val medium = Medium(null, filename, mPath, parent, ts, ts, File(mPath).length(), type, duration, isFavorite, 0, 0L)
+                    val medium = Medium(null, filename, mPath, parent, ts, ts, File(mPath).length(), type, duration, 0, 0L)
                     mediaDB.insert(medium)
                 }
             }
@@ -562,11 +544,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         initBottomActionsLayout()
     }
 
-    private fun initFavorites() {
-        ensureBackgroundThread {
-            mFavoritePaths = getFavoritePaths()
-        }
-    }
+
 
     private fun setupOrientation() {
         if (!mIsOrientationLocked) {
@@ -865,7 +843,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
                 val intent = Intent(this, ViewPagerActivity::class.java).apply {
                     putExtra(PATH, path)
                     putExtra(SHOW_ALL, config.showAll)
-                    putExtra(SHOW_FAVORITES, path == FAVORITES)
                     putExtra(SHOW_RECYCLE_BIN, path == RECYCLE_BIN)
                     action = Intent.ACTION_VIEW
                     flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -926,11 +903,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private fun initBottomActionButtons() {
         val currentMedium = getCurrentMedium()
         val visibleBottomActions = if (config.bottomActions) config.visibleBottomActions else 0
-        binding.bottomActions.bottomFavorite.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_TOGGLE_FAVORITE != 0 && currentMedium?.getIsInRecycleBin() == false)
-        binding.bottomActions.bottomFavorite.setOnLongClickListener { toast(R.string.toggle_favorite); true }
-        binding.bottomActions.bottomFavorite.setOnClickListener {
-            toggleFavorite()
-        }
+
 
         binding.bottomActions.bottomEdit.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_EDIT != 0 && currentMedium?.isSVG() == false)
         binding.bottomActions.bottomEdit.setOnLongClickListener { toast(R.string.edit); true }
@@ -1037,10 +1010,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             return
         }
 
-        val favoriteIcon =
-            if (medium.isFavorite) org.fossify.commons.R.drawable.ic_star_vector else org.fossify.commons.R.drawable.ic_star_outline_vector
-        binding.bottomActions.bottomFavorite.setImageResource(favoriteIcon)
-
         val hideIcon =
             if (medium.isHidden()) org.fossify.commons.R.drawable.ic_unhide_vector else org.fossify.commons.R.drawable.ic_hide_vector
         binding.bottomActions.bottomToggleFileVisibility.setImageResource(hideIcon)
@@ -1049,22 +1018,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         binding.bottomActions.bottomChangeOrientation.setImageResource(getChangeOrientationIcon())
     }
 
-    private fun toggleFavorite() {
-        val medium = getCurrentMedium() ?: return
-        medium.isFavorite = !medium.isFavorite
-        ensureBackgroundThread {
-            updateFavorite(medium.path, medium.isFavorite)
-            if (medium.isFavorite) {
-                mFavoritePaths.add(medium.path)
-            } else {
-                mFavoritePaths.remove(medium.path)
-            }
 
-            runOnUiThread {
-                refreshMenuItems()
-            }
-        }
-    }
 
     private fun printFile() {
         sendPrintIntent(getCurrentPath())

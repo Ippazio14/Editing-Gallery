@@ -13,13 +13,7 @@
         android:paddingTop="@dimen/medium_margin"
         android:paddingRight="@dimen/activity_margin">
 
-        <org.fossify.commons.views.MyAppCompatCheckbox
-            android:id="@+id/manage_bottom_actions_toggle_favorite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/activity_margin"
-            android:paddingBottom="@dimen/activity_margin"
-            android:text="@string/toggle_favorite" />
+
 
         <org.fossify.commons.views.MyAppCompatCheckbox
             android:id="@+id/manage_bottom_actions_edit"

@@ -181,7 +181,7 @@
     <string name="allow_zooming_videos">Увеличаване мащаба на видеото с двойно потупване</string>
     <string name="folder_thumbnail_style">Вид на миниатюрите на папки</string>
     <string name="file_thumbnail_style">Вид на миниатюрите на файлове</string>
-    <string name="mark_favorite_items">Отбелязване на избраните елементи</string>
+
     <string name="thumbnail_spacing">Пространство между миниатюрите</string>
     <string name="show_file_count_line">Показване броя файлове на отделен ред</string>
     <string name="show_file_count_brackets">Показване броя файлове в скоби</string>
@@ -189,8 +189,8 @@
     <string name="limit_folder_title">Ограничаване на заглавията на папките до един ред</string>
     <string name="square">Квадратни</string>
     <string name="rounded_corners">Заоблени ъгли</string>
-    <string name="export_favorite_paths">Изнасяне на избраните</string>
-    <string name="import_favorite_paths">Внасяне на избраните</string>
+
+
     <string name="paths_imported_successfully">Пътищата са внесени</string>
     <string name="media_management_prompt">За да работят надеждно всички действия, задайте приложението да управлява медията в настройките на устройството.</string>
     <string name="password_protect_excluded">Защита с парола изключените папки</string>
@@ -207,7 +207,7 @@
     <string name="extended_details">Подробности</string>
     <string name="bottom_actions">Действия от долния край на екрана</string>
     <string name="manage_bottom_actions">Управление на бутоните в долния край на екрана</string>
-    <string name="toggle_favorite">Превключване на любимите</string>
+
     <string name="toggle_file_visibility">Превключване видимостта на файловете</string>
     <string name="faq_2_title">Заключих приложението с парола, но я забравих. Какво мога да направя?</string>
     <string name="faq_2_text">Можете да разрешите проблема по два начина. Можете или да преинсталирате приложението, или да го намерите в настройките на устройството и да изберете „Изчистване на данните“. По този начин ще нулирате настройките му, но няма да засегне медийните файлове.</string>

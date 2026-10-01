@@ -219,7 +219,7 @@
     <string name="allow_zooming_videos">Allow zooming videos with double tapping them</string>
     <string name="folder_thumbnail_style">Folder thumbnail style</string>
     <string name="file_thumbnail_style">File thumbnail style</string>
-    <string name="mark_favorite_items">Mark favorite items</string>
+
     <string name="thumbnail_spacing">Thumbnail spacing</string>
     <string name="show_file_count_line">Show file count on a separate line</string>
     <string name="show_file_count_brackets">Show file count in brackets</string>
@@ -227,8 +227,8 @@
     <string name="limit_folder_title">Limit long folder titles to 1 line</string>
     <string name="square">Square</string>
     <string name="rounded_corners">Rounded corners</string>
-    <string name="export_favorite_paths">Export favorites</string>
-    <string name="import_favorite_paths">Import favorites</string>
+
+
     <string name="paths_imported_successfully">Paths imported successfully</string>
     <string name="media_management_prompt">To make sure that all file operations work reliably, please make this app a Media management app in your device settings.</string>
     <string name="password_protect_excluded">Password protect excluded folder visibility</string>
@@ -249,7 +249,7 @@
 
     <!-- Bottom actions -->
     <string name="manage_bottom_actions">Manage visible bottom actions</string>
-    <string name="toggle_favorite">Toggle favorite</string>
+
     <string name="toggle_file_visibility">Toggle file visibility</string>
 
     <!-- Errors -->

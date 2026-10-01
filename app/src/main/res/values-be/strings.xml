@@ -201,14 +201,14 @@
     <string name="allow_zooming_videos">Дазволіць маштабаванне відэа з падвойным націскам</string>
     <string name="folder_thumbnail_style">Выгляд мініяцюр тэчак</string>
     <string name="file_thumbnail_style">Стыль мініяцюр файла</string>
-    <string name="mark_favorite_items">Адзначце любімыя прадметы</string>
+
     <string name="show_file_count_brackets">Паказваць колькасць файлаў у дужках</string>
     <string name="show_file_count_none">Не паказваць колькасць файлаў</string>
     <string name="limit_folder_title">Доўгая назва тэчкі адным радком</string>
     <string name="square">квадратны</string>
     <string name="rounded_corners">Скругленыя куты</string>
-    <string name="export_favorite_paths">Экспарт абранага</string>
-    <string name="import_favorite_paths">Імпарт абранага</string>
+
+
     <string name="paths_imported_successfully">Шляхі паспяхова імпартаваны</string>
     <string name="media_management_prompt">Каб быць упэўненым у надзейнай працы аперацый з файламі, зрабіце гэта дадатак асноўным мэнэджэрам медыяфайлаў у наладах прылады.</string>
     <string name="password_protect_excluded">Бачнасць выключанай папкі абараніць паролем</string>
@@ -225,7 +225,7 @@
     <string name="extended_details">Пашыраныя дэталі</string>
     <string name="bottom_actions">Ніжнія дзеянні</string>
     <string name="manage_bottom_actions">Кіруйце бачнымі ніжнімі дзеяннямі</string>
-    <string name="toggle_favorite">Пераключыць абранае</string>
+
     <string name="toggle_file_visibility">Пераключыць бачнасць файла</string>
     <string name="faq_2_title">Я заблакаваў прыкладанне паролем, але забыўся яго. Што я магу зрабіць\?</string>
     <string name="faq_2_text">Вы можаце вырашыць гэтую праблему 2 спосабамі. Вы можаце пераўсталяваць дадатак або знайсці яго ў наладах прылады і выбраць «Ачысціць дадзеныя». Ён скіне ўсе вашы налады, але не выдаліць ніякіх медыяфайлаў.</string>

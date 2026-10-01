@@ -185,7 +185,7 @@
     <string name="allow_zooming_videos">Масштабировать видео двойным нажатием по нему</string>
     <string name="folder_thumbnail_style">Вид миниатюр папок</string>
     <string name="file_thumbnail_style">Вид миниатюр файлов</string>
-    <string name="mark_favorite_items">Пометка избранных элементов</string>
+
     <string name="thumbnail_spacing">Промежуток между миниатюрами</string>
     <string name="show_file_count_line">Показывать количество файлов отдельной строкой</string>
     <string name="show_file_count_brackets">Показывать количество файлов в скобках</string>
@@ -193,8 +193,8 @@
     <string name="limit_folder_title">Длинное название папки одной строкой</string>
     <string name="square">Квадраты</string>
     <string name="rounded_corners">Закруглённые углы</string>
-    <string name="export_favorite_paths">Экспорт избранного</string>
-    <string name="import_favorite_paths">Импорт избранного</string>
+
+
     <string name="paths_imported_successfully">Пути успешно импортированы</string>
     <string name="media_management_prompt">Чтобы быть уверенным в надёжной работе операций с файлами, сделайте это приложение основным менеджером медиафайлов в настройках устройства.</string>
     <string name="password_protect_excluded">Защита паролем отображения исключённых папок</string>
@@ -211,7 +211,7 @@
     <string name="extended_details">Подробности</string>
     <string name="bottom_actions">Нижние кнопки действий</string>
     <string name="manage_bottom_actions">Настройка нижних кнопок действий</string>
-    <string name="toggle_favorite">Переключить избранное</string>
+
     <string name="toggle_file_visibility">Переключение видимости файлов</string>
     <string name="faq_2_title">Я заблокировал приложение паролем, но забыл его. Что мне теперь делать\?</string>
     <string name="faq_2_text">Это можно решить двумя способами. Вы можете переустановить приложение или найти его в настройках вашего устройства и выбрать пункт \"Очистить данные\", что сбросит все настройки приложения, но не удалит медиафайлы.</string>

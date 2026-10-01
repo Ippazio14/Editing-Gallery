@@ -178,7 +178,7 @@
     <string name="allow_zooming_videos">Permitir zoom de vídeos com um toque duplo neles</string>
     <string name="folder_thumbnail_style">Estilo da miniatura de pasta</string>
     <string name="file_thumbnail_style">Estilo da miniatura de arquivo</string>
-    <string name="mark_favorite_items">Marcar itens favoritos</string>
+
     <string name="thumbnail_spacing">Espaçamento das miniaturas</string>
     <string name="show_file_count_line">Exibir a quantidade de arquivos em uma linha separada</string>
     <string name="show_file_count_brackets">Exibir a quantidade de arquivos entre parênteses</string>
@@ -186,8 +186,8 @@
     <string name="limit_folder_title">Limitar nomes longos em uma linha</string>
     <string name="square">Quadrado</string>
     <string name="rounded_corners">Cantos arredondados</string>
-    <string name="export_favorite_paths">Exportar favoritos</string>
-    <string name="import_favorite_paths">Importar favoritos</string>
+
+
     <string name="paths_imported_successfully">Caminhos importados com sucesso</string>
     <string name="media_management_prompt">Para você se certificar que todas as operações de arquivos funcionam corretamente, por favor, permita o gerenciamento de mídias nas configurações do seu dispositivo.</string>
     <string name="password_protect_excluded">Proteger com senha a visibilidade de pastas excluídas</string>
@@ -204,7 +204,7 @@
     <string name="extended_details">Detalhes adicionais</string>
     <string name="bottom_actions">Barra inferior</string>
     <string name="manage_bottom_actions">Gerenciar botões visíveis</string>
-    <string name="toggle_favorite">Marcar como favorito</string>
+
     <string name="toggle_file_visibility">Exibir/ocultar arquivo</string>
     <string name="faq_2_title">Eu protegi o app com senha, mas a esqueci. O que posso fazer\?</string>
     <string name="faq_2_text">Você pode resolver isto de duas formas. Você pode reinstalar o aplicativo ou ir nas configurações do seu dispositivo e selecionar a opção Limpar armazenamento. Isto irá redefinir todas as suas configurações, não removerá nenhum arquivo de mídia.</string>

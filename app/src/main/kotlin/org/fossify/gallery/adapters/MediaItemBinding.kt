@@ -12,7 +12,6 @@ import org.fossify.gallery.databinding.VideoItemListBinding
 interface MediaItemBinding {
     val root: ViewGroup
     val mediaItemHolder: ViewGroup
-    val favorite: ImageView
     val playPortraitOutline: ImageView?
     val fileType: TextView?
     val mediumName: TextView
@@ -24,7 +23,6 @@ interface MediaItemBinding {
 class PhotoListMediaItemBinding(val binding: PhotoItemListBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root
     override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val favorite: ImageView = binding.favorite
     override val playPortraitOutline: ImageView? = null
     override val fileType: TextView = binding.fileType
     override val mediumName: TextView = binding.mediumName
@@ -38,7 +36,6 @@ fun PhotoItemListBinding.toMediaItemBinding() = PhotoListMediaItemBinding(this)
 class PhotoGridMediaItemBinding(val binding: PhotoItemGridBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root
     override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val favorite: ImageView = binding.favorite
     override val playPortraitOutline: ImageView? = null
     override val fileType: TextView = binding.fileType
     override val mediumName: TextView = binding.mediumName
@@ -52,7 +49,6 @@ fun PhotoItemGridBinding.toMediaItemBinding() = PhotoGridMediaItemBinding(this)
 class VideoListMediaItemBinding(val binding: VideoItemListBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root
     override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val favorite: ImageView = binding.favorite
     override val playPortraitOutline: ImageView = binding.playPortraitOutline
     override val fileType: TextView? = null
     override val mediumName: TextView = binding.mediumName
@@ -66,7 +62,6 @@ fun VideoItemListBinding.toMediaItemBinding() = VideoListMediaItemBinding(this)
 class VideoGridMediaItemBinding(val binding: VideoItemGridBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root
     override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val favorite: ImageView = binding.favorite
     override val playPortraitOutline: ImageView = binding.playPortraitOutline
     override val fileType: TextView? = null
     override val mediumName: TextView = binding.mediumName

@@ -66,7 +66,6 @@ import org.fossify.gallery.helpers.IS_IN_RECYCLE_BIN
 import org.fossify.gallery.helpers.IS_VIEW_INTENT
 import org.fossify.gallery.helpers.MEDIUM
 import org.fossify.gallery.helpers.PATH
-import org.fossify.gallery.helpers.SHOW_FAVORITES
 import org.fossify.gallery.helpers.SKIP_AUTHENTICATION
 import org.fossify.gallery.helpers.TYPE_GIFS
 import org.fossify.gallery.helpers.TYPE_IMAGES
@@ -253,7 +252,7 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
         }
 
         mIsVideo = type == TYPE_VIDEOS
-        mMedium = Medium(null, filename, mUri.toString(), mUri!!.path!!.getParentPath(), 0, 0, file.length(), type, 0, false, 0L, 0)
+        mMedium = Medium(null, filename, mUri.toString(), mUri!!.path!!.getParentPath(), 0, 0, file.length(), type, 0, 0L, 0)
         binding.fragmentViewerToolbar.title = Html.fromHtml("<font color='${Color.WHITE.toHex()}'>${mMedium!!.name}</font>")
         bundle.putSerializable(MEDIUM, mMedium)
 
@@ -314,7 +313,6 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
             hideKeyboard()
             Intent(this, ViewPagerActivity::class.java).apply {
                 putExtra(SKIP_AUTHENTICATION, intent.getBooleanExtra(SKIP_AUTHENTICATION, false))
-                putExtra(SHOW_FAVORITES, intent.getBooleanExtra(SHOW_FAVORITES, false))
                 putExtra(IS_VIEW_INTENT, true)
                 putExtra(IS_FROM_GALLERY, mIsFromGallery)
                 putExtra(PATH, path)
@@ -368,7 +366,6 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
 
     private fun initBottomActionButtons() {
         arrayListOf(
-            binding.bottomActions.bottomFavorite,
             binding.bottomActions.bottomDelete,
             binding.bottomActions.bottomRotate,
             binding.bottomActions.bottomProperties,

@@ -43,7 +43,6 @@ import org.fossify.commons.extensions.needsStupidWritePermissions
 import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.toast
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isRPlus
@@ -77,15 +76,13 @@ import org.fossify.gallery.extensions.showRestoreConfirmationDialog
 import org.fossify.gallery.extensions.toggleFileVisibility
 import org.fossify.gallery.extensions.tryCopyMoveFilesTo
 import org.fossify.gallery.extensions.updateDBMediaPath
-import org.fossify.gallery.extensions.updateFavorite
-import org.fossify.gallery.extensions.updateFavoritePaths
+import org.fossify.gallery.extensions.updateMovedMediaPaths
 import org.fossify.gallery.helpers.PATH
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_BIG
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_NONE
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_SMALL
 import org.fossify.gallery.helpers.SHOW_ALL
-import org.fossify.gallery.helpers.SHOW_FAVORITES
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
 import org.fossify.gallery.helpers.TYPE_GIFS
 import org.fossify.gallery.helpers.TYPE_RAWS
@@ -189,7 +186,6 @@ class MediaAdapter(
         val isInRecycleBin = selectedItems.firstOrNull()?.getIsInRecycleBin() == true
         menu.apply {
             findItem(R.id.cab_rename).isVisible = !isInRecycleBin
-            findItem(R.id.cab_add_to_favorites).isVisible = !isInRecycleBin
             findItem(R.id.cab_fix_date_taken).isVisible = !isInRecycleBin
             findItem(R.id.cab_move_to).isVisible = !isInRecycleBin
             findItem(R.id.cab_open_with).isVisible = isOneItemSelected
@@ -201,7 +197,6 @@ class MediaAdapter(
             findItem(R.id.cab_create_shortcut).isVisible = isOneItemSelected
 
             checkHideBtnVisibility(this, selectedItems)
-            checkFavoriteBtnVisibility(this, selectedItems)
         }
     }
 
@@ -217,8 +212,6 @@ class MediaAdapter(
             R.id.cab_edit -> editFile()
             R.id.cab_hide -> toggleFileVisibility(true)
             R.id.cab_unhide -> toggleFileVisibility(false)
-            R.id.cab_add_to_favorites -> toggleFavorites(true)
-            R.id.cab_remove_from_favorites -> toggleFavorites(false)
             R.id.cab_restore_recycle_bin_files -> restoreFiles()
             R.id.cab_share -> shareMedia()
             R.id.cab_rotate_right -> rotateSelection(90)
@@ -267,10 +260,7 @@ class MediaAdapter(
         menu.findItem(R.id.cab_unhide).isVisible = (!isRPlus() || isExternalStorageManager()) && !isInRecycleBin && selectedItems.any { it.isHidden() }
     }
 
-    private fun checkFavoriteBtnVisibility(menu: Menu, selectedItems: ArrayList<Medium>) {
-        menu.findItem(R.id.cab_add_to_favorites).isVisible = selectedItems.none { it.getIsInRecycleBin() } && selectedItems.any { !it.isFavorite }
-        menu.findItem(R.id.cab_remove_from_favorites).isVisible = selectedItems.none { it.getIsInRecycleBin() } && selectedItems.any { it.isFavorite }
-    }
+
 
     private fun confirmSelection() {
         listener?.selectedPaths(getSelectedPaths())
@@ -376,18 +366,7 @@ class MediaAdapter(
         }
     }
 
-    private fun toggleFavorites(add: Boolean) {
-        ensureBackgroundThread {
-            getSelectedItems().forEach {
-                it.isFavorite = add
-                activity.updateFavorite(it.path, add)
-            }
-            activity.runOnUiThread {
-                listener?.refreshItems()
-                finishActMode()
-            }
-        }
-    }
+
 
     private fun restoreFiles() {
         val paths = getSelectedPaths()
@@ -473,7 +452,6 @@ class MediaAdapter(
                 val intent = Intent(activity, ViewPagerActivity::class.java).apply {
                     putExtra(PATH, path)
                     putExtra(SHOW_ALL, config.showAll)
-                    putExtra(SHOW_FAVORITES, path == FAVORITES)
                     putExtra(SHOW_RECYCLE_BIN, path == RECYCLE_BIN)
                     action = Intent.ACTION_VIEW
                     flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -636,7 +614,6 @@ class MediaAdapter(
 
             mediaItemHolder.setPadding(padding, padding, padding, padding)
 
-            favorite.beVisibleIf(medium.isFavorite && config.markFavoriteItems)
 
             playPortraitOutline?.beVisibleIf(medium.isVideo() || medium.isPortrait())
             if (medium.isVideo()) {

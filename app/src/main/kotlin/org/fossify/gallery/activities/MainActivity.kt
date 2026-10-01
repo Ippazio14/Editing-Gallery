@@ -61,7 +61,6 @@ import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.underlineText
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.DAY_SECONDS
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.PERMISSION_READ_STORAGE
 import org.fossify.commons.helpers.SORT_BY_DATE_MODIFIED
 import org.fossify.commons.helpers.SORT_BY_DATE_TAKEN
@@ -94,7 +93,6 @@ import org.fossify.gallery.extensions.getCachedMedia
 import org.fossify.gallery.extensions.getDirectorySortingValue
 import org.fossify.gallery.extensions.getDirsToShow
 import org.fossify.gallery.extensions.getDistinctPath
-import org.fossify.gallery.extensions.getFavoritePaths
 import org.fossify.gallery.extensions.getNoMediaFoldersSync
 import org.fossify.gallery.extensions.getOTGFolderChildrenNames
 import org.fossify.gallery.extensions.getSortedDirectories
@@ -152,7 +150,7 @@ import java.io.OutputStream
 
 class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     override var isSearchBarEnabled = true
-    
+
     companion object {
         private const val PICK_MEDIA = 2
         private const val PICK_WALLPAPER = 3
@@ -200,6 +198,8 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (config.defaultFolder == "favorites") config.defaultFolder = ""
+        config.removePinnedFolders(hashSetOf("favorites"))
         setContentView(binding.root)
         appLaunched(BuildConfig.APPLICATION_ID)
 
@@ -239,10 +239,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         checkWhatsNewDialog()
         setupLatestMediaId()
 
-        if (!config.wereFavoritesPinned) {
-            config.addPinnedFolders(hashSetOf(FAVORITES))
-            config.wereFavoritesPinned = true
-        }
+
 
         if (!config.wasRecycleBinPinned) {
             config.addPinnedFolders(hashSetOf(RECYCLE_BIN))
@@ -1097,16 +1094,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         mIsGettingDirs = false
         mShouldStopFetching = false
 
-        // if hidden item showing is disabled but all Favorite items are hidden, hide the Favorites folder
-        if (!config.shouldShowHidden) {
-            val favoritesFolder = newDirs.firstOrNull { it.areFavorites() }
-            if (
-                favoritesFolder != null
-                && favoritesFolder.tmb.getFilenameFromPath().startsWith('.')
-            ) {
-                newDirs.remove(favoritesFolder)
-            }
-        }
+
 
         val dirs = getSortedDirectories(newDirs)
         if (config.groupDirectSubfolders) {
@@ -1127,7 +1115,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         val getVideos = mIsPickVideoIntent || mIsGetVideoContentIntent
         val getImagesOnly = getImages && !getVideos
         val getVideosOnly = getVideos && !getImages
-        val favoritePaths = getFavoritePaths()
         val hiddenString = getString(R.string.hidden)
         val albumCovers = config.parseAlbumCovers()
         val includedFolders = config.includedFolders
@@ -1157,24 +1144,10 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             }
         }
 
-        if (dirs.map { it.path }.contains(FAVORITES)) {
-            if (mediaDB.getFavoritesCount() > 0) {
-                val favorites = Directory().apply {
-                    path = FAVORITES
-                    name = getString(org.fossify.commons.R.string.favorites)
-                    location = LOCATION_INTERNAL
-                }
-
-                dirs.add(0, favorites)
-            }
-        }
-
         // fetch files from MediaStore only, unless the app has the MANAGE_EXTERNAL_STORAGE permission on Android 11+
         val android11Files = mLastMediaFetcher?.getAndroid11FolderMedia(
             isPickImage = getImagesOnly,
             isPickVideo = getVideosOnly,
-            favoritePaths = favoritePaths,
-            getFavoritePathsOnly = false,
             getProperDateTaken = true,
             dateTakens = dateTakens
         )
@@ -1204,7 +1177,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                     getProperDateTaken = getProperDateTaken,
                     getProperLastModified = getProperLastModified,
                     getProperFileSize = getProperFileSize,
-                    favoritePaths = favoritePaths,
                     getVideoDurations = false,
                     lastModifieds = lastModifieds,
                     dateTakens = dateTakens,
@@ -1248,7 +1220,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
                 // update directories and media files in the local db, delete invalid items. Intentionally creating a new thread
                 updateDBDirectory(directory)
-                if (!directory.isRecycleBin() && !directory.areFavorites()) {
+                if (!directory.isRecycleBin()) {
                     Thread {
                         try {
                             mediaDB.insertAll(curMedia)
@@ -1286,8 +1258,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         val foldersToScan = mLastMediaFetcher!!.getFoldersToScan()
-        foldersToScan.remove(FAVORITES)
-        foldersToScan.add(0, FAVORITES)
         if (config.showRecycleBinAtFolders) {
             if (foldersToScan.contains(RECYCLE_BIN)) {
                 foldersToScan.remove(RECYCLE_BIN)
@@ -1299,7 +1269,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             foldersToScan.remove(RECYCLE_BIN)
         }
 
-        dirs.filterNot { it.path == RECYCLE_BIN || it.path == FAVORITES }.forEach {
+        dirs.filterNot { it.path == RECYCLE_BIN }.forEach {
             foldersToScan.remove(it.path)
         }
 
@@ -1328,7 +1298,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                 getProperDateTaken = getProperDateTaken,
                 getProperLastModified = getProperLastModified,
                 getProperFileSize = getProperFileSize,
-                favoritePaths = favoritePaths,
                 getVideoDurations = false,
                 lastModifieds = lastModifieds,
                 dateTakens = dateTakens,
@@ -1364,7 +1333,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             Thread {
                 try {
                     directoryDB.insert(newDir)
-                    if (folder != RECYCLE_BIN && folder != FAVORITES) {
+                    if (folder != RECYCLE_BIN) {
                         mediaDB.insertAll(newMedia)
                     }
                 } catch (ignored: Exception) {
@@ -1422,7 +1391,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
         val defaultDir = File(config.defaultFolder)
 
-        if ((!defaultDir.exists() || !defaultDir.isDirectory) && (config.defaultFolder != RECYCLE_BIN && config.defaultFolder != FAVORITES)) {
+        if ((!defaultDir.exists() || !defaultDir.isDirectory) && (config.defaultFolder != RECYCLE_BIN)) {
             config.defaultFolder = ""
             return
         }
@@ -1549,7 +1518,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     private fun checkInvalidDirectories(dirs: ArrayList<Directory>) {
         val invalidDirs = ArrayList<Directory>()
         val OTGPath = config.OTGPath
-        dirs.filter { !it.areFavorites() && !it.isRecycleBin() }.forEach {
+        dirs.filter { !it.isRecycleBin() }.forEach {
             if (!getDoesFilePathExist(it.path, OTGPath)) {
                 invalidDirs.add(it)
             } else if (it.path != config.tempFolderPath && (!isRPlus() || isExternalStorageManager())) {
@@ -1574,12 +1543,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             }
         }
 
-        if (getFavoritePaths().isEmpty()) {
-            val favoritesFolder = dirs.firstOrNull { it.areFavorites() }
-            if (favoritesFolder != null) {
-                invalidDirs.add(favoritesFolder)
-            }
-        }
+
 
         if (config.useRecycleBin) {
             try {

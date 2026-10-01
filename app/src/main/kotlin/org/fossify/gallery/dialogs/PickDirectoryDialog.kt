@@ -40,7 +40,7 @@ class PickDirectoryDialog(
     val activity: BaseSimpleActivity,
     val sourcePath: String,
     showOtherFolderButton: Boolean,
-    val showFavoritesBin: Boolean,
+    val showRecycleBin: Boolean,
     val isPickingCopyMoveDestination: Boolean,
     val isPickingFolderForWidget: Boolean,
     val callback: (path: String) -> Unit
@@ -220,7 +220,7 @@ class PickDirectoryDialog(
             allDirectories = newDirs.clone() as ArrayList<Directory>
         }
 
-        val distinctDirs = newDirs.filter { showFavoritesBin || (!it.isRecycleBin() && !it.areFavorites()) }.distinctBy { it.path.getDistinctPath() }
+        val distinctDirs = newDirs.filter { showRecycleBin || (!it.isRecycleBin()) }.distinctBy { it.path.getDistinctPath() }
             .toMutableList() as ArrayList<Directory>
         val sortedDirs = activity.getSortedDirectories(distinctDirs)
         val dirs = activity.getDirsToShow(sortedDirs, allDirectories, currentPathPrefix).clone() as ArrayList<Directory>

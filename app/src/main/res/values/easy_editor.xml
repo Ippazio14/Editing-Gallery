@@ -1,0 +1,30 @@
+<resources>
+    <string name="easy_preview">Photo preview</string>
+    <string name="easy_undo">Undo</string>
+    <string name="easy_redo">Redo</string>
+    <string name="easy_auto">Auto correction</string>
+    <string name="easy_crop">Crop</string>
+    <string name="easy_resize">Resize and compress</string>
+    <string name="easy_rotate">Rotate 90°</string>
+    <string name="easy_random">Random adjustments</string>
+    <string name="easy_saturation">Saturation</string>
+    <string name="easy_temperature">Temperature</string>
+    <string name="easy_brightness">Brightness</string>
+    <string name="easy_contrast">Contrast</string>
+    <string name="easy_loading">Opening photo…</string>
+    <string name="easy_save_copy">Save copy</string>
+    <string name="easy_dimensions">%1$d × %2$d px · JPEG %3$d%%</string>
+    <string name="easy_cancel">Cancel</string>
+    <string name="easy_apply">Apply</string>
+    <string name="easy_width">Width in pixels (1–%1$d)</string>
+    <string name="easy_quality">JPEG quality (1–100)</string>
+    <string name="easy_ratio">Height follows automatically. Original proportions are preserved.</string>
+    <string name="easy_saving">Saving copy…</string>
+    <string name="easy_saved">Copy saved. Original preserved.</string>
+    <string name="easy_read_error">Unable to open this photo.</string>
+    <string name="easy_image_too_large">This prototype supports photos up to 40 megapixels.</string>
+    <string name="easy_memory_error">Not enough memory for this photo. The original is unchanged.</string>
+    <string name="easy_copy_only">Choose a different file to preserve the original.</string>
+    <string name="easy_discard">Exit the editor? Unsaved changes will be lost.</string>
+    <string name="easy_exit">Exit</string>
+</resources>

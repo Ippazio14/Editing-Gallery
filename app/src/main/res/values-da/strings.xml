@@ -178,7 +178,7 @@
     <string name="allow_zooming_videos">Tillad zoom på videoer ved dobbelttryk</string>
     <string name="folder_thumbnail_style">Miniaturestil på mapper</string>
     <string name="file_thumbnail_style">Miniaturestil på filer</string>
-    <string name="mark_favorite_items">Markér favoritelementer</string>
+
     <string name="thumbnail_spacing">Afstand mellem miniaturer</string>
     <string name="show_file_count_line">Vis antal filer på en separat linje</string>
     <string name="show_file_count_brackets">Vis antal filer i parentes</string>
@@ -186,8 +186,8 @@
     <string name="limit_folder_title">Begræns lange mappenavne til 1 linje</string>
     <string name="square">Firkant</string>
     <string name="rounded_corners">Afrundede hjørner</string>
-    <string name="export_favorite_paths">Eksportér favoritter</string>
-    <string name="import_favorite_paths">Importér favoritter</string>
+
+
     <string name="paths_imported_successfully">Stier blev importeret</string>
     <string name="media_management_prompt">For at sikre pålidelig filhåndtering skal du angive denne app som mediehåndteringsapp i enhedens indstillinger.</string>
     <string name="password_protect_excluded">Beskyt synligheden af ekskluderede mapper med adgangskode</string>
@@ -204,7 +204,7 @@
     <string name="extended_details">Udvidede detaljer</string>
     <string name="bottom_actions">Handlingsknapper</string>
     <string name="manage_bottom_actions">Administrer synlige handlingsknapper</string>
-    <string name="toggle_favorite">Favorit</string>
+
     <string name="toggle_file_visibility">Synlighed til/fra</string>
     <string name="faq_2_title">Jeg har låst appen med en adgangskode, men jeg har glemt den. Hvad kan jeg gøre\?</string>
     <string name="faq_2_text">Du har to muligheder: Enten kan du geninstallere appen eller finde den i enhedens indstillinger og vælge \"Ryd data\". Det nulstiller alle indstillinger, men fjerner ikke dine mediefiler.</string>

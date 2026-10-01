@@ -47,7 +47,7 @@
     <string name="excluded">(شامل نمی‌شود)</string>
     <string name="exclude_folder_parent">در عوض یک پوشه‌ی مافوق را مستثنا می‌کنید؟</string>
     <string name="restore_to_path">بازگرداندن به \'%s\'</string>
-    <string name="toggle_favorite">نمایش دادن یا ندادن برگزیده‌ها</string>
+
     <string name="exclude_folder_description">این کار، موارد انتخاب‌شده را با زیرشاخه‌هایش، تنها از این برنامه مستثنا می‌کند. شما می‌توانید پوشه‌های مستثناشده را در تنظیمات مدیریت کنید.</string>
     <string name="add_folder">افزودن پوشه</string>
     <string name="width">پهنا</string>
@@ -120,8 +120,8 @@
     <string name="square">مربع</string>
     <string name="paths_imported_successfully">مسیرها با موفقیت وارد شد</string>
     <string name="rounded_corners">گوشه‌های گرد</string>
-    <string name="export_favorite_paths">برون‌داد برگزیده‌ها</string>
-    <string name="import_favorite_paths">درون‌داد برگزیده‌ها</string>
+
+
     <string name="bottom_actions">عملکردهای پایین صفحه</string>
     <string name="all_files">همه‌ی پرونده‌ها</string>
     <string name="manage_bottom_actions">مدیریت عملکردهای نمایان در پایین صفحه</string>

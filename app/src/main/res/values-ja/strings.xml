@@ -171,7 +171,7 @@
     <string name="allow_zooming_videos">ダブルタップで動画ズームを設定</string>
     <string name="folder_thumbnail_style">フォルダーサムネイルのスタイル</string>
     <string name="file_thumbnail_style">サムネイルのスタイル</string>
-    <string name="mark_favorite_items">お気に入りマークを表示</string>
+
     <string name="thumbnail_spacing">サムネイルの間隔</string>
     <string name="show_file_count_line">ファイル数を別の行に表示</string>
     <string name="show_file_count_brackets">ファイル数を括弧内に表示</string>
@@ -179,8 +179,8 @@
     <string name="limit_folder_title">長いフォルダー名を1行に制限</string>
     <string name="square">四角</string>
     <string name="rounded_corners">角丸</string>
-    <string name="export_favorite_paths">お気に入りをエクスポート</string>
-    <string name="import_favorite_paths">お気に入りをインポート</string>
+
+
     <string name="paths_imported_successfully">パスをインポートしました</string>
     <string name="media_management_prompt">すべてのファイル操作を確実に行うためには、端末の設定でこのアプリをメディア管理アプリにする必要があります。</string>
     <string name="password_protect_excluded">除外されたフォルダーの表示をパスワードで保護</string>
@@ -197,7 +197,7 @@
     <string name="extended_details">詳細も表示</string>
     <string name="bottom_actions">画面下部のアクション</string>
     <string name="manage_bottom_actions">表示するアクションの選択</string>
-    <string name="toggle_favorite">お気に入り</string>
+
     <string name="toggle_file_visibility">表示/非表示の切替</string>
     <string name="faq_2_title">アプリをパスワードでロックしましたが、パスワードを忘れてしまいました。どうすればいいですか？</string>
     <string name="faq_2_text">解決策は2つあります。アプリを再インストールするか、デバイス設定からアプリを見つけて「データを消去」を選択するかです。そうすると設定がリセットされますが、メディアファイルは削除されません。</string>

@@ -162,7 +162,7 @@
     <string name="allow_zooming_videos">אפשר הגדלה של סרטונים באמצעות הקשה כפולה עליהם</string>
     <string name="folder_thumbnail_style">סגנון תצוגה מקדימה לתיקייה</string>
     <string name="file_thumbnail_style">סגנון תצוגה מקדימה לקובץ</string>
-    <string name="mark_favorite_items">סמן פריטים מועדפים</string>
+
     <string name="thumbnail_spacing">מרווח בין תמונות ממוזערות</string>
     <string name="show_file_count_line">הצג את ספירת הקבצים בשורה נפרדת</string>
     <string name="show_file_count_brackets">הצג את ספירת הקבצים בסוגריים</string>
@@ -170,7 +170,7 @@
     <string name="limit_folder_title">הגבל כותרות תיקיות ארוכות לשורה אחת</string>
     <string name="square">ריבוע</string>
     <string name="rounded_corners">פינות מעוגלות</string>
-    <string name="export_favorite_paths">ייצוא נתיבי קבצים מועדפים</string>
+
     <string name="media_management_prompt">כדי לוודא שכל פעולות הקבצים פועלות בצורה מהימנה, אנא הפוך את האפליקציה הזו לאפליקציית ניהול מדיה בהגדרות המכשיר שלך.</string>
     <string name="password_protect_excluded">הגנה באמצעות סיסמה על הצגת תיקיות מוסתרות</string>
     <string name="thumbnails">תמונות ממוזערות</string>
@@ -178,7 +178,7 @@
     <string name="extended_details">הרחבת פרטים</string>
     <string name="bottom_actions">כפתורי פעולות</string>
     <string name="manage_bottom_actions">נהל כפתורי פעולות שיוצגו בתחתית המסך</string>
-    <string name="toggle_favorite">מתג מועדף</string>
+
     <string name="toggle_file_visibility">מתג נראות הקובץ</string>
     <string name="hidden_all_files">נדרש להתיר ליישום גישה לכל הקבצים כדי לראות קבצים מוסתרים, אחרת זה לא יכול לעבוד.</string>
     <string name="full_storage_permission_required">ליישום „גלריה” מבית Fossify נחוצה גישה מלאה לכל התמונות והסרטונים שלך. נא לגשת אל הגדרות &gt; הרשאות &gt; תמונות וסרטונים &gt; לאפשר הכול.</string>
@@ -212,7 +212,7 @@
     </plurals>
     <string name="crop">חיתוך</string>
     <string name="allow_changing_aspect_ratio">לאפשר לשנות את יחס הגובה־רוחב</string>
-    <string name="import_favorite_paths">ייבוא מועדפים</string>
+
     <string name="faq_2_title">נעלתי את האפליקציה עם סיסמה, אבל שכחתי אותה. מה אני יכול לעשות?</string>
     <string name="faq_5_title">מה ההבדל בין הסתרת תיקייה לבין החרגתה?</string>
     <string name="faq_6_title">מדוע מופיעות תיקיות עם אמנות עטיפת מוזיקה או מדבקות?</string>

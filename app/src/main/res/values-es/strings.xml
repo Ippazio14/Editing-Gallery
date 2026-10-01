@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Permitir hacer zoom en videos con doble toque</string>
     <string name="folder_thumbnail_style">Estilo de las miniaturas de las carpetas</string>
     <string name="file_thumbnail_style">Estilo de las miniaturas de los archivos</string>
-    <string name="mark_favorite_items">Marcar elementos favoritos</string>
+
     <string name="thumbnail_spacing">Espaciado de las miniaturas</string>
     <string name="show_file_count_line">Mostrar el recuento de archivos en una línea separada</string>
     <string name="show_file_count_brackets">Mostrar el recuento de archivos entre paréntesis</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Limitar los títulos largos de las carpetas a 1 línea</string>
     <string name="square">Cuadrado</string>
     <string name="rounded_corners">Esquinas redondeadas</string>
-    <string name="export_favorite_paths">Exportar los favoritos</string>
-    <string name="import_favorite_paths">Importar los favoritos</string>
+
+
     <string name="paths_imported_successfully">Rutas importadas correctamente</string>
     <string name="media_management_prompt">Para asegurarse de que todas las operaciones en ficheros funcionan de forma segura, por favor haga esta aplicación una aplicación de manejo de medios en los ajustes de su dispositivo.</string>
     <string name="password_protect_excluded">Proteger con contraseña la visibilidad de las carpetas excluidas</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Detalles ampliados</string>
     <string name="bottom_actions">Acciones en la parte inferior</string>
     <string name="manage_bottom_actions">Administrar los botones de la parte inferior</string>
-    <string name="toggle_favorite">Alternar favorito</string>
+
     <string name="toggle_file_visibility">Alternar visibilidad del archivo</string>
     <string name="faq_2_title">He protegido la aplicación con una contraseña, pero la he olvidado. ¿Qué puedo hacer\?</string>
     <string name="faq_2_text">Puede resolverlo de 2 maneras. Puede reinstalar la aplicación o encontrar la aplicación en la configuración de su dispositivo y seleccionar \"Borrar datos \". Restablecerá todas sus configuraciones, no eliminará ningún archivo multimedia.</string>

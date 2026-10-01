@@ -176,7 +176,7 @@
     <string name="allow_zooming_videos">Erlaube Zoomen in Videos mit doppeltem Antippen</string>
     <string name="folder_thumbnail_style">Miniaturbildordner-Stil</string>
     <string name="file_thumbnail_style">Dateivorschau-Stil</string>
-    <string name="mark_favorite_items">Favoriten markieren</string>
+
     <string name="thumbnail_spacing">Vorschaubild-Abstand</string>
     <string name="show_file_count_line">Anzahl der Dateien in einer separaten Zeile anzeigen</string>
     <string name="show_file_count_brackets">Anzahl der Dateien in Klammern anzeigen</string>
@@ -184,8 +184,8 @@
     <string name="limit_folder_title">Lange Ordnertitel auf 1 Zeile begrenzen</string>
     <string name="square">Quadrat</string>
     <string name="rounded_corners">Abgerundete Ecken</string>
-    <string name="export_favorite_paths">Favoriten exportieren</string>
-    <string name="import_favorite_paths">Favoriten importieren</string>
+
+
     <string name="paths_imported_successfully">Pfade erfolgreich importiert</string>
     <string name="media_management_prompt">Um sicherzustellen, dass alle Dateivorgänge zuverlässig funktionieren, sollte diese App in den Geräteeinstellungen als Medienverwaltungs-App festgelegt werden.</string>
     <string name="password_protect_excluded">Passwortschutz für die Sichtbarkeit ausgeschlossener Ordner</string>
@@ -202,7 +202,7 @@
     <string name="extended_details">Erweiterte Details</string>
     <string name="bottom_actions">Funktionen am unteren Bildschirmrand</string>
     <string name="manage_bottom_actions">Funktionen auswählen</string>
-    <string name="toggle_favorite">Favorit umschalten</string>
+
     <string name="toggle_file_visibility">Sichtbarkeit von Dateien umschalten</string>
     <string name="faq_2_title">Ich habe die App mit einem Passwort geschützt und es vergessen. Was kann ich tun\?</string>
     <string name="faq_2_text">Es gibt zwei Möglichkeiten: Entweder du installierst die App neu oder suchst die App in den Geräteeinstellungen und wählst dort „Daten löschen“ aus. Dadurch werden alle Einstellungen zurückgesetzt, die Mediendateien bleiben jedoch alle erhalten.</string>

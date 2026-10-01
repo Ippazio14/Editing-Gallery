@@ -195,21 +195,21 @@
     <string name="allow_rotating_gestures">Ceadaigh íomhánna rothlacha le gothaí</string>
     <string name="folder_thumbnail_style">Stíl mhionsamhlacha fillteáin</string>
     <string name="file_thumbnail_style">Stíl mhionsamhlacha an chomhaid</string>
-    <string name="mark_favorite_items">Marcáil na míreanna is fearr leat</string>
+
     <string name="thumbnail_spacing">Spásáil mionsamhlacha</string>
     <string name="show_file_count_line">Taispeáin líon na gcomhad ar líne ar leith</string>
     <string name="show_file_count_brackets">Taispeáin líon na gcomhad idir lúibíní</string>
     <string name="show_file_count_none">Ná taispeáin líon na gcomhad</string>
     <string name="limit_folder_title">Cuir teorainn le teidil fillteáin fhada go líne 1</string>
     <string name="rounded_corners">Cúinní cruinn</string>
-    <string name="export_favorite_paths">Easpórtáil ceanáin</string>
+
     <string name="file_loading_priority">Tosaíocht luchtaithe comhad</string>
     <string name="speed">Luas</string>
     <string name="compromise">Comhréiteach</string>
     <string name="avoid_showing_invalid_files">Seachain comhaid neamhbhailí a thaispeáint</string>
     <string name="show_image_file_types">Taispeáin cineálacha comhaid íomhá</string>
     <string name="allow_zooming_videos">Ceadaigh físeáin zúmála le cnagadh dúbailte orthu</string>
-    <string name="import_favorite_paths">Iompórtáil ceanáin</string>
+
     <string name="paths_imported_successfully">D\' éirigh le cosáin a iompórtáladh</string>
     <string name="password_protect_excluded">Pasfhocal a chosaint infheictheacht fillteán eisiata</string>
     <string name="media_management_manual">Chuaigh rud éigin mícheart, téigh isteach i Socruithe do ghléis - Feidhmchláir - Rochtain speisialta ar fheidhmchláir - Feidhmchláir bhainistíochta meán agus lig don aip seo na meáin a bhainistiú.</string>
@@ -255,7 +255,7 @@
     <string name="faq_17_text">Stop sé sin ag obair mar gheall ar na hathruithe córais a tháinig le Android 11 freisin, ní féidir leis an aip fillteáin fíor a bhrabhsáil níos mó, braitheann sé ar an MediaStore mar a thugtar air ag fáil sonraí.</string>
     <string name="faq_18_title">Cén fáth a bhfeicim fógraí le linn athsheinm físe?</string>
     <string name="faq_8_text">Má chuirtear fillteán leis na Fillteáin Áirithe, ní fhágann sin rud ar bith as an áireamh go huathoibríoch. Cad is féidir leat a dhéanamh ná dul i Socruithe -&gt; Bainistigh Fillteáin Eisiata, eisiamh an fillteán fréimhe \"/\", ansin cuir na fillteáin atá ag teastáil ag Socruithe -&gt; Bainistigh Fillteáin Áirithe. Ní dhéanfaidh sé sin ach na fillteáin roghnaithe a fheiceáil, mar go bhfuil an dá eisiamh agus lena n-áirítear athfhillteach agus má tá fillteán eisiata agus san áireamh, beidh sé a thaispeáint suas.</string>
-    <string name="toggle_favorite">Scoránaigh is fearr leat</string>
+
     <string name="keep_screen_on_fullscreen_photos">Coinnigh an scáileán ar siúl agus grianghraif lánscáileáin á bhféachaint agat</string>
     <plurals name="restore_confirmation">
         <item quantity="one">An bhfuil tú cinnte gur mian leat %d comhad a athchóiriú?</item>

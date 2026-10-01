@@ -1,7 +1,7 @@
 name: Build Editing Gallery APK
 on:
   push:
-    branches: [main]
+    branches: [main, accessible-editor]
   workflow_dispatch:
 permissions:
   contents: read

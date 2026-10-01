@@ -187,7 +187,7 @@
     <string name="allow_zooming_videos">السماح بتكبير مقاطع الفيديو مع النقر المزدوج عليها</string>
     <string name="folder_thumbnail_style">نمط الصورة المصغرة للمجلد</string>
     <string name="file_thumbnail_style">نمط الصورة المصغرة للملف</string>
-    <string name="mark_favorite_items">وضع علامة على العناصر المفضلة</string>
+
     <string name="thumbnail_spacing">تباعد الصور المصغرة</string>
     <string name="show_file_count_line">إظهار عدد الملفات في سطر منفصل</string>
     <string name="show_file_count_brackets">إظهار عدد الملفات بين قوسين</string>
@@ -195,8 +195,8 @@
     <string name="limit_folder_title">تحديد عناوين المجلدات الطويلة إلى سطر واحد</string>
     <string name="square">مربع</string>
     <string name="rounded_corners">زوايا مستديرة</string>
-    <string name="export_favorite_paths">صدِّر المفضلة</string>
-    <string name="import_favorite_paths">استورد المفضلة</string>
+
+
     <string name="paths_imported_successfully">استوردت المسارات بنجاح</string>
     <string name="media_management_prompt">لضمان عمل جميع عمليات الملفات بشكل موثوق، يُرجى تعيين هذا التطبيق كتطبيق لإدارة الوسائط في إعدادات جهازك.</string>
     <string name="password_protect_excluded">حماية رؤية المجلدات المستثناة بكلمة سر</string>
@@ -213,7 +213,7 @@
     <string name="extended_details">التفاصيل الموسعة</string>
     <string name="bottom_actions">إجراءات الأزرار السفلية</string>
     <string name="manage_bottom_actions">إدارة إجراءات الأزرار المرئية</string>
-    <string name="toggle_favorite">تبديل المفضلة</string>
+
     <string name="toggle_file_visibility">تبديل رؤية الملف</string>
     <string name="faq_2_title">لقد أغلقت التطبيق بكلمة مرور، لكنني نسيتها. ماذا يمكنني أن أفعل؟</string>
     <string name="faq_2_text">يمكنك حلها بطريقتين. يمكنك إما إعادة تثبيت التطبيق أو البحث عن التطبيق في إعدادات جهازك وتحديد \"مسح البيانات\". سيتم إعادة تعيين كل إعداداتك، ولن يقوم بإزالة أي ملفات وسائط.</string>

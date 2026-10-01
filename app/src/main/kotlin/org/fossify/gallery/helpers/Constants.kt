@@ -65,7 +65,6 @@ const val TEMP_SKIP_RECYCLE_BIN = "temp_skip_recycle_bin"
 const val BOTTOM_ACTIONS = "bottom_actions"
 const val LAST_VIDEO_POSITION_PREFIX = "last_video_position_"
 const val VISIBLE_BOTTOM_ACTIONS = "visible_bottom_actions"
-const val WERE_FAVORITES_PINNED = "were_favorites_pinned"
 const val WAS_RECYCLE_BIN_PINNED = "was_recycle_bin_pinned"
 const val USE_RECYCLE_BIN = "use_recycle_bin"
 const val GROUP_BY = "group_by"
@@ -90,11 +89,9 @@ const val SHOW_NOTCH = "show_notch"
 const val FILE_LOADING_PRIORITY = "file_loading_priority"
 const val SPAM_FOLDERS_CHECKED = "spam_folders_checked"
 const val SHOW_THUMBNAIL_FILE_TYPES = "show_thumbnail_file_types"
-const val MARK_FAVORITE_ITEMS = "mark_favorite_items"
 const val EDITOR_BRUSH_COLOR = "editor_brush_color"
 const val EDITOR_BRUSH_HARDNESS = "editor_brush_hardness"
 const val EDITOR_BRUSH_SIZE = "editor_brush_size"
-const val WERE_FAVORITES_MIGRATED = "were_favorites_migrated"
 const val FOLDER_THUMBNAIL_STYLE = "folder_thumbnail_style"
 const val FOLDER_MEDIA_COUNT = "folder_media_count"
 const val LIMIT_FOLDER_TITLE = "folder_limit_title"
@@ -103,7 +100,6 @@ const val FILE_ROUNDED_CORNERS = "file_rounded_corners"
 const val CUSTOM_FOLDERS_ORDER = "custom_folders_order"
 const val AVOID_SHOWING_ALL_FILES_PROMPT = "avoid_showing_all_files_prompt"
 const val SEARCH_ALL_FILES_BY_DEFAULT = "search_all_files_by_default"
-const val LAST_EXPORTED_FAVORITES_FOLDER = "last_exported_favorites_folder"
 const val SHOW_PERMISSION_RATIONALE = "show_permission_rationale"
 
 // slideshow
@@ -125,7 +121,6 @@ const val SLIDESHOW_ANIMATION_SLIDE = 1
 const val SLIDESHOW_ANIMATION_FADE = 2
 
 const val RECYCLE_BIN = "recycle_bin"
-const val SHOW_FAVORITES = "show_favorites"
 const val SHOW_RECYCLE_BIN = "show_recycle_bin"
 const val IS_IN_RECYCLE_BIN = "is_in_recycle_bin"
 const val SHOW_NEXT_ITEM = "show_next_item"
@@ -218,7 +213,6 @@ const val GROUP_DESCENDING = 1024
 const val GROUP_SHOW_FILE_COUNT = 2048
 
 // bottom actions
-const val BOTTOM_ACTION_TOGGLE_FAVORITE = 1
 const val BOTTOM_ACTION_EDIT = 2
 const val BOTTOM_ACTION_SHARE = 4
 const val BOTTOM_ACTION_DELETE = 8
@@ -234,7 +228,7 @@ const val BOTTOM_ACTION_COPY = 4096
 const val BOTTOM_ACTION_MOVE = 8192
 const val BOTTOM_ACTION_RESIZE = 16384
 
-const val DEFAULT_BOTTOM_ACTIONS = BOTTOM_ACTION_TOGGLE_FAVORITE or BOTTOM_ACTION_EDIT or BOTTOM_ACTION_SHARE or BOTTOM_ACTION_DELETE
+const val DEFAULT_BOTTOM_ACTIONS = BOTTOM_ACTION_EDIT or BOTTOM_ACTION_SHARE or BOTTOM_ACTION_DELETE
 
 // aspect ratios used at the editor for cropping
 const val ASPECT_RATIO_FREE = 0

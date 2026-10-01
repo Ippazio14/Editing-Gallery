@@ -195,7 +195,7 @@
     <string name="allow_zooming_videos">อนุญาตให้ซูมวิดีโอโดยแตะสองครั้ง</string>
     <string name="folder_thumbnail_style">รูปแบบภาพขนาดย่อของโฟลเดอร์</string>
     <string name="file_thumbnail_style">รูปแบบภาพขนาดย่อของไฟล์</string>
-    <string name="mark_favorite_items">ทำเครื่องหมายรายการโปรด</string>
+
     <string name="thumbnail_spacing">ระยะห่างภาพขนาดย่อ</string>
     <string name="show_file_count_line">แสดงจำนวนไฟล์ในบรรทัดแยก</string>
     <string name="show_file_count_brackets">แสดงจำนวนไฟล์ในวงเล็บ</string>
@@ -203,8 +203,8 @@
     <string name="limit_folder_title">จำกัดชื่อโฟลเดอร์ยาวเป็น 1 บรรทัด</string>
     <string name="square">สี่เหลี่ยมจัตุรัส</string>
     <string name="rounded_corners">มุมโค้งมน</string>
-    <string name="export_favorite_paths">ส่งออกรายการโปรด</string>
-    <string name="import_favorite_paths">นำเข้ารายการโปรด</string>
+
+
     <string name="paths_imported_successfully">นำเข้าเส้นทางสำเร็จแล้ว</string>
     <string name="media_management_prompt">เพื่อให้แน่ใจว่าการดำเนินการไฟล์ทั้งหมดทำงานได้อย่างถูกต้อง กรุณาตั้งแอปนี้เป็นแอปจัดการสื่อในการตั้งค่าอุปกรณ์ของคุณ</string>
     <string name="password_protect_excluded">ป้องกันด้วยรหัสผ่านสำหรับการมองเห็นโฟลเดอร์ที่ยกเว้น</string>
@@ -221,7 +221,7 @@
     <string name="extended_details">รายละเอียดเพิ่มเติม</string>
     <string name="bottom_actions">ปุ่มลัดด้านล่าง</string>
     <string name="manage_bottom_actions">จัดการปุ่มลัดด้านล่างที่มองเห็น</string>
-    <string name="toggle_favorite">สลับรายการโปรด</string>
+
     <string name="toggle_file_visibility">สลับการมองเห็นไฟล์</string>
     <string name="failed_to_load_media">โหลดสื่อล้มเหลว</string>
     <string name="file_is_malformed_or_corrupted">ไฟล์ผิดรูปแบบหรือเสียหาย</string>

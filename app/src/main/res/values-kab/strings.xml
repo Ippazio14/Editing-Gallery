@@ -106,7 +106,7 @@
     <string name="allow_zooming_videos">Sireg asemɣer/asenqes n tvidyut s usiti n snat tikkal fell-as</string>
     <string name="folder_thumbnail_style">Aɣanib n tenfult n ukaram</string>
     <string name="file_thumbnail_style">Aɣanib n tenfult n ufaylu</string>
-    <string name="mark_favorite_items">Creḍ iferdisen ismenyifen</string>
+
     <string name="thumbnail_spacing">Tallunt n tenfult</string>
     <string name="show_file_count_line">Sken amḍan n ifuyla deg izirig yemgaraden</string>
     <string name="show_file_count_brackets">Sken amḍan n ifuyla deg tacciwin</string>
@@ -114,8 +114,8 @@
     <string name="limit_folder_title">Talast n izwal n ukaram ɣezzifen ɣer 1 n izirig</string>
     <string name="square">Amkuẓ</string>
     <string name="rounded_corners">Tiɣemmaṛ timdewweṛin</string>
-    <string name="export_favorite_paths">Sifeḍ ismenyifen</string>
-    <string name="import_favorite_paths">Kter ismenyifen</string>
+
+
     <string name="paths_imported_successfully">Iberdan ttwaketren-d akken iwata</string>
     <string name="media_management_prompt">Akken ad tetḥeqqeḍ dakken akk timhal n yifuyla tteddunt akken iwata, ttxil-k-m, err asnas-a d asnas n usefrek n Umidya deg yiɣewwaren-ik-im n yibenk.</string>
     <string name="password_protect_excluded">Awal uffir yettḥuddu ɣef twalit n ukaram yettwaɛezlen</string>
@@ -194,7 +194,7 @@
     <string name="speed">Arured</string>
     <string name="bottom_actions">Tigawin n wadda</string>
     <string name="manage_bottom_actions">Sefrek tigawin n wadda yettbanen</string>
-    <string name="toggle_favorite">Beddel amenyaf</string>
+
     <string name="toggle_file_visibility">Beddel tittwalit n ufaylu</string>
     <string name="failed_to_load_media">Asali n umidya ur yeddi ara.</string>
     <string name="file_is_malformed_or_corrupted">Afaylu ur ittusefrak ara akken iwata neɣ d ameggafsu.</string>

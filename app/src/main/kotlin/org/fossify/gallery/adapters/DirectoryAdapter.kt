@@ -52,7 +52,6 @@ import org.fossify.commons.extensions.isVisible
 import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.SHOW_ALL_TABS
 import org.fossify.commons.helpers.SORT_BY_CUSTOM
 import org.fossify.commons.helpers.VIEW_TYPE_LIST
@@ -77,7 +76,6 @@ import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.directoryDB
 import org.fossify.gallery.extensions.emptyAndDisableTheRecycleBin
 import org.fossify.gallery.extensions.emptyTheRecycleBin
-import org.fossify.gallery.extensions.favoritesDB
 import org.fossify.gallery.extensions.fixDateTaken
 import org.fossify.gallery.extensions.getShortcutImage
 import org.fossify.gallery.extensions.isThisOrParentFolderHidden
@@ -178,7 +176,7 @@ class DirectoryAdapter(
             findItem(R.id.cab_move_to_top).isVisible = isDragAndDropping
             findItem(R.id.cab_move_to_bottom).isVisible = isDragAndDropping
 
-            findItem(R.id.cab_rename).isVisible = !selectedPaths.contains(FAVORITES) && !selectedPaths.contains(RECYCLE_BIN)
+            findItem(R.id.cab_rename).isVisible = !selectedPaths.contains(RECYCLE_BIN)
             findItem(R.id.cab_change_cover_image).isVisible = isOneItemSelected
 
             findItem(R.id.cab_lock).isVisible = selectedPaths.any { !config.isFolderProtected(it) }
@@ -292,7 +290,7 @@ class DirectoryAdapter(
     private fun showProperties() {
         if (selectedKeys.size <= 1) {
             val path = getFirstSelectedItemPath() ?: return
-            if (path != FAVORITES && path != RECYCLE_BIN) {
+            if (path != RECYCLE_BIN) {
                 activity.handleLockedFolderOpening(path) { success ->
                     if (success) {
                         PropertiesDialog(activity, path, config.shouldShowHidden)
@@ -301,7 +299,7 @@ class DirectoryAdapter(
             }
         } else {
             PropertiesDialog(activity, getSelectedPaths().filter {
-                it != FAVORITES && it != RECYCLE_BIN && !config.isFolderProtected(it)
+                it != RECYCLE_BIN && !config.isFolderProtected(it)
             }.toMutableList(), config.shouldShowHidden)
         }
     }
@@ -371,7 +369,7 @@ class DirectoryAdapter(
                 return
             }
 
-            selectedPaths.filter { it != FAVORITES && it != RECYCLE_BIN && (selectedPaths.size == 1 || !config.isFolderProtected(it)) }.forEach {
+            selectedPaths.filter { it != RECYCLE_BIN && (selectedPaths.size == 1 || !config.isFolderProtected(it)) }.forEach {
                 val path = it
                 activity.handleLockedFolderOpening(path) { success ->
                     if (success) {
@@ -479,7 +477,7 @@ class DirectoryAdapter(
 
     private fun tryExcludeFolder() {
         val selectedPaths = getSelectedPaths()
-        val paths = selectedPaths.filter { it != PATH && it != RECYCLE_BIN && it != FAVORITES }.toSet()
+        val paths = selectedPaths.filter { it != PATH && it != RECYCLE_BIN }.toSet()
         if (selectedPaths.contains(RECYCLE_BIN)) {
             config.showRecycleBinAtFolders = false
             if (selectedPaths.size == 1) {
@@ -678,7 +676,7 @@ class DirectoryAdapter(
                 }
 
                 val fileDirItem = getFirstSelectedItem() ?: return
-                val baseString = if (!config.useRecycleBin || config.tempSkipRecycleBin || (isOneItemSelected() && fileDirItem.areFavorites())) {
+                val baseString = if (!config.useRecycleBin || config.tempSkipRecycleBin) {
                     org.fossify.commons.R.string.deletion_confirmation
                 } else {
                     org.fossify.commons.R.string.move_to_recycle_bin_confirmation
@@ -712,16 +710,8 @@ class DirectoryAdapter(
 
                 var foldersToDelete = ArrayList<File>(selectedKeys.size)
                 selectedDirs.forEach {
-                    if (it.areFavorites() || it.isRecycleBin()) {
-                        if (it.isRecycleBin()) {
-                            tryEmptyRecycleBin(false)
-                        } else {
-                            ensureBackgroundThread {
-                                activity.mediaDB.clearFavorites()
-                                activity.favoritesDB.clearFavorites()
-                                listener?.refreshItems()
-                            }
-                        }
+                    if (it.isRecycleBin()) {
+                        tryEmptyRecycleBin(false)
 
                         if (selectedKeys.size == 1) {
                             finishActMode()

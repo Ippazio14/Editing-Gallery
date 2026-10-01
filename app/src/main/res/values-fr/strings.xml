@@ -182,7 +182,7 @@
     <string name="allow_zooming_videos">Zoomer les vidéos par un double appui</string>
     <string name="folder_thumbnail_style">Style des miniatures des dossiers</string>
     <string name="file_thumbnail_style">Style des miniatures des fichiers</string>
-    <string name="mark_favorite_items">Marquer les éléments favoris</string>
+
     <string name="thumbnail_spacing">Espacement des miniatures</string>
     <string name="show_file_count_line">Afficher le nombre de fichiers sur une autre ligne</string>
     <string name="show_file_count_brackets">Afficher le nombre de fichiers entre parenthèses</string>
@@ -190,8 +190,8 @@
     <string name="limit_folder_title">Limiter à une ligne les noms de fichiers</string>
     <string name="square">Carré</string>
     <string name="rounded_corners">Arrondi</string>
-    <string name="export_favorite_paths">Exporter les favoris</string>
-    <string name="import_favorite_paths">Importer des favoris</string>
+
+
     <string name="paths_imported_successfully">Favoris importés avec succès</string>
     <string name="media_management_prompt">Pour vous assurer que toutes les opérations de fichiers fonctionnent de manière fiable, veuillez faire de cette application l\'application de gestion des médias dans les paramètres de votre appareil.</string>
     <string name="password_protect_excluded">Protéger la visibilité des dossiers exclus par mot de passe</string>
@@ -208,7 +208,7 @@
     <string name="extended_details">Détails supplémentaires</string>
     <string name="bottom_actions">Barre d\'actions</string>
     <string name="manage_bottom_actions">Gérer la barre d\'actions</string>
-    <string name="toggle_favorite">Ajouter/retirer des favoris</string>
+
     <string name="toggle_file_visibility">Visibilité du fichier</string>
     <string name="faq_1_title">Comment puis-je faire de Fossify Gallery la galerie par défaut ?</string>
     <string name="faq_1_text">D\'abord, vous devez trouver la galerie qui est actuellement définie par défaut dans la section \"Applications\" des paramètres de votre appareil. Cherchez un bouton qui dit quelque chose comme \"Ouvrir par défaut\", cliquez dessus, puis sélectionnez \"Effacer les valeurs par défaut\". La prochaine fois que vous tenterez d\'ouvrir une image ou une vidéo, vous devriez voir apparaître un sélecteur d\'application, où vous pourrez sélectionner Fossify Gallery et en faire l\'application par défaut.</string>

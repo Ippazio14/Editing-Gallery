@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Videók dupla koppintással történő nagyításának engedélyezése</string>
     <string name="folder_thumbnail_style">Mappák bélyegképének stílusa</string>
     <string name="file_thumbnail_style">Fájlok bélyegképének stílusa</string>
-    <string name="mark_favorite_items">Kedvenc elemek megjelölése</string>
+
     <string name="thumbnail_spacing">Bélyegképek térköze</string>
     <string name="show_file_count_line">Fájlok számának megjelenítése külön sorban</string>
     <string name="show_file_count_brackets">Fájlok számának megjelenítése zárójelben</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Hosszú mappanevek egy sorra korlátozása</string>
     <string name="square">Négyzet</string>
     <string name="rounded_corners">Lekerekített sarkok</string>
-    <string name="export_favorite_paths">Kedvencek exportálása</string>
-    <string name="import_favorite_paths">Kedvencek importálása</string>
+
+
     <string name="paths_imported_successfully">A fájlútvonalak sikeresen importálva</string>
     <string name="media_management_prompt">Hogy megbízhatóan működjenek a fájlműveletek, győződjön meg róla, hogy ez az alkalmazás egy Médiakezelő alkalmazás az eszközbeállításokban.</string>
     <string name="password_protect_excluded">Jelszóval védi a kizárt mappák láthatóságát</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Bővített részletek</string>
     <string name="bottom_actions">Gombműveletek</string>
     <string name="manage_bottom_actions">Látható gombok műveletének kezelése</string>
-    <string name="toggle_favorite">Kedvenc be/ki</string>
+
     <string name="toggle_file_visibility">Fájl láthatósága be/ki</string>
     <string name="faq_2_title">Zároltam az alkalmazást jelszóval, de elfelejtettem. Mit tehetek\?</string>
     <string name="faq_2_text">2 módon is megoldhatja. Újratelepítheti az alkalmazást, vagy megkeresi az alkalmazást az eszköz beállításai között, és válassza az \"Adatok törlése\" lehetőséget. Minden beállítást visszaállít alapértelmezettre. Ez nem távolítja el a média fájlokat.</string>

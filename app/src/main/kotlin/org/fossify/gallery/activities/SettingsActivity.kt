@@ -27,8 +27,6 @@ import kotlin.system.exitProcess
 class SettingsActivity : SimpleActivity() {
     companion object {
         private const val PICK_IMPORT_SOURCE_INTENT = 1
-        private const val SELECT_EXPORT_FAVORITES_FILE_INTENT = 2
-        private const val SELECT_IMPORT_FAVORITES_FILE_INTENT = 3
     }
 
     private var mRecycleBinContentSize = 0L
@@ -106,8 +104,6 @@ class SettingsActivity : SimpleActivity() {
         setupEmptyRecycleBin()
         updateTextColors(binding.settingsHolder)
         setupClearCache()
-        setupExportFavorites()
-        setupImportFavorites()
         setupExportSettings()
         setupImportSettings()
 
@@ -135,12 +131,6 @@ class SettingsActivity : SimpleActivity() {
         if (requestCode == PICK_IMPORT_SOURCE_INTENT && resultCode == Activity.RESULT_OK && resultData != null && resultData.data != null) {
             val inputStream = contentResolver.openInputStream(resultData.data!!)
             parseFile(inputStream)
-        } else if (requestCode == SELECT_EXPORT_FAVORITES_FILE_INTENT && resultCode == Activity.RESULT_OK && resultData != null && resultData.data != null) {
-            val outputStream = contentResolver.openOutputStream(resultData.data!!)
-            exportFavoritesTo(outputStream)
-        } else if (requestCode == SELECT_IMPORT_FAVORITES_FILE_INTENT && resultCode == Activity.RESULT_OK && resultData != null && resultData.data != null) {
-            val inputStream = contentResolver.openInputStream(resultData.data!!)
-            importFavorites(inputStream)
         }
     }
 
@@ -789,114 +779,15 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
-    private fun setupExportFavorites() {
-        binding.settingsExportFavoritesHolder.setOnClickListener {
-            if (isQPlus()) {
-                ExportFavoritesDialog(this, getExportFavoritesFilename(), true) { path, filename ->
-                    Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TITLE, filename)
-                        addCategory(Intent.CATEGORY_OPENABLE)
 
-                        try {
-                            startActivityForResult(this, SELECT_EXPORT_FAVORITES_FILE_INTENT)
-                        } catch (e: ActivityNotFoundException) {
-                            toast(org.fossify.commons.R.string.system_service_disabled, Toast.LENGTH_LONG)
-                        } catch (e: Exception) {
-                            showErrorToast(e)
-                        }
-                    }
-                }
-            } else {
-                handlePermission(PERMISSION_WRITE_STORAGE) {
-                    if (it) {
-                        ExportFavoritesDialog(this, getExportFavoritesFilename(), false) { path, filename ->
-                            val file = File(path)
-                            getFileOutputStream(file.toFileDirItem(this), true) {
-                                exportFavoritesTo(it)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    private fun exportFavoritesTo(outputStream: OutputStream?) {
-        if (outputStream == null) {
-            toast(org.fossify.commons.R.string.unknown_error_occurred)
-            return
-        }
 
-        ensureBackgroundThread {
-            val favoritePaths = favoritesDB.getValidFavoritePaths()
-            if (favoritePaths.isNotEmpty()) {
-                outputStream.bufferedWriter().use { out ->
-                    favoritePaths.forEach { path ->
-                        out.writeLn(path)
-                    }
-                }
 
-                toast(org.fossify.commons.R.string.exporting_successful)
-            } else {
-                toast(org.fossify.commons.R.string.no_items_found)
-            }
-        }
-    }
 
-    private fun getExportFavoritesFilename(): String {
-        val appName = baseConfig.appId.removeSuffix(".debug").removeSuffix(".pro").removePrefix("org.fossify.")
-        return "$appName-favorites_${getCurrentFormattedDateTime()}"
-    }
 
-    private fun setupImportFavorites() {
-        binding.settingsImportFavoritesHolder.setOnClickListener {
-            if (isQPlus()) {
-                Intent(Intent.ACTION_GET_CONTENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "text/plain"
-                    startActivityForResult(this, SELECT_IMPORT_FAVORITES_FILE_INTENT)
-                }
-            } else {
-                handlePermission(PERMISSION_READ_STORAGE) {
-                    if (it) {
-                        FilePickerDialog(this) {
-                            ensureBackgroundThread {
-                                importFavorites(File(it).inputStream())
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
-    private fun importFavorites(inputStream: InputStream?) {
-        if (inputStream == null) {
-            toast(org.fossify.commons.R.string.unknown_error_occurred)
-            return
-        }
 
-        ensureBackgroundThread {
-            var importedItems = 0
-            inputStream.bufferedReader().use {
-                while (true) {
-                    try {
-                        val line = it.readLine() ?: break
-                        if (getDoesFilePathExist(line)) {
-                            val favorite = getFavoriteFromPath(line)
-                            favoritesDB.insert(favorite)
-                            importedItems++
-                        }
-                    } catch (e: Exception) {
-                        showErrorToast(e)
-                    }
-                }
-            }
 
-            toast(if (importedItems > 0) org.fossify.commons.R.string.importing_successful else org.fossify.commons.R.string.no_entries_for_importing)
-        }
-    }
 
     private fun setupExportSettings() {
         binding.settingsExportHolder.setOnClickListener {
@@ -926,7 +817,6 @@ class SettingsActivity : SimpleActivity() {
                 put(CROP_THUMBNAILS, config.cropThumbnails)
                 put(SHOW_THUMBNAIL_VIDEO_DURATION, config.showThumbnailVideoDuration)
                 put(SHOW_THUMBNAIL_FILE_TYPES, config.showThumbnailFileTypes)
-                put(MARK_FAVORITE_ITEMS, config.markFavoriteItems)
                 put(SCROLL_HORIZONTALLY, config.scrollHorizontally)
                 put(ENABLE_PULL_TO_REFRESH, config.enablePullToRefresh)
                 put(MAX_BRIGHTNESS, config.maxBrightness)
@@ -1072,7 +962,6 @@ class SettingsActivity : SimpleActivity() {
                 CROP_THUMBNAILS -> config.cropThumbnails = value.toBoolean()
                 SHOW_THUMBNAIL_VIDEO_DURATION -> config.showThumbnailVideoDuration = value.toBoolean()
                 SHOW_THUMBNAIL_FILE_TYPES -> config.showThumbnailFileTypes = value.toBoolean()
-                MARK_FAVORITE_ITEMS -> config.markFavoriteItems = value.toBoolean()
                 SCROLL_HORIZONTALLY -> config.scrollHorizontally = value.toBoolean()
                 ENABLE_PULL_TO_REFRESH -> config.enablePullToRefresh = value.toBoolean()
                 MAX_BRIGHTNESS -> config.maxBrightness = value.toBoolean()

@@ -110,7 +110,7 @@
     <string name="avoid_showing_invalid_files">अमान्य फाइलें दिखाने से बचें</string>
     <string name="folder_thumbnail_style">फोल्डर थंबनेल शैली</string>
     <string name="file_thumbnail_style">फाइल थंबनेल शैली</string>
-    <string name="mark_favorite_items">पसंदीदा आइटम चिह्नित करें</string>
+
     <string name="faq_6_title">संगीत कवर आर्ट या स्टिकर वाले फोल्डर क्यों दिखाई देते हैं?</string>
     <string name="faq_7_title">छवियों वाला फोल्डर दिखाई नहीं दे रहा है, या यह सभी आइटम नहीं दिखाता है। मैं क्या कर सकता हूँ?</string>
     <string name="faq_8_text">सम्मिलित फोल्डर में एक फोल्डर जोड़ने से स्वचालित रूप से कुछ भी बाहर नहीं निकलता है। आप क्या कर सकते हैं सेटिंग्स में जाएं -&gt; बहिष्कृत फोल्डर प्रबंधित करें, रूट फोल्डर \"/\" को बाहर करें, फिर सेटिंग्स में वांछित फोल्डर जोड़ें -&gt; शामिल फोल्डर प्रबंधित करें। इससे केवल चयनित फोल्डर ही दृश्यमान होंगे, क्योंकि बहिष्कृत और सम्मिलित दोनों ही पुनरावर्ती हैं और यदि किसी फोल्डर को बहिष्कृत और सम्मिलित दोनों किया गया है, तो यह दिखाई देगा।</string>
@@ -216,8 +216,8 @@
     <string name="limit_folder_title">लंबे फोल्डर शीर्षकों को 1 पंक्ति तक सीमित करें</string>
     <string name="square">वर्ग</string>
     <string name="rounded_corners">गोल कोनें</string>
-    <string name="export_favorite_paths">पसंदीदा निर्यात करें</string>
-    <string name="import_favorite_paths">पसंदीदा आयात करें</string>
+
+
     <string name="paths_imported_successfully">पथ सफलतापूर्वक आयात किए गए</string>
     <string name="media_management_prompt">यह सुनिश्चित करने के लिए कि सभी फाइल संचालन विश्वसनीय रूप से काम करते हैं, कृपया इस ऐप को अपनी डिवाइस सेटिंग्स में मीडिया प्रबंधन ऐप बनाएं।</string>
     <string name="password_protect_excluded">पासवर्ड बहिष्कृत फोल्डर दृश्यता की रक्षा करता है</string>
@@ -234,7 +234,7 @@
     <string name="extended_details">विस्तृत विवरण</string>
     <string name="bottom_actions">निचली क्रियाएं</string>
     <string name="manage_bottom_actions">दृश्यमान निचली गतिविधियाँ प्रबंधित करें</string>
-    <string name="toggle_favorite">पसंदीदा टॉगल करें</string>
+
     <string name="toggle_file_visibility">फाइल दृश्यता टॉगल करें</string>
     <string name="faq_7_text">इसके कई कारण हो सकते हैं, लेकिन इसे हल करना आसान है। बस सेटिंग्स में जाएं -&gt; शामिल फोल्डर प्रबंधित करें, प्लस चुनें और आवश्यक फोल्डर पर नेविगेट करें।</string>
     <string name="faq_2_title">मैंने ऐप को पासवर्ड से लॉक कर दिया, लेकिन मैं इसे भूल गया। मैं क्या कर सकता हूँ?</string>

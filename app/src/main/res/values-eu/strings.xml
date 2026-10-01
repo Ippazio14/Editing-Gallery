@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Baimendu bideoen zooma birritan ukitzean</string>
     <string name="folder_thumbnail_style">Karpeta-iruditxoaren estiloa</string>
     <string name="file_thumbnail_style">Fitxategi-iruditxoaren estiloa</string>
-    <string name="mark_favorite_items">Markatu gogoko elementuak</string>
+
     <string name="thumbnail_spacing">Iruditxoen arteko tartea</string>
     <string name="show_file_count_line">Erakutsi fitxategi kopurua beste lerro batean</string>
     <string name="show_file_count_brackets">Erakutsi fitxategi kopurua parentesi artean</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Mugatu karpeten izenburu luzeak lerro batera</string>
     <string name="square">Karratua</string>
     <string name="rounded_corners">Ertz biribilduak</string>
-    <string name="export_favorite_paths">Esportatu gogokoak</string>
-    <string name="import_favorite_paths">Inportatu gogokoak</string>
+
+
     <string name="paths_imported_successfully">Bideak behar bezala inportatu dira</string>
     <string name="media_management_prompt">Fitxategien eragiketa guztiek modu fidagarrian funtzionatzen dutela ziurtatzeko, egin ezazu aplikazio hau Multimedia kudeatzeko aplikazio bat gailuaren ezarpenetan.</string>
     <string name="password_protect_excluded">Babestu pasahitzez baztertutako karpetaren ikusgaitasuna</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Xehetasun hedatuak</string>
     <string name="bottom_actions">Beheko ekintzak</string>
     <string name="manage_bottom_actions">Kudeatu ikusgai dauden beheko ekintzak</string>
-    <string name="toggle_favorite">Aldatu gogokoa</string>
+
     <string name="toggle_file_visibility">Aldatu fitxategien ikusgaitasuna</string>
     <string name="faq_2_title">Aplikazioa pasahitz batez blokeatu dut, baina ahaztu egin zait. Zer egin dezaket\?</string>
     <string name="faq_2_text">Bi modutan konpondu dezakezu: aplikazioa berriro instala dezakezu edo aplikazioa zure gailuaren ezarpenetan aurkitu eta \"Garbitu datuak\" aukeratu. Zure ezarpen guztiak berrezarriko ditu, ez du multimedia fitxategirik kenduko.</string>

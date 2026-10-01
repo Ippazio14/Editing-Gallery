@@ -185,7 +185,7 @@
     <string name="allow_zooming_videos">Масштабувати відео подвійним натисканням по ньому</string>
     <string name="folder_thumbnail_style">Вид мініатюр тек</string>
     <string name="file_thumbnail_style">Вид мініатюр файлів</string>
-    <string name="mark_favorite_items">Позначати улюблені елементи</string>
+
     <string name="thumbnail_spacing">Проміжок між мініатюрами</string>
     <string name="show_file_count_line">Показувати кількість файлів в окремому рядку</string>
     <string name="show_file_count_brackets">Показувати кількість файлів у дужках</string>
@@ -193,8 +193,8 @@
     <string name="limit_folder_title">Обмежити довгі назви тек одним рядком</string>
     <string name="square">Квадрат</string>
     <string name="rounded_corners">Закруглені кути</string>
-    <string name="export_favorite_paths">Експорт обраного</string>
-    <string name="import_favorite_paths">Імпорт обраного</string>
+
+
     <string name="paths_imported_successfully">Шляхи успішно імпортовано</string>
     <string name="media_management_prompt">Щоб переконатися в надійності роботи операції з файлами, в налаштуваннях свого пристрою зробіть цю програму такою, що керує мультимедіа.</string>
     <string name="password_protect_excluded">Захист паролем видимості вилучених тек</string>
@@ -211,7 +211,7 @@
     <string name="extended_details">Розширені подробиці</string>
     <string name="bottom_actions">Кнопки дій внизу екрана</string>
     <string name="manage_bottom_actions">Керування видимими кнопками дій внизу екрана</string>
-    <string name="toggle_favorite">Перемкнути улюблене</string>
+
     <string name="toggle_file_visibility">Перемкнути видимість файлу</string>
     <string name="faq_2_title">Я заблокував застосунок за допомогою пароля і забув його. Що я можу зробити?</string>
     <string name="faq_2_text">Ви можете вирішити цю проблему двома способами: перевстановити застосунок або знайти його в розділі «Програми» налаштувань вашого пристрою та обрати «Очистити дані». Це скине усі ваші налаштування застосунку, але не видалить жодного медіа файлу.</string>

@@ -182,7 +182,7 @@
     <string name="allow_zooming_videos">Povolit zoomování videí dvojitým klepnutím</string>
     <string name="folder_thumbnail_style">Styl miniatur složek</string>
     <string name="file_thumbnail_style">Styl miniatur souborů</string>
-    <string name="mark_favorite_items">Označit oblíbené položky</string>
+
     <string name="thumbnail_spacing">Mezery mezi miniaturami</string>
     <string name="show_file_count_line">Zobrazit počet souborů na samostatném řádku</string>
     <string name="show_file_count_brackets">Zobrazit počet souborů v závorkách</string>
@@ -190,8 +190,8 @@
     <string name="limit_folder_title">Omezit dlouhé názvy složek na jeden řádek</string>
     <string name="square">Čtverec</string>
     <string name="rounded_corners">Zaoblené rohy</string>
-    <string name="export_favorite_paths">Export oblíbených</string>
-    <string name="import_favorite_paths">Import oblíbených</string>
+
+
     <string name="paths_imported_successfully">Cesty byly úspěšně importovány</string>
     <string name="media_management_prompt">Chcete-li zajistit, aby všechny operace se soubory fungovaly spolehlivě, nastavte tuto aplikaci v nastavení Vašeho zařízení jako výchozí pro správu médií.</string>
     <string name="password_protect_excluded">Chránit viditelnost vyloučených složek heslem</string>
@@ -208,7 +208,7 @@
     <string name="extended_details">Rozšířené vlastnosti</string>
     <string name="bottom_actions">Spodní akční tlačítka</string>
     <string name="manage_bottom_actions">Spravovat viditelná spodní akční tlačítka</string>
-    <string name="toggle_favorite">Přepínač oblíbenosti</string>
+
     <string name="toggle_file_visibility">Přepínač viditelnosti souboru</string>
     <string name="faq_2_title">Uzamknul jsem aplikaci heslem, ale zapomněl jsem ho. Co můžu udělat\?</string>
     <string name="faq_2_text">Můžete to vyřešit dvěma způsoby. Aplikaci můžete buď přeinstalovat nebo ji vyhledat v nastavení zařízení a zvolit „Vymazat data“. Obnoví se tím všechna Vaše nastavení a žádné mediální soubory nebudou odstraněny.</string>

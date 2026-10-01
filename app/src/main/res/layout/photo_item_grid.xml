@@ -49,16 +49,7 @@
         android:orientation="vertical"
         android:gravity="end">
 
-        <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="@dimen/selection_check_size"
-            android:layout_height="@dimen/selection_check_size"
-            android:layout_margin="@dimen/smaller_margin"
-            android:background="@drawable/circle_black_background"
-            android:padding="@dimen/small_margin"
-            android:src="@drawable/ic_star_vector"
-            android:visibility="gone"
-            tools:visibility="visible" />
+
 
         <TextView
             android:id="@+id/medium_name"

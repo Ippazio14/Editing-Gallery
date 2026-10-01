@@ -108,8 +108,8 @@
     <string name="by_date_taken">Dyddiad y\'i cymerwyd</string>
     <string name="show_folder_name">Dangos enw y ffolder</string>
     <string name="loop_videos">Ailadrodd fideos</string>
-    <string name="export_favorite_paths">Allforio ffefrynnau</string>
-    <string name="import_favorite_paths">Mewnforio ffefrynnau</string>
+
+
     <string name="all_files">Pob ffeil</string>
     <string name="fullscreen_media">Cyfryngau sgrin lawn</string>
     <string name="bottom_actions">Gweithredoedd gwaelod</string>
@@ -127,7 +127,7 @@
     <string name="screen_rotation_device_rotation">Gorweddiad y ddyfais</string>
     <string name="screen_rotation_aspect_ratio">Cymhareb agwedd</string>
     <string name="media_only">Cyfryngau yn unig</string>
-    <string name="toggle_favorite">Hoffi</string>
+
     <string name="invalid_image_path">Llwybr delwedd annilys</string>
     <string name="home_and_lock_screen">Sgrin gartref a chlo</string>
     <string name="invalid_video_path">Llwybr fideo annilys</string>
@@ -136,7 +136,7 @@
     <string name="show_thumbnail_video_duration">Dangos hyd fideo</string>
     <string name="deep_zoomable_images">Chwyddo delwedd dwfn</string>
     <string name="show_highest_quality">Dangos delweddau yn yr ansawdd uchaf posibl</string>
-    <string name="mark_favorite_items">Dynodi ffefrynnau</string>
+
     <string name="thumbnail_spacing">Bylchiad rhwng cryno-luniau</string>
     <string name="image_edited_successfully">Wedi golygu\'r delwedd yn llwyddiannus</string>
     <string name="video_edited_successfully">Wedi golygu\'r fideo\'n llwyddiannus</string>

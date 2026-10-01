@@ -44,7 +44,6 @@ import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.viewBinding
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.IS_FROM_GALLERY
 import org.fossify.commons.helpers.REQUEST_EDIT_IMAGE
 import org.fossify.commons.helpers.SORT_BY_RANDOM
@@ -71,7 +70,6 @@ import org.fossify.gallery.extensions.deleteDBPath
 import org.fossify.gallery.extensions.directoryDB
 import org.fossify.gallery.extensions.emptyAndDisableTheRecycleBin
 import org.fossify.gallery.extensions.emptyTheRecycleBin
-import org.fossify.gallery.extensions.favoritesDB
 import org.fossify.gallery.extensions.getCachedMedia
 import org.fossify.gallery.extensions.getHumanizedFilename
 import org.fossify.gallery.extensions.isDownloadsFolder
@@ -101,7 +99,6 @@ import org.fossify.gallery.helpers.PICKED_PATHS
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.SET_WALLPAPER_INTENT
 import org.fossify.gallery.helpers.SHOW_ALL
-import org.fossify.gallery.helpers.SHOW_FAVORITES
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
 import org.fossify.gallery.helpers.SHOW_TEMP_HIDDEN_DURATION
 import org.fossify.gallery.helpers.SKIP_AUTHENTICATION
@@ -117,7 +114,7 @@ import java.io.IOException
 
 class MediaActivity : SimpleActivity(), MediaOperationsListener {
     override var isSearchBarEnabled = true
-    
+
     private val LAST_MEDIA_CHECK_PERIOD = 3000L
 
     private var mPath = ""
@@ -143,7 +140,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private var mStoredScrollHorizontally = true
     private var mStoredShowFileTypes = true
     private var mStoredRoundedCorners = false
-    private var mStoredMarkFavoriteItems = true
     private var mStoredTextColor = 0
     private var mStoredPrimaryColor = 0
     private var mStoredThumbnailSpacing = 0
@@ -231,7 +227,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         if (
             mStoredThumbnailSpacing != config.thumbnailSpacing
             || mStoredRoundedCorners != config.fileRoundedCorners
-            || mStoredMarkFavoriteItems != config.markFavoriteItems
         ) {
             binding.mediaGrid.adapter = null
             setupAdapter()
@@ -341,7 +336,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
             findItem(R.id.empty_recycle_bin).isVisible = mPath == RECYCLE_BIN
             findItem(R.id.empty_disable_recycle_bin).isVisible = mPath == RECYCLE_BIN
-            findItem(R.id.transfer_paste).isVisible = MediaTransferClipboard.hasItems && !mShowAll && mPath != RECYCLE_BIN && mPath != FAVORITES
+            findItem(R.id.transfer_paste).isVisible = MediaTransferClipboard.hasItems && !mShowAll && mPath != RECYCLE_BIN
             findItem(R.id.transfer_paste).isEnabled = !MediaTransferClipboard.busy
             findItem(R.id.transfer_cancel).isVisible = MediaTransferClipboard.hasItems && !MediaTransferClipboard.busy
             findItem(R.id.restore_all_files).isVisible = mPath == RECYCLE_BIN
@@ -350,7 +345,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             findItem(R.id.open_camera).isVisible = mShowAll
             findItem(R.id.about).isVisible = mShowAll
             findItem(R.id.create_new_folder).isVisible =
-                !mShowAll && mPath != RECYCLE_BIN && mPath != FAVORITES
+                !mShowAll && mPath != RECYCLE_BIN
             findItem(R.id.open_recycle_bin).isVisible = config.useRecycleBin && mPath != RECYCLE_BIN
 
             findItem(R.id.temporarily_show_hidden).isVisible = !config.shouldShowHidden
@@ -433,7 +428,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             mStoredCropThumbnails = cropThumbnails
             mStoredScrollHorizontally = scrollHorizontally
             mStoredShowFileTypes = showThumbnailFileTypes
-            mStoredMarkFavoriteItems = markFavoriteItems
             mStoredThumbnailSpacing = thumbnailSpacing
             mStoredRoundedCorners = fileRoundedCorners
             mShowAll = showAll && mPath != RECYCLE_BIN
@@ -471,7 +465,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private fun tryLoadGallery() {
         requestMediaPermissions {
             val dirName = when (mPath) {
-                FAVORITES -> getString(org.fossify.commons.R.string.favorites)
                 RECYCLE_BIN -> getString(org.fossify.commons.R.string.recycle_bin)
                 config.OTGPath -> getString(org.fossify.commons.R.string.usb)
                 else -> getHumanizedFilename(mPath)
@@ -710,12 +703,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                         .mapNotNull { it as? Medium }
                         .filter { !newPaths.contains(it.path) }
                         .forEach {
-                            if (mPath == FAVORITES && getDoesFilePathExist(it.path)) {
-                                favoritesDB.deleteFavoritePath(it.path)
-                                mediaDB.updateFavorite(it.path, false)
-                            } else {
-                                mediaDB.deleteMediumPath(it.path)
-                            }
+                            mediaDB.deleteMediumPath(it.path)
                         }
                 } catch (e: Exception) {
                 }
@@ -727,16 +715,12 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
     private fun isDirEmpty(): Boolean {
         return if (mMedia.isEmpty() && config.filterMedia > 0) {
-            if (mPath != FAVORITES && mPath != RECYCLE_BIN) {
+            if (mPath != RECYCLE_BIN) {
                 deleteDirectoryIfEmpty()
                 deleteDBDirectory()
             }
 
-            if (mPath == FAVORITES) {
-                ensureBackgroundThread {
-                    directoryDB.deleteDirPath(FAVORITES)
-                }
-            }
+
 
             if (mPath == RECYCLE_BIN) {
                 binding.mediaEmptyTextPlaceholder.setText(org.fossify.commons.R.string.no_items_found)
@@ -993,7 +977,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             putExtra(SKIP_AUTHENTICATION, shouldSkipAuthentication())
             putExtra(PATH, path)
             putExtra(SHOW_ALL, mShowAll)
-            putExtra(SHOW_FAVORITES, mPath == FAVORITES)
             putExtra(SHOW_RECYCLE_BIN, mPath == RECYCLE_BIN)
             putExtra(IS_FROM_GALLERY, true)
             startActivity(this)
@@ -1004,7 +987,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         openPath(
             path = path,
             forceChooser = false,
-            extras = hashMapOf(SHOW_FAVORITES to (mPath == FAVORITES)).apply {
                 if (path.startsWith(recycleBinPath)) put(IS_IN_RECYCLE_BIN, true)
                 if (shouldSkipAuthentication()) put(SKIP_AUTHENTICATION, true)
             }

@@ -19,12 +19,10 @@ class ChangeFileThumbnailStyleDialog(val activity: BaseSimpleActivity) : DialogI
             dialogFileStyleRoundedCorners.isChecked = config.fileRoundedCorners
             dialogFileStyleShowThumbnailVideoDuration.isChecked = config.showThumbnailVideoDuration
             dialogFileStyleShowThumbnailFileTypes.isChecked = config.showThumbnailFileTypes
-            dialogFileStyleMarkFavoriteItems.isChecked = config.markFavoriteItems
 
             dialogFileStyleRoundedCornersHolder.setOnClickListener { dialogFileStyleRoundedCorners.toggle() }
             dialogFileStyleShowThumbnailVideoDurationHolder.setOnClickListener { dialogFileStyleShowThumbnailVideoDuration.toggle() }
             dialogFileStyleShowThumbnailFileTypesHolder.setOnClickListener { dialogFileStyleShowThumbnailFileTypes.toggle() }
-            dialogFileStyleMarkFavoriteItemsHolder.setOnClickListener { dialogFileStyleMarkFavoriteItems.toggle() }
 
             dialogFileStyleSpacingHolder.setOnClickListener {
                 val items = arrayListOf(
@@ -59,7 +57,6 @@ class ChangeFileThumbnailStyleDialog(val activity: BaseSimpleActivity) : DialogI
         config.fileRoundedCorners = binding.dialogFileStyleRoundedCorners.isChecked
         config.showThumbnailVideoDuration = binding.dialogFileStyleShowThumbnailVideoDuration.isChecked
         config.showThumbnailFileTypes = binding.dialogFileStyleShowThumbnailFileTypes.isChecked
-        config.markFavoriteItems = binding.dialogFileStyleMarkFavoriteItems.isChecked
         config.thumbnailSpacing = thumbnailSpacing
     }
 

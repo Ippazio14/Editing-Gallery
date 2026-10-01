@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Dozvoli zumiranje videa dvostrukim dodirom</string>
     <string name="folder_thumbnail_style">Stil sličica mapa</string>
     <string name="file_thumbnail_style">Stil sličica datoteka</string>
-    <string name="mark_favorite_items">Označi favorite</string>
+
     <string name="thumbnail_spacing">Razmak između sličica</string>
     <string name="show_file_count_line">Prikaži broj datoteka u zasebnom retku</string>
     <string name="show_file_count_brackets">Prikaži broj datoteka u zagradama</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Ograniči dugačke naslove mapa na jedan redak</string>
     <string name="square">Kvadrat</string>
     <string name="rounded_corners">Zaobljeni kutovi</string>
-    <string name="export_favorite_paths">Izvezi favorite</string>
-    <string name="import_favorite_paths">Uvezi favorite</string>
+
+
     <string name="paths_imported_successfully">Staze su uspješno uvezene</string>
     <string name="media_management_prompt">Kako bi sve radnje s datotekama pouzdano radile, postavi ovu aplikaciju kao aplikaciju za upravljanje medijima u postavkama uređaja.</string>
     <string name="password_protect_excluded">Lozinkom zaštiti vidljivost isključene mape</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Proširene pojedinosti</string>
     <string name="bottom_actions">Donje radnje</string>
     <string name="manage_bottom_actions">Upravljaj vidljivim donjim radnjama</string>
-    <string name="toggle_favorite">Uključi/isključi favorite</string>
+
     <string name="toggle_file_visibility">Uključi/isključi vidljivost datoteka</string>
     <string name="faq_2_title">Zaključao/la sam aplikaciju lozinkom, ali sam je zaboravio/la. Što mogu učiniti\?</string>
     <string name="faq_2_text">Problem možeš riješiti na dva načina. Ponovo instalirati aplikaciju ili pronađi aplikaciju u postavkama uređaja i odaberi opciju „Izbriši podatke”. Navedeno će obnoviti sve postavke, ali neće ukloniti nikoje medijske datoteke.</string>

@@ -1,1013 +1,371 @@
 package org.fossify.gallery.activities
 
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.Point
+import android.content.res.Configuration
+import android.graphics.*
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.provider.MediaStore
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.scale
-import androidx.core.net.toUri
+import android.text.InputType
+import android.view.Gravity
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.exifinterface.media.ExifInterface
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.DecodeFormat
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.canhub.cropper.CropImageView
-import com.zomato.photofilters.FilterPack
-import com.zomato.photofilters.imageprocessors.Filter
-import org.fossify.commons.dialogs.ColorPickerDialog
-import org.fossify.commons.extensions.applyColorFilter
-import org.fossify.commons.extensions.setFillWithStroke
-import org.fossify.commons.extensions.beGone
-import org.fossify.commons.extensions.beGoneIf
-import org.fossify.commons.extensions.beVisible
-import org.fossify.commons.extensions.beVisibleIf
-import org.fossify.commons.extensions.checkAppSideloading
-import org.fossify.commons.extensions.getCompressionFormat
-import org.fossify.commons.extensions.getFileOutputStream
-import org.fossify.commons.extensions.getFilenameFromPath
-import org.fossify.commons.extensions.getProperBackgroundColor
-import org.fossify.commons.extensions.getProperPrimaryColor
-import org.fossify.commons.extensions.getProperTextColor
-import org.fossify.commons.extensions.getRealPathFromURI
-import org.fossify.commons.extensions.isGone
-import org.fossify.commons.extensions.isPathOnOTG
-import org.fossify.commons.extensions.isVisible
-import org.fossify.commons.extensions.onGlobalLayout
-import org.fossify.commons.extensions.onSeekBarChangeListener
-import org.fossify.commons.extensions.rescanPaths
-import org.fossify.commons.extensions.sharePathIntent
-import org.fossify.commons.extensions.showErrorToast
-import org.fossify.commons.extensions.toast
-import org.fossify.commons.extensions.viewBinding
-import org.fossify.commons.helpers.NavigationIcon
-import org.fossify.commons.helpers.REAL_FILE_PATH
-import org.fossify.commons.helpers.ensureBackgroundThread
-import org.fossify.commons.models.FileDirItem
-import org.fossify.gallery.BuildConfig
 import org.fossify.gallery.R
-import org.fossify.gallery.adapters.FiltersAdapter
-import org.fossify.gallery.databinding.ActivityEditBinding
-import org.fossify.gallery.dialogs.OtherAspectRatioDialog
-import org.fossify.gallery.dialogs.ResizeDialog
-import org.fossify.gallery.dialogs.SaveAsDialog
-import org.fossify.gallery.extensions.config
-import org.fossify.gallery.extensions.ensureWritablePath
-import org.fossify.gallery.extensions.fixDateTaken
-import org.fossify.gallery.extensions.getCompressionFormatFromUri
-import org.fossify.gallery.extensions.openEditor
-import org.fossify.gallery.extensions.proposeNewFilePath
-import org.fossify.gallery.extensions.readExif
-import org.fossify.gallery.extensions.resolveUriScheme
-import org.fossify.gallery.extensions.showContentDescriptionOnLongClick
-import org.fossify.gallery.extensions.writeBitmapToCache
-import org.fossify.gallery.extensions.writeExif
-import org.fossify.gallery.helpers.ASPECT_RATIO_FOUR_THREE
-import org.fossify.gallery.helpers.ASPECT_RATIO_FREE
-import org.fossify.gallery.helpers.ASPECT_RATIO_ONE_ONE
-import org.fossify.gallery.helpers.ASPECT_RATIO_OTHER
-import org.fossify.gallery.helpers.ASPECT_RATIO_SIXTEEN_NINE
-import org.fossify.gallery.helpers.ColorModeHelper
-import org.fossify.gallery.helpers.FilterThumbnailsManager
-import org.fossify.gallery.helpers.getPermissionToRequest
-import org.fossify.gallery.models.FilterItem
 import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import kotlin.math.max
+import java.io.Serializable
+import java.util.concurrent.Executors
+import kotlin.math.*
+import kotlin.random.Random
 
-class EditActivity : BaseCropActivity() {
-    companion object {
-        init {
-            System.loadLibrary("NativeImageProcessor")
-        }
-
-        private const val ASPECT_X = "aspectX"
-        private const val ASPECT_Y = "aspectY"
-        private const val CROP = "crop"
-
-        // constants for bottom primary action groups
-        private const val PRIMARY_ACTION_NONE = 0
-        private const val PRIMARY_ACTION_FILTER = 1
-        private const val PRIMARY_ACTION_CROP_ROTATE = 2
-        private const val PRIMARY_ACTION_DRAW = 3
-
-        private const val CROP_ROTATE_NONE = 0
-        private const val CROP_ROTATE_ASPECT_RATIO = 1
-    }
-
-    private lateinit var saveUri: Uri
+/** Accessible photo editor. Undo keeps edit parameters, never full-resolution bitmap copies. */
+class EditActivity : SimpleActivity() {
+    private data class Geometry(val rotation: Boolean = false, val left: Float = 0f, val top: Float = 0f, val right: Float = 1f, val bottom: Float = 1f) : Serializable
+    private data class State(val saturation: Int = 0, val temperature: Int = 0, val brightness: Int = 0, val contrast: Int = 0,
+        val width: Int = 0, val quality: Int = 85, val geometry: List<Geometry> = emptyList()) : Serializable
+    private var state = State()
+    private val undo = ArrayList<State>()
+    private val redo = ArrayList<State>()
+    private val worker = Executors.newSingleThreadExecutor()
+    private var source: Bitmap? = null
+    private var previewSource: Bitmap? = null
+    private var preview: Bitmap? = null
     private var uri: Uri? = null
-    private var resizeWidth = 0
-    private var resizeHeight = 0
-    private var drawColor = 0
-    private var lastOtherAspectRatio: Pair<Float, Float>? = null
-    private var currPrimaryAction = PRIMARY_ACTION_NONE
-    private var currCropRotateAction = CROP_ROTATE_ASPECT_RATIO
-    private var currAspectRatio = ASPECT_RATIO_FREE
-    private var isCropIntent = false
-    private var isEditingWithThirdParty = false
-    private var isSharingBitmap = false
-    private var wasDrawCanvasPositioned = false
-    private var oldExif: ExifInterface? = null
-    private var filterInitialBitmap: Bitmap? = null
-    private var originalUri: Uri? = null
-    private val binding by viewBinding(ActivityEditBinding::inflate)
-
-    private var overwriteRequested = false
-
-    override val cropImageView: CropImageView
-        get() = binding.cropImageView
+    private var generation = 0
+    private var saving = false
+    private var ready = false
+    private lateinit var image: ImageView
+    private lateinit var undoButton: Button
+    private lateinit var redoButton: Button
+    private lateinit var saveButton: Button
+    private lateinit var status: TextView
+    private lateinit var root: LinearLayout
+    private val values = HashMap<String, TextView>()
+    private val editButtons = ArrayList<Button>()
+    private var editorBackgroundColor = Color.BLACK
+    private var editorTextColor = Color.WHITE
+    private var editorSurfaceColor = Color.DKGRAY
+    private fun dp(n: Int) = (n * resources.displayMetrics.density).roundToInt()
+    private fun label(id: Int) = getString(id)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-        isCropIntent = intent.extras?.get(CROP) == "true"
-        setupEdgeToEdge(
-            padBottomSystem = listOf(
-                if (isCropIntent) {
-                    binding.bottomEditorCropRotateActions.root
-                } else {
-                    binding.bottomEditorPrimaryActions.root
-                }
-            )
-        )
-
-        if (checkAppSideloading()) {
-            return
-        }
-
-        setupOptionsMenu()
-        handlePermission(getPermissionToRequest()) {
-            if (!it) {
-                toast(org.fossify.commons.R.string.no_storage_permissions)
-                finish()
-            }
-            initEditActivity()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isEditingWithThirdParty = false
-        binding.bottomEditorDrawActions.bottomDrawWidth.setColors(getProperTextColor(), getProperPrimaryColor(), getProperBackgroundColor())
-        setupTopAppBar(binding.editorAppbar, NavigationIcon.Arrow)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (isEditingWithThirdParty) {
-            finish()
-        }
-    }
-
-    private fun setupOptionsMenu() {
-        binding.editorToolbar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.save_as -> startSaveFlow(overwrite = false)
-                R.id.overwrite_original -> startSaveFlow(overwrite = true)
-                R.id.edit -> editWith()
-                R.id.share -> shareImage()
-                else -> return@setOnMenuItemClickListener false
-            }
-            return@setOnMenuItemClickListener true
-        }
-    }
-
-    private fun initEditActivity() {
-        if (intent.data == null) {
-            toast(R.string.invalid_image_path)
-            finish()
-            return
-        }
-
-        uri = intent.data!!
-        originalUri = uri
-        if (uri!!.scheme != "file" && uri!!.scheme != "content") {
-            toast(R.string.unknown_file_location)
-            finish()
-            return
-        }
-
-        val extras = intent.extras
-        if (extras?.containsKey(REAL_FILE_PATH) == true) {
-            val realPath = intent.extras!!.getString(REAL_FILE_PATH)
-            uri = when {
-                isPathOnOTG(realPath!!) -> uri
-                realPath.startsWith("file:/") -> realPath.toUri()
-                else -> Uri.fromFile(File(realPath))
-            }
-        } else {
-            (getRealPathFromURI(uri!!))?.apply {
-                uri = Uri.fromFile(File(this))
-            }
-        }
-
-        saveUri = when {
-            extras?.containsKey(MediaStore.EXTRA_OUTPUT) == true
-                    && extras.get(MediaStore.EXTRA_OUTPUT) is Uri -> extras.get(MediaStore.EXTRA_OUTPUT) as Uri
-            else -> uri!!
-        }
-
-        if (isCropIntent) {
-            binding.bottomEditorPrimaryActions.root.beGone()
-
-            val params = binding.bottomEditorCropRotateActions.root.layoutParams as? ConstraintLayout.LayoutParams
-            if (params != null) {
-                params.bottomToBottom = binding.activityEditHolder.id
-                binding.bottomEditorCropRotateActions.root.layoutParams = params
-            }
-
-            binding.editorToolbar.menu.findItem(R.id.overwrite_original).isVisible = false
-        }
-
-        loadDefaultImageView()
-        setupBottomActions()
-
-        if (config.lastEditorCropAspectRatio == ASPECT_RATIO_OTHER) {
-            if (config.lastEditorCropOtherAspectRatioX == 0f) {
-                config.lastEditorCropOtherAspectRatioX = 1f
-            }
-
-            if (config.lastEditorCropOtherAspectRatioY == 0f) {
-                config.lastEditorCropOtherAspectRatioY = 1f
-            }
-
-            lastOtherAspectRatio = Pair(config.lastEditorCropOtherAspectRatioX, config.lastEditorCropOtherAspectRatioY)
-        }
-        updateAspectRatio(config.lastEditorCropAspectRatio)
-        binding.cropImageView.guidelines = CropImageView.Guidelines.ON
-        binding.bottomAspectRatios.root.beVisible()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        ColorModeHelper.resetColorMode(this)
-    }
-
-    private fun loadDefaultImageView() {
-        binding.defaultImageView.beVisible()
-        binding.cropImageView.beGone()
-        binding.editorDrawCanvas.beGone()
-
-        val options = RequestOptions()
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-
-        Glide.with(this)
-            .asBitmap()
-            .load(uri)
-            .apply(options)
-            .listener(object : RequestListener<Bitmap> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
-                    ColorModeHelper.resetColorMode(this@EditActivity)
-                    if (uri != originalUri) {
-                        uri = originalUri
-                        Handler().post {
-                            loadDefaultImageView()
-                        }
-                    }
-                    return false
-                }
-
-                override fun onResourceReady(
-                    bitmap: Bitmap,
-                    model: Any,
-                    target: Target<Bitmap>,
-                    dataSource: DataSource,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    ColorModeHelper.setColorModeForImage(this@EditActivity, bitmap, config.ultraHdrRendering)
-                    val currentFilter = getFiltersAdapter()?.getCurrentFilter()
-                    if (filterInitialBitmap == null) {
-                        loadCropImageView()
-                        bottomCropRotateClicked()
-                    }
-
-                    if (filterInitialBitmap != null && currentFilter != null && currentFilter.filter.name != getString(org.fossify.commons.R.string.none)) {
-                        binding.defaultImageView.onGlobalLayout {
-                            applyFilter(currentFilter)
-                        }
-                    } else {
-                        filterInitialBitmap = bitmap
-                    }
-
-                    if (isCropIntent) {
-                        binding.bottomEditorPrimaryActions.bottomPrimaryFilter.beGone()
-                        binding.bottomEditorPrimaryActions.bottomPrimaryDraw.beGone()
-                    }
-
-                    return false
-                }
-            }).into(binding.defaultImageView)
-    }
-
-    private fun loadCropImageView() {
-        binding.defaultImageView.beGone()
-        binding.editorDrawCanvas.beGone()
-        binding.cropImageView.apply {
-            beVisible()
-            setImageUriAsync(uri)
-            guidelines = CropImageView.Guidelines.ON
-
-            if (isCropIntent && shouldCropSquare()) {
-                currAspectRatio = ASPECT_RATIO_ONE_ONE
-                setFixedAspectRatio(true)
-                binding.bottomEditorCropRotateActions.bottomAspectRatio.beGone()
-            }
-        }
-    }
-
-    private fun loadDrawCanvas() {
-        binding.defaultImageView.beGone()
-        binding.cropImageView.beGone()
-        binding.editorDrawCanvas.beVisible()
-
-        if (!wasDrawCanvasPositioned) {
-            wasDrawCanvasPositioned = true
-            binding.editorDrawCanvas.onGlobalLayout {
-                ensureBackgroundThread {
-                    fillCanvasBackground()
-                }
-            }
-        }
-    }
-
-    private fun fillCanvasBackground() {
-        val size = Point()
-        windowManager.defaultDisplay.getSize(size)
-        val options = RequestOptions()
-            .format(DecodeFormat.PREFER_ARGB_8888)
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .fitCenter()
-
-        try {
-            val builder = Glide.with(applicationContext)
-                .asBitmap()
-                .load(uri)
-                .apply(options)
-                .into(binding.editorDrawCanvas.width, binding.editorDrawCanvas.height)
-
-            val bitmap = builder.get()
-            runOnUiThread {
-                binding.editorDrawCanvas.apply {
-                    updateBackgroundBitmap(bitmap)
-                    layoutParams.width = bitmap.width
-                    layoutParams.height = bitmap.height
-                    y = (height - bitmap.height) / 2f
-                    requestLayout()
-                }
-            }
-        } catch (e: Exception) {
-            showErrorToast(e)
-        }
-    }
-
-    private fun setOldExif() {
-        oldExif = readExif(uri!!)
-    }
-
-    private fun startSaveFlow(overwrite: Boolean) {
-        overwriteRequested = overwrite
-        setOldExif()
-        when {
-            binding.cropImageView.isVisible() -> cropImage()
-            binding.editorDrawCanvas.isVisible() -> saveDrawnImage()
-            else -> saveFilteredImage(overwrite)
-        }
-    }
-
-    private fun saveDrawnImage() {
-        saveBitmap(
-            overwrite = overwriteRequested,
-            bitmap = binding.editorDrawCanvas.getBitmap()
-        )
-    }
-
-    override fun onImageCropped(bitmap: Bitmap?, error: Exception?) {
-        if (isFinishing || isDestroyed) return
-        if (error != null || bitmap == null) {
-            toast("${getString(R.string.image_editing_failed)}: ${error?.message}")
-            return
-        }
-
-        setOldExif()
-
-        if (isSharingBitmap) {
-            isSharingBitmap = false
-            shareBitmap(bitmap)
-            return
-        }
-
-        if (isCropIntent) {
-            resolveUriScheme(
-                uri = saveUri,
-                onPath = { saveBitmapToPath(bitmap, it, true) },
-                onContentUri = {
-                    saveBitmapToContentUri(bitmap, it, showSavingToast = true, isCropCommit = true)
-                }
-            )
-            return
-        }
-
-        saveBitmap(overwriteRequested, bitmap, showSavingToast = true)
-    }
-
-    private fun getOriginalBitmap(): Bitmap {
-        return Glide.with(applicationContext)
-            .asBitmap()
-            .load(uri)
-            .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-            .get()
-    }
-
-    private fun withFilteredImage(callback: (Bitmap) -> Unit) {
-        val currentFilter = getFiltersAdapter()?.getCurrentFilter()?.filter ?: return
-        freeMemory()
-        ensureBackgroundThread {
+        state = savedInstanceState?.getSerializable("edit_state") as? State ?: State()
+        @Suppress("UNCHECKED_CAST")
+        (savedInstanceState?.getSerializable("undo_states") as? ArrayList<State>)?.let { undo.addAll(it) }
+        @Suppress("UNCHECKED_CAST")
+        (savedInstanceState?.getSerializable("redo_states") as? ArrayList<State>)?.let { redo.addAll(it) }
+        uri = savedInstanceState?.getString("source_uri")?.let(Uri::parse) ?: intent.data
+        buildUi()
+        val input = uri ?: run { finish(); return }
+        worker.execute {
             try {
-                val original = getOriginalBitmap()
-                currentFilter.processFilter(original)
-                callback(original)
-            } catch (_: OutOfMemoryError) {
-                toast(org.fossify.commons.R.string.out_of_memory_error)
-            }
-        }
-    }
-
-    private fun saveFilteredImage(overwrite: Boolean) {
-        if (overwrite) {
-            withFilteredImage {
-                saveBitmap(true, it)
-            }
-        } else {
-            resolveSaveAsPath { path ->
-                withFilteredImage {
-                    saveBitmapToPath(it, path, showSavingToast = true)
-                }
-            }
-        }
-    }
-
-    private fun shareImage() {
-        ensureBackgroundThread {
-            when {
-                binding.defaultImageView.isVisible() -> {
-                    val currentFilter = getFiltersAdapter()?.getCurrentFilter()
-                    if (currentFilter == null) {
-                        toast(org.fossify.commons.R.string.unknown_error_occurred)
-                        return@ensureBackgroundThread
-                    }
-
-                    val originalBitmap = getOriginalBitmap()
-                    currentFilter.filter.processFilter(originalBitmap)
-                    shareBitmap(originalBitmap)
-                }
-
-                binding.cropImageView.isVisible() -> {
-                    isSharingBitmap = true
-                    runOnUiThread {
-                        cropImage()
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                stream(input).use { BitmapFactory.decodeStream(it, null, bounds) }
+                require(bounds.outWidth > 0 && bounds.outHeight > 0)
+                // Fail clearly rather than silently exporting a reduced original.
+                require(bounds.outWidth.toLong() * bounds.outHeight <= 40_000_000) { label(R.string.easy_image_too_large) }
+                val decoded = stream(input).use { BitmapFactory.decodeStream(it) } ?: error(label(R.string.easy_read_error))
+                val orientation = stream(input).use { ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1) }
+                val matrix = Matrix().apply {
+                    when (orientation) {
+                        2 -> setScale(-1f, 1f)
+                        3 -> setRotate(180f)
+                        4 -> { setRotate(180f); postScale(-1f, 1f) }
+                        5 -> { setRotate(90f); postScale(-1f, 1f) }
+                        6 -> setRotate(90f)
+                        7 -> { setRotate(-90f); postScale(-1f, 1f) }
+                        8 -> setRotate(-90f)
                     }
                 }
-
-                binding.editorDrawCanvas.isVisible() -> shareBitmap(binding.editorDrawCanvas.getBitmap())
-            }
-        }
-    }
-
-    private fun shareBitmap(bitmap: Bitmap) {
-        writeBitmapToCache(saveUri, bitmap) {
-            if (it != null) {
-                sharePathIntent(it, BuildConfig.APPLICATION_ID)
-            } else {
-                toast(org.fossify.commons.R.string.unknown_error_occurred)
-            }
-        }
-    }
-
-    private fun getFiltersAdapter(): FiltersAdapter? {
-        return binding.bottomEditorFilterActions.bottomActionsFilterList.adapter as? FiltersAdapter
-    }
-
-    private fun setupBottomActions() {
-        setupPrimaryActionButtons()
-        setupCropRotateActionButtons()
-        setupAspectRatioButtons()
-        setupDrawButtons()
-    }
-
-    private fun setupPrimaryActionButtons() {
-        binding.bottomEditorPrimaryActions.bottomPrimaryFilter.setOnClickListener {
-            bottomFilterClicked()
-        }
-
-        binding.bottomEditorPrimaryActions.bottomPrimaryCropRotate.setOnClickListener {
-            bottomCropRotateClicked()
-        }
-
-        binding.bottomEditorPrimaryActions.bottomPrimaryDraw.setOnClickListener {
-            bottomDrawClicked()
-        }
-        arrayOf(
-            binding.bottomEditorPrimaryActions.bottomPrimaryFilter,
-            binding.bottomEditorPrimaryActions.bottomPrimaryCropRotate,
-            binding.bottomEditorPrimaryActions.bottomPrimaryDraw
-        ).forEach {
-            it.showContentDescriptionOnLongClick()
-        }
-    }
-
-    private fun bottomFilterClicked() {
-        currPrimaryAction = if (currPrimaryAction == PRIMARY_ACTION_FILTER) {
-            PRIMARY_ACTION_NONE
-        } else {
-            PRIMARY_ACTION_FILTER
-        }
-        updatePrimaryActionButtons()
-    }
-
-    private fun bottomCropRotateClicked() {
-        currPrimaryAction = if (currPrimaryAction == PRIMARY_ACTION_CROP_ROTATE) {
-            PRIMARY_ACTION_NONE
-        } else {
-            PRIMARY_ACTION_CROP_ROTATE
-        }
-        updatePrimaryActionButtons()
-    }
-
-    private fun bottomDrawClicked() {
-        currPrimaryAction = if (currPrimaryAction == PRIMARY_ACTION_DRAW) {
-            PRIMARY_ACTION_NONE
-        } else {
-            PRIMARY_ACTION_DRAW
-        }
-        updatePrimaryActionButtons()
-    }
-
-    private fun setupCropRotateActionButtons() {
-        binding.bottomEditorCropRotateActions.bottomRotate.setOnClickListener {
-            binding.cropImageView.rotateImage(90)
-        }
-
-        binding.bottomEditorCropRotateActions.bottomResize.beGoneIf(isCropIntent)
-        binding.bottomEditorCropRotateActions.bottomResize.setOnClickListener {
-            resizeImage()
-        }
-
-        binding.bottomEditorCropRotateActions.bottomFlipHorizontally.setOnClickListener {
-            binding.cropImageView.flipImageHorizontally()
-        }
-
-        binding.bottomEditorCropRotateActions.bottomFlipVertically.setOnClickListener {
-            binding.cropImageView.flipImageVertically()
-        }
-
-        binding.bottomEditorCropRotateActions.bottomAspectRatio.setOnClickListener {
-            currCropRotateAction = if (currCropRotateAction == CROP_ROTATE_ASPECT_RATIO) {
-                binding.cropImageView.guidelines = CropImageView.Guidelines.OFF
-                binding.bottomAspectRatios.root.beGone()
-                CROP_ROTATE_NONE
-            } else {
-                binding.cropImageView.guidelines = CropImageView.Guidelines.ON
-                binding.bottomAspectRatios.root.beVisible()
-                CROP_ROTATE_ASPECT_RATIO
-            }
-            updateCropRotateActionButtons()
-        }
-
-        arrayOf(
-            binding.bottomEditorCropRotateActions.bottomRotate,
-            binding.bottomEditorCropRotateActions.bottomResize,
-            binding.bottomEditorCropRotateActions.bottomFlipHorizontally,
-            binding.bottomEditorCropRotateActions.bottomFlipVertically,
-            binding.bottomEditorCropRotateActions.bottomAspectRatio
-        ).forEach {
-            it.showContentDescriptionOnLongClick()
-        }
-    }
-
-    private fun setupAspectRatioButtons() {
-        binding.bottomAspectRatios.bottomAspectRatioFree.setOnClickListener {
-            updateAspectRatio(ASPECT_RATIO_FREE)
-        }
-
-        binding.bottomAspectRatios.bottomAspectRatioOneOne.setOnClickListener {
-            updateAspectRatio(ASPECT_RATIO_ONE_ONE)
-        }
-
-        binding.bottomAspectRatios.bottomAspectRatioFourThree.setOnClickListener {
-            updateAspectRatio(ASPECT_RATIO_FOUR_THREE)
-        }
-
-        binding.bottomAspectRatios.bottomAspectRatioSixteenNine.setOnClickListener {
-            updateAspectRatio(ASPECT_RATIO_SIXTEEN_NINE)
-        }
-
-        binding.bottomAspectRatios.bottomAspectRatioOther.setOnClickListener {
-            OtherAspectRatioDialog(this, lastOtherAspectRatio) {
-                lastOtherAspectRatio = it
-                config.lastEditorCropOtherAspectRatioX = it.first
-                config.lastEditorCropOtherAspectRatioY = it.second
-                updateAspectRatio(ASPECT_RATIO_OTHER)
-            }
-        }
-
-        updateAspectRatioButtons()
-    }
-
-    private fun setupDrawButtons() {
-        updateDrawColor(config.lastEditorDrawColor)
-        binding.bottomEditorDrawActions.bottomDrawWidth.progress = config.lastEditorBrushSize
-        updateBrushSize(config.lastEditorBrushSize)
-
-        binding.bottomEditorDrawActions.bottomDrawColorClickable.setOnClickListener {
-            ColorPickerDialog(this, drawColor) { wasPositivePressed, color ->
-                if (wasPositivePressed) {
-                    updateDrawColor(color)
-                }
-            }
-        }
-
-        binding.bottomEditorDrawActions.bottomDrawWidth.onSeekBarChangeListener {
-            config.lastEditorBrushSize = it
-            updateBrushSize(it)
-        }
-
-        binding.bottomEditorDrawActions.bottomDrawUndo.setOnClickListener {
-            binding.editorDrawCanvas.undo()
-        }
-    }
-
-    private fun updateBrushSize(percent: Int) {
-        binding.editorDrawCanvas.updateBrushSize(percent)
-        val scale = max(0.03f, percent / 100f)
-        binding.bottomEditorDrawActions.bottomDrawColor.scaleX = scale
-        binding.bottomEditorDrawActions.bottomDrawColor.scaleY = scale
-    }
-
-    private fun updatePrimaryActionButtons() {
-        if (binding.cropImageView.isGone() && currPrimaryAction == PRIMARY_ACTION_CROP_ROTATE) {
-            loadCropImageView()
-        } else if (binding.defaultImageView.isGone() && currPrimaryAction == PRIMARY_ACTION_FILTER) {
-            loadDefaultImageView()
-        } else if (binding.editorDrawCanvas.isGone() && currPrimaryAction == PRIMARY_ACTION_DRAW) {
-            loadDrawCanvas()
-        }
-
-        arrayOf(
-            binding.bottomEditorPrimaryActions.bottomPrimaryFilter,
-            binding.bottomEditorPrimaryActions.bottomPrimaryCropRotate,
-            binding.bottomEditorPrimaryActions.bottomPrimaryDraw
-        ).forEach {
-            it.applyColorFilter(Color.WHITE)
-        }
-
-        val currentPrimaryActionButton = when (currPrimaryAction) {
-            PRIMARY_ACTION_FILTER -> binding.bottomEditorPrimaryActions.bottomPrimaryFilter
-            PRIMARY_ACTION_CROP_ROTATE -> binding.bottomEditorPrimaryActions.bottomPrimaryCropRotate
-            PRIMARY_ACTION_DRAW -> binding.bottomEditorPrimaryActions.bottomPrimaryDraw
-            else -> null
-        }
-
-        currentPrimaryActionButton?.applyColorFilter(getProperPrimaryColor())
-        binding.bottomEditorFilterActions.root.beVisibleIf(currPrimaryAction == PRIMARY_ACTION_FILTER)
-        binding.bottomEditorCropRotateActions.root.beVisibleIf(currPrimaryAction == PRIMARY_ACTION_CROP_ROTATE)
-        binding.bottomEditorDrawActions.root.beVisibleIf(currPrimaryAction == PRIMARY_ACTION_DRAW)
-
-        if (currPrimaryAction == PRIMARY_ACTION_FILTER && binding.bottomEditorFilterActions.bottomActionsFilterList.adapter == null) {
-            ensureBackgroundThread {
-                val thumbnailSize = resources.getDimension(R.dimen.bottom_filters_thumbnail_size).toInt()
-
-                val bitmap = try {
-                    Glide.with(this)
-                        .asBitmap()
-                        .load(uri).listener(object : RequestListener<Bitmap> {
-                            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
-                                showErrorToast(e.toString())
-                                return false
-                            }
-
-                            override fun onResourceReady(
-                                resource: Bitmap,
-                                model: Any,
-                                target: Target<Bitmap>,
-                                dataSource: DataSource,
-                                isFirstResource: Boolean
-                            ) = false
-                        })
-                        .submit(thumbnailSize, thumbnailSize)
-                        .get()
-                } catch (e: GlideException) {
-                    showErrorToast(e)
-                    finish()
-                    return@ensureBackgroundThread
-                }
-
+                val full = Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, matrix, true)
+                if (full !== decoded) decoded.recycle()
+                val scale = min(1f, 1400f / max(full.width, full.height))
+                val small = Bitmap.createScaledBitmap(full, max(1, (full.width * scale).roundToInt()), max(1, (full.height * scale).roundToInt()), true)
                 runOnUiThread {
-                    val filterThumbnailsManager = FilterThumbnailsManager()
-                    filterThumbnailsManager.clearThumbs()
-
-                    val noFilter = Filter(getString(org.fossify.commons.R.string.none))
-                    filterThumbnailsManager.addThumb(FilterItem(bitmap, noFilter))
-
-                    FilterPack.getFilterPack(this).forEach {
-                        val filterItem = FilterItem(bitmap, it)
-                        filterThumbnailsManager.addThumb(filterItem)
-                    }
-
-                    val filterItems = filterThumbnailsManager.processThumbs()
-                    val adapter = FiltersAdapter(applicationContext, filterItems) {
-                        val layoutManager = binding.bottomEditorFilterActions.bottomActionsFilterList.layoutManager as LinearLayoutManager
-                        applyFilter(filterItems[it])
-
-                        if (it == layoutManager.findLastCompletelyVisibleItemPosition() || it == layoutManager.findLastVisibleItemPosition()) {
-                            binding.bottomEditorFilterActions.bottomActionsFilterList.smoothScrollBy(thumbnailSize, 0)
-                        } else if (it == layoutManager.findFirstCompletelyVisibleItemPosition() || it == layoutManager.findFirstVisibleItemPosition()) {
-                            binding.bottomEditorFilterActions.bottomActionsFilterList.smoothScrollBy(-thumbnailSize, 0)
-                        }
-                    }
-
-                    binding.bottomEditorFilterActions.bottomActionsFilterList.adapter = adapter
-                    adapter.notifyDataSetChanged()
+                    if (!isDestroyed) { source = full; previewSource = small; ready = true; renderPreview() }
                 }
+            } catch (e: Exception) { showFailure(e.message) } catch (_: OutOfMemoryError) { showFailure(label(R.string.easy_memory_error)) }
+        }
+    }
+
+    private fun stream(input: Uri) = requireNotNull(if (input.scheme == "file" || input.scheme == null) File(requireNotNull(input.path)).inputStream() else contentResolver.openInputStream(input))
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putSerializable("edit_state", state)
+        outState.putSerializable("undo_states", undo)
+        outState.putSerializable("redo_states", redo)
+        outState.putString("source_uri", uri.toString())
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        buildUi()
+        if (ready) renderPreview()
+    }
+
+    private fun button(text: String, description: String = text, action: () -> Unit): Button = Button(this).apply {
+        this.text = text; textSize = 22f; isAllCaps = false
+        contentDescription = description; tooltipText = description
+        setTextColor(editorTextColor)
+        background = GradientDrawable().apply { setColor(editorSurfaceColor); cornerRadius = dp(8).toFloat(); setStroke(dp(1), editorTextColor) }
+        minWidth = 0; minimumWidth = 0; minHeight = dp(58); minimumHeight = dp(58)
+        setPadding(dp(6), dp(4), dp(6), dp(4))
+        setOnClickListener { if (!saving) action() }
+        editButtons.add(this)
+    }
+
+    private fun buildUi() {
+        val dark = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        editorBackgroundColor = if (dark) Color.rgb(20, 23, 21) else Color.rgb(247, 248, 245)
+        editorTextColor = if (dark) Color.WHITE else Color.rgb(15, 22, 17)
+        editorSurfaceColor = if (dark) Color.rgb(43, 49, 45) else Color.WHITE
+        editButtons.clear(); values.clear()
+        root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setBackgroundColor(editorBackgroundColor) }
+        root.setOnApplyWindowInsetsListener { view, insets ->
+            view.setPadding(insets.systemWindowInsetLeft, insets.systemWindowInsetTop, insets.systemWindowInsetRight, insets.systemWindowInsetBottom)
+            insets
+        }
+        setContentView(root)
+        root.requestApplyInsets()
+        val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && resources.configuration.screenWidthDp >= 680
+        val workspace = LinearLayout(this).apply { orientation = if (landscape) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL }
+        root.addView(workspace, LinearLayout.LayoutParams(-1, 0, 1f))
+        val photo = FrameLayout(this).apply { setBackgroundColor(Color.rgb(35, 38, 36)) }
+        image = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_CENTER; contentDescription = label(R.string.easy_preview) }
+        photo.addView(image, FrameLayout.LayoutParams(-1, -1))
+        val history = LinearLayout(this)
+        undoButton = button("↶", label(R.string.easy_undo)) { if (undo.isNotEmpty()) { redo.add(state); state = undo.removeAt(undo.lastIndex); renderPreview() } }
+        redoButton = button("↷", label(R.string.easy_redo)) { if (redo.isNotEmpty()) { undo.add(state); state = redo.removeAt(redo.lastIndex); renderPreview() } }
+        val auto = button("✦", label(R.string.easy_auto)) { applyAuto() }
+        listOf(undoButton, redoButton, auto).forEach { history.addView(it, LinearLayout.LayoutParams(dp(48), dp(60)).apply { marginEnd = dp(3) }) }
+        photo.addView(history, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.START).apply { setMargins(dp(6), dp(6), 0, 0) })
+        val tools = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val upper = LinearLayout(this); val lower = LinearLayout(this)
+        upper.addView(button("⌗", label(R.string.easy_crop)) { cropDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)))
+        upper.addView(button("⤢", label(R.string.easy_resize)) { resizeDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
+        lower.addView(button("⟳", label(R.string.easy_rotate)) { change(state.copy(geometry = state.geometry + Geometry(rotation = true), width = 0)) }, LinearLayout.LayoutParams(dp(52), dp(60)))
+        lower.addView(button("⚄", label(R.string.easy_random)) { change(state.copy(saturation = Random.nextInt(-25, 36), temperature = Random.nextInt(-25, 26), brightness = Random.nextInt(-15, 16), contrast = Random.nextInt(-10, 26))) }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
+        tools.addView(upper); tools.addView(lower, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dp(4) })
+        photo.addView(tools, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply { setMargins(0, dp(6), dp(6), 0) })
+        val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(10), dp(8), dp(10), dp(8)) }
+        val labels = listOf("saturation" to R.string.easy_saturation, "temperature" to R.string.easy_temperature, "brightness" to R.string.easy_brightness, "contrast" to R.string.easy_contrast)
+        for ((key, name) in labels) {
+            val row = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
+            val title = TextView(this).apply { text = label(name); textSize = 19f; setTextColor(editorTextColor) }
+            val number = TextView(this).apply { textSize = 20f; gravity = Gravity.CENTER; setTextColor(editorTextColor) }
+            values[key] = number
+            row.addView(title, LinearLayout.LayoutParams(0, -2, 1f)); row.addView(number, LinearLayout.LayoutParams(dp(45), -2))
+            for (delta in listOf(-5, 5)) {
+                val step = button(if (delta < 0) "−" else "+", label(name) + if (delta < 0) " −" else " +") { adjust(key, delta) }
+                row.addView(step, LinearLayout.LayoutParams(dp(52), dp(58)).apply { marginStart = dp(4) })
             }
+            panel.addView(row, LinearLayout.LayoutParams(-1, -2).apply { bottomMargin = dp(6) })
         }
-
-        if (currPrimaryAction != PRIMARY_ACTION_CROP_ROTATE) {
-            binding.bottomAspectRatios.root.beGone()
-            currCropRotateAction = CROP_ROTATE_NONE
-        }
-        updateCropRotateActionButtons()
-    }
-
-    private fun applyFilter(filterItem: FilterItem) {
-        val newBitmap = Bitmap.createBitmap(filterInitialBitmap!!)
-        binding.defaultImageView.setImageBitmap(filterItem.filter.processFilter(newBitmap))
-    }
-
-    private fun updateAspectRatio(aspectRatio: Int) {
-        currAspectRatio = aspectRatio
-        config.lastEditorCropAspectRatio = aspectRatio
-        updateAspectRatioButtons()
-
-        binding.cropImageView.apply {
-            if (aspectRatio == ASPECT_RATIO_FREE) {
-                setFixedAspectRatio(false)
-            } else {
-                val newAspectRatio = when (aspectRatio) {
-                    ASPECT_RATIO_ONE_ONE -> Pair(1f, 1f)
-                    ASPECT_RATIO_FOUR_THREE -> Pair(4f, 3f)
-                    ASPECT_RATIO_SIXTEEN_NINE -> Pair(16f, 9f)
-                    else -> Pair(lastOtherAspectRatio!!.first, lastOtherAspectRatio!!.second)
-                }
-
-                setAspectRatio(newAspectRatio.first.toInt(), newAspectRatio.second.toInt())
-            }
-        }
-    }
-
-    private fun updateAspectRatioButtons() {
-        arrayOf(
-            binding.bottomAspectRatios.bottomAspectRatioFree,
-            binding.bottomAspectRatios.bottomAspectRatioOneOne,
-            binding.bottomAspectRatios.bottomAspectRatioFourThree,
-            binding.bottomAspectRatios.bottomAspectRatioSixteenNine,
-            binding.bottomAspectRatios.bottomAspectRatioOther,
-        ).forEach {
-            it.setTextColor(Color.WHITE)
-        }
-
-        val currentAspectRatioButton = when (currAspectRatio) {
-            ASPECT_RATIO_FREE -> binding.bottomAspectRatios.bottomAspectRatioFree
-            ASPECT_RATIO_ONE_ONE -> binding.bottomAspectRatios.bottomAspectRatioOneOne
-            ASPECT_RATIO_FOUR_THREE -> binding.bottomAspectRatios.bottomAspectRatioFourThree
-            ASPECT_RATIO_SIXTEEN_NINE -> binding.bottomAspectRatios.bottomAspectRatioSixteenNine
-            else -> binding.bottomAspectRatios.bottomAspectRatioOther
-        }
-
-        currentAspectRatioButton.setTextColor(getProperPrimaryColor())
-    }
-
-    private fun updateCropRotateActionButtons() {
-        arrayOf(binding.bottomEditorCropRotateActions.bottomAspectRatio).forEach {
-            it.applyColorFilter(Color.WHITE)
-        }
-
-        val primaryActionView = when (currCropRotateAction) {
-            CROP_ROTATE_ASPECT_RATIO -> binding.bottomEditorCropRotateActions.bottomAspectRatio
-            else -> null
-        }
-
-        primaryActionView?.applyColorFilter(getProperPrimaryColor())
-    }
-
-    private fun updateDrawColor(color: Int) {
-        drawColor = color
-        binding.bottomEditorDrawActions.bottomDrawColor
-            .setFillWithStroke(color, getProperBackgroundColor())
-        config.lastEditorDrawColor = color
-        binding.editorDrawCanvas.updateColor(color)
-    }
-
-    private fun resizeImage() {
-        val point = getAreaSize()
-        if (point == null) {
-            toast(org.fossify.commons.R.string.unknown_error_occurred)
-            return
-        }
-
-        ResizeDialog(this, point) {
-            resizeWidth = it.x
-            resizeHeight = it.y
-            cropImage()
-        }
-    }
-
-    private fun shouldCropSquare(): Boolean {
-        val extras = intent.extras
-        return if (extras != null && extras.containsKey(ASPECT_X) && extras.containsKey(ASPECT_Y)) {
-            extras.getInt(ASPECT_X) == extras.getInt(ASPECT_Y)
+        val scroll = ScrollView(this).apply { isFillViewport = false; addView(panel) }
+        if (landscape) {
+            workspace.addView(scroll, LinearLayout.LayoutParams(dp(335), -1))
+            workspace.addView(photo, LinearLayout.LayoutParams(0, -1, 1f))
         } else {
-            false
+            workspace.addView(photo, LinearLayout.LayoutParams(-1, 0, 1f))
+            workspace.addView(scroll, LinearLayout.LayoutParams(-1, dp(272)))
         }
+        status = TextView(this).apply { textSize = 16f; gravity = Gravity.CENTER; setTextColor(editorTextColor); setPadding(dp(8), dp(4), dp(8), dp(4)); text = label(R.string.easy_loading) }
+        root.addView(status, LinearLayout.LayoutParams(-1, -2))
+        saveButton = button(label(R.string.easy_save_copy)) { chooseOutput() }
+        root.addView(saveButton, LinearLayout.LayoutParams(-1, dp(60)).apply { setMargins(dp(10), dp(4), dp(10), dp(8)) })
+        updateControls()
     }
 
-    private fun getAreaSize(): Point? {
-        val rect = binding.cropImageView.cropRect ?: return null
-        val rotation = binding.cropImageView.rotatedDegrees
-        return if (rotation == 0 || rotation == 180) {
-            Point(rect.width(), rect.height())
-        } else {
-            Point(rect.height(), rect.width())
-        }
+    private fun adjust(key: String, delta: Int) {
+        fun next(v: Int) = (v + delta).coerceIn(-100, 100)
+        change(when (key) {
+            "saturation" -> state.copy(saturation = next(state.saturation))
+            "temperature" -> state.copy(temperature = next(state.temperature))
+            "brightness" -> state.copy(brightness = next(state.brightness))
+            else -> state.copy(contrast = next(state.contrast))
+        })
     }
 
-    private fun resolveSaveAsPath(callback: (String) -> Unit) {
-        runOnUiThread {
-            resolveUriScheme(
-                uri = saveUri,
-                onPath = {
-                    SaveAsDialog(this, it, true, callback = callback)
-                },
-                onContentUri = {
-                    val (path, append) = proposeNewFilePath(it)
-                    SaveAsDialog(this, path, append, callback = callback)
-                }
-            )
-        }
+    private fun change(next: State) {
+        if (!ready || next == state) return
+        undo.add(state); if (undo.size > 50) undo.removeAt(0)
+        redo.clear(); state = next; renderPreview()
     }
 
-    private fun saveBitmap(overwrite: Boolean, bitmap: Bitmap, showSavingToast: Boolean = true) {
-        if (overwrite) {
-            resolveUriScheme(
-                uri = saveUri,
-                onPath = { path ->
-                    ensureWritablePath(targetPath = path, confirmOverwrite = false) {
-                        saveBitmapToPath(bitmap, it, showSavingToast)
-                    }
-                },
-                onContentUri = { contentUri ->
-                    saveBitmapToContentUri(bitmap, contentUri, showSavingToast, isCropCommit = false)
-                }
-            )
-        } else {
-            resolveSaveAsPath { path ->
-                saveBitmapToPath(bitmap, path, showSavingToast)
+    private fun updateControls() {
+        editButtons.forEach { it.isEnabled = ready && !saving }
+        undoButton.isEnabled = ready && !saving && undo.isNotEmpty()
+        redoButton.isEnabled = ready && !saving && redo.isNotEmpty()
+        values["saturation"]?.text = state.saturation.toString(); values["temperature"]?.text = state.temperature.toString()
+        values["brightness"]?.text = state.brightness.toString(); values["contrast"]?.text = state.contrast.toString()
+    }
+
+    private fun geometry(input: Bitmap, edit: State): Bitmap {
+        var bitmap = input
+        for (op in edit.geometry) {
+            val next = if (op.rotation) Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, Matrix().apply { postRotate(90f) }, true)
+            else {
+                val x = (op.left * bitmap.width).roundToInt().coerceIn(0, bitmap.width - 1)
+                val y = (op.top * bitmap.height).roundToInt().coerceIn(0, bitmap.height - 1)
+                val w = ((op.right - op.left) * bitmap.width).roundToInt().coerceIn(1, bitmap.width - x)
+                val h = ((op.bottom - op.top) * bitmap.height).roundToInt().coerceIn(1, bitmap.height - y)
+                Bitmap.createBitmap(bitmap, x, y, w, h)
             }
+            if (bitmap !== input && next !== bitmap) bitmap.recycle()
+            bitmap = next
         }
+        return bitmap
     }
 
-    private fun finishCropResultForContent(uri: Uri) {
-        val result = Intent().apply {
-            data = uri
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        setResult(RESULT_OK, result)
-        finish()
+    private fun dimensions(edit: State): Pair<Int, Int> {
+        var w = source?.width ?: 1; var h = source?.height ?: 1
+        edit.geometry.forEach { op -> if (op.rotation) { val old = w; w = h; h = old } else { w = max(1, ((op.right - op.left) * w).roundToInt()); h = max(1, ((op.bottom - op.top) * h).roundToInt()) } }
+        if (edit.width in 1 until w) { h = max(1, (h.toDouble() * edit.width / w).roundToInt()); w = edit.width }
+        return w to h
     }
 
-    private fun freeMemory() {
-        // clean up everything to free as much memory as possible
-        binding.defaultImageView.setImageResource(0)
-        binding.cropImageView.setImageBitmap(null)
-        binding.bottomEditorFilterActions.bottomActionsFilterList.adapter = null
-        binding.bottomEditorFilterActions.bottomActionsFilterList.beGone()
+    private fun render(input: Bitmap, edit: State, exporting: Boolean): Bitmap {
+        var shaped = geometry(input, edit)
+        val (w, h) = if (exporting) dimensions(edit) else shaped.width to shaped.height
+        val output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        val matrix = ColorMatrix().apply { setSaturation(1f + edit.saturation / 100f) }
+        val contrast = 1f + edit.contrast / 100f
+        val offset = 128f * (1f - contrast) + edit.brightness * 2.55f
+        val warmth = edit.temperature * 0.30f
+        matrix.postConcat(ColorMatrix(floatArrayOf(contrast,0f,0f,0f,offset+warmth, 0f,contrast,0f,0f,offset, 0f,0f,contrast,0f,offset-warmth, 0f,0f,0f,1f,0f)))
+        Canvas(output).apply {
+            drawColor(Color.WHITE)
+            drawBitmap(shaped, null, Rect(0,0,w,h), Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG).apply { colorFilter = ColorMatrixColorFilter(matrix) })
+        }
+        if (shaped !== input) shaped.recycle()
+        return output
     }
 
-    private fun saveBitmapToPath(bitmap: Bitmap, path: String, showSavingToast: Boolean) {
-        try {
-            ensureBackgroundThread {
-                val file = File(path)
-                val fileDirItem = FileDirItem(path, path.getFilenameFromPath())
-                try {
-                    val out = FileOutputStream(file)
-                    saveBitmapToFile(file, bitmap, out, showSavingToast)
-                } catch (e: Exception) {
-                    getFileOutputStream(fileDirItem, true) {
-                        if (it != null) {
-                            saveBitmapToFile(file, bitmap, it, showSavingToast)
-                        } else {
-                            toast(R.string.image_editing_failed)
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            showErrorToast(e)
-        } catch (e: OutOfMemoryError) {
-            toast(org.fossify.commons.R.string.out_of_memory_error)
-        }
-    }
-
-    private fun saveBitmapToFile(file: File, bitmap: Bitmap, out: OutputStream, showSavingToast: Boolean) {
-        if (showSavingToast) {
-            toast(org.fossify.commons.R.string.saving)
-        }
-
-        out.use {
-            if (resizeWidth > 0 && resizeHeight > 0) {
-                val resized = bitmap.scale(resizeWidth, resizeHeight, false)
-                resized.compress(file.absolutePath.getCompressionFormat(), 90, out)
-            } else {
-                bitmap.compress(file.absolutePath.getCompressionFormat(), 90, out)
-            }
-        }
-
-        writeExif(oldExif, file.toUri())
-        setResult(RESULT_OK, intent)
-        scanFinalPath(file.absolutePath)
-    }
-
-    private fun saveBitmapToContentUri(
-        bitmap: Bitmap,
-        uri: Uri,
-        showSavingToast: Boolean,
-        isCropCommit: Boolean
-    ) {
-        if (showSavingToast) {
-            toast(org.fossify.commons.R.string.saving)
-        }
-
-        ensureBackgroundThread {
-            var out: OutputStream? = null
+    private fun renderPreview() {
+        val input = previewSource ?: return
+        val edit = state; val ticket = ++generation
+        updateControls()
+        worker.execute {
             try {
-                out = contentResolver.openOutputStream(uri, "wt")
-                    ?: contentResolver.openOutputStream(uri)
-                if (out == null) {
-                    val (path, append) = proposeNewFilePath(uri)
-                    runOnUiThread {
-                        SaveAsDialog(this, path, append) { path ->
-                            saveBitmapToPath(bitmap, path, showSavingToast)
-                        }
-                    }
-                    return@ensureBackgroundThread
-                }
-
-                val quality = if (isCropCommit) 100 else 90
-                bitmap.compress(getCompressionFormatFromUri(uri), quality, out)
-                out.flush()
-                writeExif(oldExif, uri)
-
+                val output = render(input, edit, false)
                 runOnUiThread {
-                    if (isCropCommit) {
-                        finishCropResultForContent(uri)
-                    } else {
-                        setResult(RESULT_OK, intent)
-                        toast(org.fossify.commons.R.string.file_saved)
-                        finish()
-                    }
+                    if (!isDestroyed && ticket == generation) {
+                        val old = preview; preview = output; image.setImageBitmap(output); old?.recycle()
+                        val (w,h) = dimensions(edit)
+                        status.text = getString(R.string.easy_dimensions, w, h, edit.quality)
+                    } else output.recycle()
                 }
-            } catch (e: Exception) {
-                showErrorToast(e)
-            } finally {
-                try { out?.close() } catch (_: Exception) {}
+            } catch (e: Exception) { showFailure(e.message) } catch (_: OutOfMemoryError) { showFailure(label(R.string.easy_memory_error)) }
+        }
+    }
+
+    private fun applyAuto() {
+        val input = previewSource ?: return
+        val snapshot = state
+        worker.execute {
+            val shaped = geometry(input, snapshot)
+            val histogram = IntArray(256); var count = 0; var total = 0L
+            for (y in 0 until shaped.height step 8) for (x in 0 until shaped.width step 8) {
+                val pixel = shaped.getPixel(x,y)
+                val luma = (Color.red(pixel)*0.2126 + Color.green(pixel)*0.7152 + Color.blue(pixel)*0.0722).roundToInt().coerceIn(0,255)
+                histogram[luma]++; count++; total += luma
+            }
+            if (shaped !== input) shaped.recycle()
+            fun percentile(f: Double): Int { var sum = 0; for (i in 0..255) { sum += histogram[i]; if (sum >= count * f) return i }; return 255 }
+            val contrast = ((200.0 / max(1,percentile(.95)-percentile(.05)) - 1) * 100).roundToInt().coerceIn(0,35)
+            val brightness = ((128.0 - total.toDouble()/max(1,count)) / 2.55).roundToInt().coerceIn(-25,25)
+            runOnUiThread { if (!isDestroyed && state == snapshot) change(snapshot.copy(brightness=brightness, contrast=contrast)) }
+        }
+    }
+
+    private fun cropDialog() {
+        val shown = preview ?: return
+        // The established cropper handles touch gestures; edit history stores only its normalized rectangle.
+        val cropper = CropImageView(this).apply { setImageBitmap(shown); setAutoZoomEnabled(false) }
+        val dialog = AlertDialog.Builder(this).setTitle(R.string.easy_crop).setView(cropper)
+            .setNegativeButton(R.string.easy_cancel, null).setPositiveButton(R.string.easy_apply) { _, _ ->
+                cropper.cropRect?.let { rect ->
+                    change(state.copy(width=0, geometry=state.geometry + Geometry(left=rect.left.toFloat()/shown.width, top=rect.top.toFloat()/shown.height, right=rect.right.toFloat()/shown.width, bottom=rect.bottom.toFloat()/shown.height)))
+                }
+            }.create()
+        dialog.setOnShowListener {
+            cropper.layoutParams = cropper.layoutParams.apply { height = (resources.displayMetrics.heightPixels * .55).toInt() }
+            enlargeDialogButtons(dialog)
+        }
+        dialog.show()
+    }
+
+    private fun resizeDialog() {
+        val (w,h) = dimensions(state.copy(width=0))
+        val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(20),dp(12),dp(20),dp(8)) }
+        fun field(title: String, value: Int): EditText {
+            panel.addView(TextView(this).apply { text=title; textSize=20f; setTextColor(editorTextColor) })
+            return EditText(this).apply { inputType=InputType.TYPE_CLASS_NUMBER; textSize=24f; setText(value.toString()); selectAll(); panel.addView(this) }
+        }
+        val width = field(getString(R.string.easy_width, w), if(state.width>0) state.width else w)
+        val quality = field(label(R.string.easy_quality),state.quality)
+        panel.addView(TextView(this).apply { text=label(R.string.easy_ratio); textSize=18f; setTextColor(editorTextColor) })
+        val dialog = AlertDialog.Builder(this).setTitle(R.string.easy_resize).setView(panel).setNegativeButton(R.string.easy_cancel,null).setPositiveButton(R.string.easy_apply,null).create()
+        dialog.setOnShowListener {
+            enlargeDialogButtons(dialog)
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val pixels=width.text.toString().toIntOrNull(); val q=quality.text.toString().toIntOrNull()
+                if(pixels==null || pixels !in 1..w) { width.error=getString(R.string.easy_width,w); return@setOnClickListener }
+                if(q==null || q !in 1..100) { quality.error=label(R.string.easy_quality); return@setOnClickListener }
+                change(state.copy(width=pixels,quality=q)); dialog.dismiss()
             }
         }
+        dialog.show()
     }
 
-    private fun editWith() {
-        openEditor(uri.toString(), true)
-        isEditingWithThirdParty = true
+    private fun enlargeDialogButtons(dialog: AlertDialog) {
+        listOf(AlertDialog.BUTTON_POSITIVE,AlertDialog.BUTTON_NEGATIVE).forEach { which -> dialog.getButton(which)?.apply { textSize=20f; minHeight=dp(60) } }
     }
 
-    private fun scanFinalPath(path: String) {
-        val paths = arrayListOf(path)
-        rescanPaths(paths) {
-            fixDateTaken(paths, false)
-            setResult(RESULT_OK, intent)
-            toast(org.fossify.commons.R.string.file_saved)
-            finish()
+    private fun chooseOutput() {
+        if (!ready) return
+        val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE); type="image/jpeg"
+            putExtra(Intent.EXTRA_TITLE,"Editing-Gallery-${System.currentTimeMillis()}.jpg")
+        }
+        startActivityForResult(intent, 8101)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode,resultCode,data)
+        if(requestCode!=8101 || resultCode!=Activity.RESULT_OK) return
+        val destination=data?.data ?: return
+        val input=source ?: return
+        if(destination==uri) { showFailure(label(R.string.easy_copy_only)); return }
+        val edit=state
+        saving=true; updateControls(); status.text=label(R.string.easy_saving)
+        worker.execute {
+            try {
+                val result=render(input,edit,true)
+                try { requireNotNull(contentResolver.openOutputStream(destination,"w")).use { check(result.compress(Bitmap.CompressFormat.JPEG,edit.quality,it)) } }
+                finally { result.recycle() }
+                runOnUiThread { if(!isDestroyed) { saving=false; updateControls(); status.text=label(R.string.easy_saved); setResult(Activity.RESULT_OK) } }
+            } catch(e:Exception) { saving=false; showFailure(e.message) } catch(_:OutOfMemoryError) { saving=false; showFailure(label(R.string.easy_memory_error)) }
         }
     }
+
+    private fun showFailure(message: String?) = runOnUiThread {
+        if (!isDestroyed) { status.text=message ?: label(R.string.easy_read_error); updateControls() }
+    }
+
+    @Deprecated("Handled for the prototype's discard confirmation")
+    override fun onBackPressed() {
+        if(saving)return
+        if(undo.isEmpty()) { super.onBackPressed(); return }
+        val dialog=AlertDialog.Builder(this).setMessage(R.string.easy_discard).setNegativeButton(R.string.easy_cancel,null)
+            .setPositiveButton(R.string.easy_exit) { _,_-> finish() }.create()
+        dialog.setOnShowListener { enlargeDialogButtons(dialog) }; dialog.show()
+    }
+
+    override fun onDestroy() { generation++; worker.shutdown(); super.onDestroy() }
 }

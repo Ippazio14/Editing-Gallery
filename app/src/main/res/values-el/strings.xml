@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Επιτρέπει την μεγέθυνση βίντεο με διπλό πάτημα</string>
     <string name="folder_thumbnail_style">Στυλ μικρογραφίας φακέλου</string>
     <string name="file_thumbnail_style">Στυλ μικρογραφίας αρχείου</string>
-    <string name="mark_favorite_items">Σημείωση Αγαπημένων στοιχείων</string>
+
     <string name="thumbnail_spacing">Απόσταση μικρογραφιών</string>
     <string name="show_file_count_line">Εμφάνιση πλήθους αρχείων σε ξεχωριστή γραμμή</string>
     <string name="show_file_count_brackets">Εμφάνιση πλήθους αρχείων σε αγκύλες</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Περιορισμός μεγάλων τίτλων φακέλων σε 1 γραμμή</string>
     <string name="square">Τετράγωνο</string>
     <string name="rounded_corners">Στρογγυλεμένες γωνίες</string>
-    <string name="export_favorite_paths">Εξαγωγή αγαπημένων</string>
-    <string name="import_favorite_paths">Εισαγωγή αγαπημένων</string>
+
+
     <string name="paths_imported_successfully">Οι Διαδρομές εισήχθησαν με επιτυχία</string>
     <string name="media_management_prompt">Για να βεβαιωθείτε ότι όλες οι λειτουργίες αρχείων λειτουργούν αξιόπιστα, παρακαλούμε ορίστε την, \"Εφαρμογή Διαχείρισης Πολυμέσων\" στις ρυθμίσεις της συσκευής σας.</string>
     <string name="password_protect_excluded">Προστασία ορατότητας αποκλεισμένου φακέλου με κωδικό</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Περισσότερες λεπτομέρειες</string>
     <string name="bottom_actions">Λειτουργίες στο κάτω μέρος</string>
     <string name="manage_bottom_actions">Διαχείρηση εμφάνισης λειτουργιών</string>
-    <string name="toggle_favorite">Εναλλαγή αγαπημένων</string>
+
     <string name="toggle_file_visibility">Εναλλαγή προβολής αρχείου</string>
     <string name="faq_2_title">Κλείδωσα την εφαρμογή με κωδικό, αλλά τον ξέχασα. Τι μπορώ να κάνω;</string>
     <string name="faq_2_text">Υπάρχουν 2 λύσεις. Μπορείτε να κάνετε επανεγκατάσταση της εφαρμογής, ή μπορείτε να εντοπίσετε την εφαρμογή στις ρυθμίσεις της συσκευής και να επιλέξετε \"Εκκαθάριση αποθηκευτικού χώρου\". Θα επαναφέρει όλες τις ρυθμίσεις και δεν θα σβήσει κάποιο αρχείο πολυμέσου.</string>

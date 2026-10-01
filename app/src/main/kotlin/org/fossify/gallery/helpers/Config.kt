@@ -197,9 +197,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_THUMBNAIL_FILE_TYPES, true)
         set(showThumbnailFileTypes) = prefs.edit().putBoolean(SHOW_THUMBNAIL_FILE_TYPES, showThumbnailFileTypes).apply()
 
-    var markFavoriteItems: Boolean
-        get() = prefs.getBoolean(MARK_FAVORITE_ITEMS, true)
-        set(markFavoriteItems) = prefs.edit().putBoolean(MARK_FAVORITE_ITEMS, markFavoriteItems).apply()
 
     var screenRotation: Int
         get() = prefs.getInt(SCREEN_ROTATION, ROTATE_BY_SYSTEM_SETTING)
@@ -401,9 +398,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(TEMP_SKIP_RECYCLE_BIN, false)
         set(tempSkipRecycleBin) = prefs.edit().putBoolean(TEMP_SKIP_RECYCLE_BIN, tempSkipRecycleBin).apply()
 
-    var wereFavoritesPinned: Boolean
-        get() = prefs.getBoolean(WERE_FAVORITES_PINNED, false)
-        set(wereFavoritesPinned) = prefs.edit().putBoolean(WERE_FAVORITES_PINNED, wereFavoritesPinned).apply()
 
     var wasRecycleBinPinned: Boolean
         get() = prefs.getBoolean(WAS_RECYCLE_BIN_PINNED, false)
@@ -422,7 +416,7 @@ class Config(context: Context) : BaseConfig(context) {
         set(useRecycleBin) = prefs.edit().putBoolean(USE_RECYCLE_BIN, useRecycleBin).apply()
 
     var bottomActions: Boolean
-        get() = prefs.getBoolean(BOTTOM_ACTIONS, true)
+        get() = true
         set(bottomActions) = prefs.edit().putBoolean(BOTTOM_ACTIONS, bottomActions).apply()
 
     fun removeLastVideoPosition(path: String) {
@@ -453,7 +447,7 @@ class Config(context: Context) : BaseConfig(context) {
         }
 
     var visibleBottomActions: Int
-        get() = prefs.getInt(VISIBLE_BOTTOM_ACTIONS, DEFAULT_BOTTOM_ACTIONS)
+        get() = DEFAULT_BOTTOM_ACTIONS
         set(visibleBottomActions) = prefs.edit().putInt(VISIBLE_BOTTOM_ACTIONS, visibleBottomActions).apply()
 
     // if a user hides a folder, then enables temporary hidden folder displaying, make sure we show it properly
@@ -559,9 +553,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getFloat(EDITOR_BRUSH_SIZE, 0.05f)
         set(editorBrushSize) = prefs.edit().putFloat(EDITOR_BRUSH_SIZE, editorBrushSize).apply()
 
-    var wereFavoritesMigrated: Boolean
-        get() = prefs.getBoolean(WERE_FAVORITES_MIGRATED, false)
-        set(wereFavoritesMigrated) = prefs.edit().putBoolean(WERE_FAVORITES_MIGRATED, wereFavoritesMigrated).apply()
 
     var showFolderMediaCount: Int
         get() = prefs.getInt(FOLDER_MEDIA_COUNT, FOLDER_MEDIA_CNT_LINE)
@@ -595,9 +586,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SEARCH_ALL_FILES_BY_DEFAULT, false)
         set(searchAllFilesByDefault) = prefs.edit().putBoolean(SEARCH_ALL_FILES_BY_DEFAULT, searchAllFilesByDefault).apply()
 
-    var lastExportedFavoritesFolder: String
-        get() = prefs.getString(LAST_EXPORTED_FAVORITES_FOLDER, "")!!
-        set(lastExportedFavoritesFolder) = prefs.edit().putString(LAST_EXPORTED_FAVORITES_FOLDER, lastExportedFavoritesFolder).apply()
 
     var showPermissionRationale: Boolean
         get() = prefs.getBoolean(SHOW_PERMISSION_RATIONALE, false)

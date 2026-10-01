@@ -171,7 +171,7 @@
     <string name="allow_zooming_videos">Dovoli povečavo videov z dvakratnim pritiskom nanj</string>
     <string name="folder_thumbnail_style">Slog sličice mape</string>
     <string name="file_thumbnail_style">Slog sličice datoteke</string>
-    <string name="mark_favorite_items">Označi priljubljene predmete</string>
+
     <string name="thumbnail_spacing">Razmik sličic</string>
     <string name="show_file_count_line">Prikaži število datotek v svoji vrstici</string>
     <string name="show_file_count_brackets">Prikaži število datotek v oklepaju</string>
@@ -179,8 +179,8 @@
     <string name="limit_folder_title">Omeji dolga imena map na eno vrstico</string>
     <string name="square">Kvadrat</string>
     <string name="rounded_corners">Zaobljeni vogali</string>
-    <string name="export_favorite_paths">Izvozi priljubljene</string>
-    <string name="import_favorite_paths">Uvozi priljubljene</string>
+
+
     <string name="paths_imported_successfully">Uspešno uvoženo</string>
     <string name="media_management_prompt">Da zagotovite zanesljivo operiranje z datotekam, prosimo nastavite to aplikacijo za upravljanje medijev v nastavitvah vaše naprave.</string>
     <string name="password_protect_excluded">Zaščita vidnosti izključenih map z geslom</string>
@@ -197,7 +197,7 @@
     <string name="extended_details">Razširjene podrobnosti</string>
     <string name="bottom_actions">Akcije na dnu</string>
     <string name="manage_bottom_actions">Urejaj vidne akcije na dnu</string>
-    <string name="toggle_favorite">Preklopi priljubljene</string>
+
     <string name="toggle_file_visibility">Preklopi vidljivost datotek</string>
     <string name="faq_2_title">Aplikacijo sem zaklenil z geslom, ki se ga ne spomnim več. Kaj lahko naredimo\?</string>
     <string name="faq_2_text">To lahko rešite na 2 načina. Lahko ali ponovno namestite aplikacijo ali pa jo poiščete v nastavitvah in kliknete \"Počisti podatke\". To bo ponastavilo vaše nastavitve, ne bo pa izbrisalo nobenih datotek.</string>

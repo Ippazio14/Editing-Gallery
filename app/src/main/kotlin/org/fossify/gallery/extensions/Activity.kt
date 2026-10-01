@@ -98,7 +98,12 @@ fun Activity.launchGesturePlayer(path: String, extras: HashMap<String, Boolean> 
 
 fun Activity.openEditor(path: String, forceChooser: Boolean = false) {
     val newPath = path.removePrefix("file://")
-    openEditorIntent(newPath, forceChooser, BuildConfig.APPLICATION_ID)
+    if (!forceChooser && !newPath.isVideoFast()) {
+        val source = if (newPath.startsWith("content://")) Uri.parse(newPath) else Uri.fromFile(File(newPath))
+        startActivityForResult(Intent(this, org.fossify.gallery.activities.EditActivity::class.java).setData(source), REQUEST_EDIT_IMAGE)
+    } else {
+        openEditorIntent(newPath, forceChooser, BuildConfig.APPLICATION_ID)
+    }
 }
 
 fun Activity.launchCamera() {
@@ -113,7 +118,7 @@ fun SimpleActivity.launchSettings() {
 
 fun SimpleActivity.launchAbout() {
     val licenses = LICENSE_GLIDE or LICENSE_CROPPER or LICENSE_RTL or LICENSE_SUBSAMPLING or LICENSE_PATTERN or LICENSE_REPRINT or LICENSE_GIF_DRAWABLE or
-        LICENSE_PICASSO or LICENSE_EXOPLAYER or LICENSE_SANSELAN or LICENSE_FILTERS or LICENSE_GESTURE_VIEWS or LICENSE_APNG
+        LICENSE_PICASSO or LICENSE_EXOPLAYER or LICENSE_SANSELAN or LICENSE_GESTURE_VIEWS or LICENSE_APNG
 
     val faqItems = arrayListOf(
         FAQItem(R.string.faq_3_title, R.string.faq_3_text),
@@ -518,7 +523,7 @@ fun BaseSimpleActivity.showRestoreConfirmationDialog(count: Int, callback: () ->
     }
 }
 
-fun BaseSimpleActivity.updateFavoritePaths(fileDirItems: ArrayList<FileDirItem>, destination: String) {
+fun BaseSimpleActivity.updateMovedMediaPaths(fileDirItems: ArrayList<FileDirItem>, destination: String) {
     ensureBackgroundThread {
         fileDirItems.forEach {
             val newPath = "$destination/${it.name}"
@@ -585,7 +590,7 @@ fun AppCompatActivity.fixDateTaken(
                         operations.clear()
                     }
 
-                    mediaDB.updateFavoriteDateTaken(path, timestamp)
+                    mediaDB.updateDateTaken(path, timestamp)
                     didUpdateFile = true
 
                     val dateTaken = DateTaken(

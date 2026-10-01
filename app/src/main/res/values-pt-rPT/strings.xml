@@ -101,7 +101,7 @@
     <string name="by_file_type">Tipo de ficheiro</string>
     <string name="show_folder_name">Mostrar nome da pasta</string>
     <string name="allow_photo_gestures">Permitir controlo do brilho com gestos verticais</string>
-    <string name="toggle_favorite">Alternar favorito</string>
+
     <string name="full_storage_permission_required">Fossify Gallery precisa de acessso total para mostrar as fotos e os vídeos. Aceda a Definições &gt; Permissões &gt; Fotos e vídeos &gt; Permitir.</string>
     <string name="exclude_folder_parent">Excluir antes a pasta superior?</string>
     <string name="resize_and_save">Redimensionar seleção e guardar</string>
@@ -135,7 +135,7 @@
     <string name="folder_on_widget">Pasta mostrada no widget:</string>
     <string name="playback_speed">Velocidade de reprodução</string>
     <string name="show_at_bottom">Mostrar alguns botões de ação na base do ecrã</string>
-    <string name="mark_favorite_items">Marcar itens favoritos</string>
+
     <string name="thumbnail_spacing">Espaçamento entre miniaturas</string>
     <string name="show_file_count_line">Mostrar número de ficheiros em linha distinta</string>
     <string name="faq_3_text">Prima longamente o álbum, seleccione Fixar no topo a partir do menu e será apresentado no topo. Pode também fixar diversas pastas em simultâneo. A ordem de apresentação é a da ordenação padrão.</string>
@@ -198,8 +198,8 @@
     <string name="limit_folder_title">Restringir título das pastas a 1 linha</string>
     <string name="square">Quadrado</string>
     <string name="rounded_corners">Cantos arredondados</string>
-    <string name="export_favorite_paths">Exportar favoritos</string>
-    <string name="import_favorite_paths">Importar favoritos</string>
+
+
     <string name="paths_imported_successfully">Caminhos importados com sucesso</string>
     <string name="media_management_prompt">Para garantir que todas as operações de ficheiros funcionem corretamente, torne esta a aplicação padrão para gerir os ficheiros multimédia.</string>
     <string name="media_management_manual">Ocorreu um erro. Aceda às definições e conceda as permissões necessárias para que esta aplicação possa fazer a gestão de ficheiros multimédia.</string>

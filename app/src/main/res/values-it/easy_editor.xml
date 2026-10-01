@@ -1,0 +1,30 @@
+<resources>
+    <string name="easy_preview">Anteprima foto</string>
+    <string name="easy_undo">Annulla modifica</string>
+    <string name="easy_redo">Ripeti modifica</string>
+    <string name="easy_auto">Correzione automatica</string>
+    <string name="easy_crop">Ritaglia</string>
+    <string name="easy_resize">Ridimensiona e comprimi</string>
+    <string name="easy_rotate">Ruota di 90°</string>
+    <string name="easy_random">Regolazioni casuali</string>
+    <string name="easy_saturation">Saturazione</string>
+    <string name="easy_temperature">Temperatura</string>
+    <string name="easy_brightness">Luminosità</string>
+    <string name="easy_contrast">Contrasto</string>
+    <string name="easy_loading">Apertura foto…</string>
+    <string name="easy_save_copy">Salva copia</string>
+    <string name="easy_dimensions">%1$d × %2$d px · JPEG %3$d%%</string>
+    <string name="easy_cancel">Annulla</string>
+    <string name="easy_apply">Applica</string>
+    <string name="easy_width">Larghezza in pixel (1–%1$d)</string>
+    <string name="easy_quality">Qualità JPEG (1–100)</string>
+    <string name="easy_ratio">Altezza automatica. Le proporzioni originali vengono conservate.</string>
+    <string name="easy_saving">Salvataggio copia…</string>
+    <string name="easy_saved">Copia salvata. Originale conservato.</string>
+    <string name="easy_read_error">Impossibile aprire questa foto.</string>
+    <string name="easy_image_too_large">Questo prototipo supporta foto fino a 40 megapixel.</string>
+    <string name="easy_memory_error">Memoria insufficiente per questa foto. Originale conservato.</string>
+    <string name="easy_copy_only">Scegli un file diverso per conservare l’originale.</string>
+    <string name="easy_discard">Uscire dall’editor? Le modifiche non salvate verranno perse.</string>
+    <string name="easy_exit">Esci</string>
+</resources>

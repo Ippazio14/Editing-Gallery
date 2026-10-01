@@ -182,7 +182,7 @@
     <string name="allow_zooming_videos">Povoliť približovanie videí dvojitým ťuknutím</string>
     <string name="folder_thumbnail_style">Štýl miniatúr priečinkov</string>
     <string name="file_thumbnail_style">Štýl miniatúr súborov</string>
-    <string name="mark_favorite_items">Označiť obľúbené položky</string>
+
     <string name="thumbnail_spacing">Medzery medzi miniatúrami</string>
     <string name="show_file_count_line">Zobraziť počet súborov na samostatnom riadku</string>
     <string name="show_file_count_brackets">Zobraziť počet súborov v zátvorkách</string>
@@ -190,8 +190,8 @@
     <string name="limit_folder_title">Obmedziť názvy dlhých priečinkov na 1 riadok</string>
     <string name="square">Štvorec</string>
     <string name="rounded_corners">Zaoblené rohy</string>
-    <string name="export_favorite_paths">Exportovať obľúbené</string>
-    <string name="import_favorite_paths">Importovať obľúbené</string>
+
+
     <string name="paths_imported_successfully">Cesty boli úspešne importované</string>
     <string name="media_management_prompt">Aby súborové operácie fungovali správne, prosím povoľte túto apku ako Správca médií v nastaveniach zariadenia.</string>
     <string name="password_protect_excluded">Uzamknúť viditeľnosť vylúčených priečinkov heslom</string>
@@ -208,7 +208,7 @@
     <string name="extended_details">Rozšírené vlastnosti</string>
     <string name="bottom_actions">Spodné akčné tlačidlá</string>
     <string name="manage_bottom_actions">Upraviť viditeľné spodné akčné tlačidlá</string>
-    <string name="toggle_favorite">Prepnutie obľúbenosti</string>
+
     <string name="toggle_file_visibility">Prepnutie viditeľnosti súboru</string>
     <string name="faq_2_title">Uzamkol som apku heslom, ale zabudol som ho. Čo môžem spraviť\?</string>
     <string name="faq_2_text">Viete to vyriešǐť 2 spôsobmi. Môžete apku buď preinštalovať, alebo ju nájsť v nastaveniach zariadenia a zvoliť \"Vymazať údaje\". Vymaže to iba nastavenia, nie súbory.</string>

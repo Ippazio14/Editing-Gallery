@@ -164,7 +164,7 @@
     <string name="allow_zooming_videos">காணொளிகளை இரட்டைத் தட்டிப் பெரிதாக்க அனுமதி</string>
     <string name="folder_thumbnail_style">கோப்புறை சிறுபட பாணி</string>
     <string name="file_thumbnail_style">கோப்பு சிறுபட பாணி</string>
-    <string name="mark_favorite_items">அபிமானவையைக் குறி</string>
+
     <string name="thumbnail_spacing">சிறுபட இடைவெளி</string>
     <string name="show_file_count_line">கோப்பு எண்ணிக்கையை தனி வரியில் காட்டு</string>
     <string name="show_file_count_brackets">கோப்பு எண்ணிக்கையை அடைப்புக்குறிக்குள் காட்டு</string>
@@ -172,13 +172,13 @@
     <string name="limit_folder_title">நீண்ட அடைவு தலைப்புகளை 1 வரிக்கு வரம்பிடு</string>
     <string name="square">சதுரம்</string>
     <string name="rounded_corners">மழுங்கையான மூலைகள்</string>
-    <string name="export_favorite_paths">பிடித்த கோப்பு பாதைகளை ஏற்றுமதி செய்</string>
+
     <string name="thumbnails">சிறுபடங்கள்</string>
     <string name="fullscreen_media">முழுத்திரை ஊடகம்</string>
     <string name="extended_details">நீடித்த விவரங்கள்</string>
     <string name="bottom_actions">அடிப்புறச் செயல்கள்</string>
     <string name="manage_bottom_actions">புலப்படும் அடிப்புறச் செயல்களை நிர்வகி</string>
-    <string name="toggle_favorite">அபிமானதை நிலைமாற்று</string>
+
     <string name="toggle_file_visibility">கோப்பு கட்புலனை நிலைமாற்று</string>
     <string name="faq_2_title">கடவுச்சொல்லுடன் செயலியைப் பூட்டினேன், ஆனால் அதை மறந்தேன். என்ன செய்வது\?</string>
     <string name="faq_2_text">நீங்கள் அதை 2 வழிகளில் தீர்க்கலாம். நீங்கள் செயலியை மறுநிறுவலாம் அ உங்கள் சாதன அமைப்புகளில் செயலியைக் கண்டுபிடித்து \"தரவைத் துடை\" என்பதைத் தேர்ந்தெடுக்கலாம். இது உங்கள் எல்லா அமைப்புகளையும் அகரமாக்கும், இது எந்த ஊடக கோப்புகளையும் நீக்காது.</string>

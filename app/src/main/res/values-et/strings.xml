@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Luba videote suumimist kahekordse puututusega</string>
     <string name="folder_thumbnail_style">Kausta pisipildi stiil</string>
     <string name="file_thumbnail_style">Faili pisipildi stiil</string>
-    <string name="mark_favorite_items">Märgi lemmikud</string>
+
     <string name="thumbnail_spacing">Pisipiltide vahekaugus</string>
     <string name="show_file_count_line">Näita failide arvu eraldi real</string>
     <string name="show_file_count_brackets">Näita failide arvu sulgudes</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Piira pikad kaustanimed 1 reaga</string>
     <string name="square">Ruut</string>
     <string name="rounded_corners">Ümarad nurgad</string>
-    <string name="export_favorite_paths">Ekspordi lemmikud</string>
-    <string name="import_favorite_paths">Impordi lemmikud</string>
+
+
     <string name="paths_imported_successfully">Asukohtade import õnnestus</string>
     <string name="media_management_prompt">Selleks, et kõik failitoimingud toimiksid korralikult, muuda see rakendus oma seadme seadetes meediahaldusrakenduseks.</string>
     <string name="password_protect_excluded">Kaitse salasõna abil varjatud kaustade nähtavust</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Detailne lisateave</string>
     <string name="bottom_actions">Tegevused ekraani alumises ääres</string>
     <string name="manage_bottom_actions">Halda ekraani alumises ääres tehtavaid toiminguid</string>
-    <string name="toggle_favorite">Vaheta olekut lemmikuna</string>
+
     <string name="toggle_file_visibility">Lülita faili nähtavus sisse/välja</string>
     <string name="faq_2_title">Lukustasin rakenduse salasõnaga, kuid unustasin selle. Mida ma saan teha\?</string>
     <string name="faq_2_text">Seda saad lahendada kahel viisil. Võid kas paigaldada rakenduse uuesti või otsi rakenduse kirje oma seadme seadistustest ja vali „Tühjenda andmed“. See nullib kõik sinu seadistused, see ei eemalda ühtegi meediafaili.</string>

@@ -24,7 +24,7 @@
     <string name="svgs">SVG-bildoj</string>
     <string name="portraits">Portretoj</string>
     <string name="thumbnails">Bildetoj</string>
-    <string name="toggle_favorite">Baskuligi plej ŝatatan</string>
+
     <string name="playback_speed">Legada rapideco</string>
     <string name="excluded">(ekskluzivita)</string>
     <string name="show_all">Montri enhavon de ĉiuj dosierujoj</string>
@@ -165,7 +165,7 @@
     <string name="allow_video_gestures">Permesi regi filmetajn sonfortecon kaj helecon per vertikalaj moviĝoj</string>
     <string name="show_image_file_types">Montri dosiertipojn de bildoj</string>
     <string name="thumbnail_spacing">Interspaco de bildetoj</string>
-    <string name="mark_favorite_items">Marki plej ŝatatajn elementojn</string>
+
     <string name="show_file_count_line">Montri nombron de dosieroj en aparta linio</string>
     <string name="show_recycle_bin">Montri rubujojn sur la ekrano de dosierujoj</string>
     <string name="one_finger_zoom">Permesi zomadon per unu fingro por plenekranaj aŭdvidaĵoj</string>
@@ -194,8 +194,8 @@
     <string name="show_file_count_brackets">Montri nombron de dosieroj inter krampoj</string>
     <string name="show_file_count_none">Ne montri nombron de dosieroj</string>
     <string name="limit_folder_title">Limi longajn nomojn de dosierujoj al unu linio</string>
-    <string name="import_favorite_paths">Importi plej ŝatatajn</string>
-    <string name="export_favorite_paths">Eksporti plej ŝatatajn</string>
+
+
     <string name="square">Kvadrato</string>
     <string name="rounded_corners">Rondaj anguloj</string>
     <string name="media_management_prompt">Por certigi, ke ĉiuj operacioj sur dosieroj ĝuste funkcias, bonvolu igi tiun ĉi aplikaĵon aplikaĵo de administrado de aŭdvidaĵoj en viaj aparataj agordoj.</string>

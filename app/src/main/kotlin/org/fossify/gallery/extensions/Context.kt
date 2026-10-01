@@ -62,7 +62,6 @@ import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.sdCardPath
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.helpers.AlphanumericComparator
-import org.fossify.commons.helpers.FAVORITES
 import org.fossify.commons.helpers.NOMEDIA
 import org.fossify.commons.helpers.SORT_BY_COUNT
 import org.fossify.commons.helpers.SORT_BY_CUSTOM
@@ -105,12 +104,10 @@ import org.fossify.gallery.helpers.TYPE_SVGS
 import org.fossify.gallery.helpers.TYPE_VIDEOS
 import org.fossify.gallery.interfaces.DateTakensDao
 import org.fossify.gallery.interfaces.DirectoryDao
-import org.fossify.gallery.interfaces.FavoritesDao
 import org.fossify.gallery.interfaces.MediumDao
 import org.fossify.gallery.interfaces.WidgetsDao
 import org.fossify.gallery.models.AlbumCover
 import org.fossify.gallery.models.Directory
-import org.fossify.gallery.models.Favorite
 import org.fossify.gallery.models.Medium
 import org.fossify.gallery.models.ThumbnailItem
 import org.fossify.gallery.svg.SvgSoftwareLayerSetter
@@ -139,8 +136,6 @@ val Context.mediaDB: MediumDao get() = GalleryDatabase.getInstance(applicationCo
 val Context.directoryDB: DirectoryDao
     get() = GalleryDatabase.getInstance(applicationContext).DirectoryDao()
 
-val Context.favoritesDB: FavoritesDao
-    get() = GalleryDatabase.getInstance(applicationContext).FavoritesDao()
 
 val Context.dateTakensDB: DateTakensDao
     get() = GalleryDatabase.getInstance(applicationContext).DateTakensDao()
@@ -365,7 +360,7 @@ fun Context.getDirectParentSubfolders(
     val foldersWithoutMediaFiles = ArrayList<String>()
 
     for (path in folders) {
-        if (path == RECYCLE_BIN || path == FAVORITES) {
+        if (path == RECYCLE_BIN) {
             continue
         }
 
@@ -429,9 +424,7 @@ fun Context.getDirectParentSubfolders(
         currentPaths.add(RECYCLE_BIN)
     }
 
-    if (currentPathPrefix.isEmpty() && folders.contains(FAVORITES)) {
-        currentPaths.add(FAVORITES)
-    }
+
 
     if (folders.size == currentPaths.size) {
         return dirs.filter { currentPaths.contains(it.path) } as ArrayList<Directory>
@@ -594,7 +587,6 @@ fun Context.getFolderNameFromPath(path: String): String {
         internalStoragePath -> getString(org.fossify.commons.R.string.internal)
         sdCardPath -> getString(org.fossify.commons.R.string.sd_card)
         otgPath -> getString(org.fossify.commons.R.string.usb)
-        FAVORITES -> getString(org.fossify.commons.R.string.favorites)
         RECYCLE_BIN -> getString(org.fossify.commons.R.string.recycle_bin)
         else -> path.getFilenameFromPath()
     }
@@ -934,9 +926,7 @@ fun Context.getCachedMedia(
         }
 
         var media = ArrayList<Medium>()
-        if (path == FAVORITES) {
-            media.addAll(mediaDB.getFavorites())
-        }
+
 
         if (path == RECYCLE_BIN) {
             media.addAll(getUpdatedDeletedMedia())
@@ -1002,8 +992,7 @@ fun Context.getCachedMedia(
                     try {
                         mediaDB.deleteMedia(*mediaToDelete.toTypedArray())
 
-                        mediaToDelete.filter { it.isFavorite }.forEach {
-                            favoritesDB.deleteFavoritePath(it.path)
+.forEach {
                         }
                     } catch (ignored: Exception) {
                     }
@@ -1018,8 +1007,7 @@ fun Context.removeInvalidDBDirectories(dirs: ArrayList<Directory>? = null) {
     val dirsToCheck = dirs ?: directoryDB.getAll()
     val OTGPath = config.OTGPath
     dirsToCheck.filter {
-        !it.areFavorites()
-                && !it.isRecycleBin()
+        !it.isRecycleBin()
                 && !getDoesFilePathExist(it.path, OTGPath)
                 && it.path != config.tempFolderPath
     }.forEach {
@@ -1035,7 +1023,6 @@ fun Context.updateDBMediaPath(oldPath: String, newPath: String) {
     val newParentPath = newPath.getParentPath()
     try {
         mediaDB.updateMedium(newFilename, newPath, newParentPath, oldPath)
-        favoritesDB.updateFavorite(newFilename, newPath, newParentPath, oldPath)
     } catch (ignored: Exception) {
     }
 }
@@ -1062,29 +1049,11 @@ fun Context.getOTGFolderChildrenNames(path: String): MutableList<String?>? {
     return getOTGFolderChildren(path)?.map { it.name }?.toMutableList()
 }
 
-fun Context.getFavoritePaths(): ArrayList<String> {
-    return try {
-        favoritesDB.getValidFavoritePaths() as ArrayList<String>
-    } catch (e: Exception) {
-        ArrayList()
-    }
-}
 
-fun Context.getFavoriteFromPath(path: String): Favorite {
-    return Favorite(null, path, path.getFilenameFromPath(), path.getParentPath())
-}
 
-fun Context.updateFavorite(path: String, isFavorite: Boolean) {
-    try {
-        if (isFavorite) {
-            favoritesDB.insert(getFavoriteFromPath(path))
-        } else {
-            favoritesDB.deleteFavoritePath(path)
-        }
-    } catch (e: Exception) {
-        toast(org.fossify.commons.R.string.unknown_error_occurred)
-    }
-}
+
+
+
 
 // remove the "recycle_bin" from the file path prefix, replace it with real bin path /data/user...
 fun Context.getUpdatedDeletedMedia(): ArrayList<Medium> {
@@ -1208,7 +1177,6 @@ fun Context.addPathToDB(path: String) {
         }
 
         try {
-            val isFavorite = favoritesDB.isFavorite(path)
             val videoDuration = if (type == TYPE_VIDEOS) getDuration(path) ?: 0 else 0
             val medium = Medium(
                 id = null,
@@ -1220,7 +1188,6 @@ fun Context.addPathToDB(path: String) {
                 size = File(path).length(),
                 type = type,
                 videoDuration = videoDuration,
-                isFavorite = isFavorite,
                 deletedTS = 0L,
                 mediaStoreId = 0L
             )
@@ -1358,7 +1325,6 @@ fun Context.updateDirectoryPath(path: String) {
     }
 
     val dateTakens = mediaFetcher.getFolderDateTakens(path)
-    val favoritePaths = getFavoritePaths()
     val curMedia = mediaFetcher.getFilesFrom(
         curPath = path,
         isPickImage = getImagesOnly,
@@ -1366,7 +1332,6 @@ fun Context.updateDirectoryPath(path: String) {
         getProperDateTaken = getProperDateTaken,
         getProperLastModified = getProperLastModified,
         getProperFileSize = getProperFileSize,
-        favoritePaths = favoritePaths,
         getVideoDurations = false,
         lastModifieds = lastModifieds,
         dateTakens = dateTakens,

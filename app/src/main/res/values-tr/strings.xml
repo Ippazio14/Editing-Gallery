@@ -188,7 +188,7 @@
     <string name="allow_zooming_videos">Videoları iki kez dokunarak yakınlaştırmaya izin ver</string>
     <string name="folder_thumbnail_style">Klasör küçük resim stili</string>
     <string name="file_thumbnail_style">Dosya küçük resim stili</string>
-    <string name="mark_favorite_items">Favori ögeleri işaretle</string>
+
     <string name="thumbnail_spacing">Küçük resim aralığı</string>
     <string name="show_file_count_line">Dosya sayısını ayrı bir satırda göster</string>
     <string name="show_file_count_brackets">Dosya sayısını parantez içinde göster</string>
@@ -196,8 +196,8 @@
     <string name="limit_folder_title">Uzun klasör başlıklarını 1 satırla sınırla</string>
     <string name="square">Kare</string>
     <string name="rounded_corners">Yuvarlatılmış köşeler</string>
-    <string name="export_favorite_paths">Favorileri dışa aktar</string>
-    <string name="import_favorite_paths">Favorileri içe aktar</string>
+
+
     <string name="paths_imported_successfully">Yollar başarıyla içe aktarıldı</string>
     <string name="media_management_prompt">Tüm dosya işlemlerinin güvenilir bir şekilde çalıştığından emin olmak için lütfen bu uygulamayı aygıt ayarlarınızda bir medya yönetimi uygulaması yapın.</string>
     <string name="password_protect_excluded">Hariç tutulan klasör görünürlüğünü parola ile koru</string>
@@ -214,7 +214,7 @@
     <string name="extended_details">Genişletilmiş ayrıntılar</string>
     <string name="bottom_actions">Alt eylemler</string>
     <string name="manage_bottom_actions">Görünür alt eylemleri yönet</string>
-    <string name="toggle_favorite">Favoriyi göster/gizle</string>
+
     <string name="toggle_file_visibility">Dosya görünürlüğünü aç/kapat</string>
     <string name="faq_1_title">Fossify Galeri\'yi nasıl öntanımlı aygıt galerisi yapabilirim?</string>
     <string name="faq_1_text">Önce aygıt ayarlarınızın Uygulamalar bölümünde öntanımlı galeriyi bulmanız, \"Öntanımlı olarak aç\" gibi bir şey söyleyen bir düğme aramanız, üzerine tıklamanız ve ardından \"Öntanımlıları Temizle\" seçeneğini seçmeniz gerekir. Gelecek sefer video veya resim açmayı denediğinizde, Fossify Galeri\'yi seçip öntanımlı uygulama haline getirebileceğiniz bir uygulama seçicisini görmelisiniz.</string>

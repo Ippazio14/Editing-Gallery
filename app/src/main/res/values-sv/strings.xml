@@ -183,7 +183,7 @@
     <string name="allow_zooming_videos">Tillåt förstoring av videor genom att dubbelklicka</string>
     <string name="folder_thumbnail_style">Miniatyrbildstil för mapp</string>
     <string name="file_thumbnail_style">Miniatyrbildstil för fil</string>
-    <string name="mark_favorite_items">Markera favoriter</string>
+
     <string name="thumbnail_spacing">Avstånd för miniatyrbild</string>
     <string name="show_file_count_line">Visa filantal på en separat rad</string>
     <string name="show_file_count_brackets">Visa filantal i klammrar</string>
@@ -191,8 +191,8 @@
     <string name="limit_folder_title">Begränsa långa mappnamn till en rad</string>
     <string name="square">Fyrkant</string>
     <string name="rounded_corners">Rundade hörn</string>
-    <string name="export_favorite_paths">Exportera favoriter</string>
-    <string name="import_favorite_paths">Importera favoriter</string>
+
+
     <string name="paths_imported_successfully">Sökvägar importerade</string>
     <string name="media_management_prompt">För att vara försäkrad om att filhanteringen fungerar som den ska, ställ in appen som filhanterare i din apparats inställningar.</string>
     <string name="password_protect_excluded">Lösenord skyddar exkluderad mapp synlighet</string>
@@ -209,7 +209,7 @@
     <string name="extended_details">Utökad information</string>
     <string name="bottom_actions">Åtgärder längst ned på skärmen</string>
     <string name="manage_bottom_actions">Hantera synliga åtgärder längst ned på skärmen</string>
-    <string name="toggle_favorite">Växla favorit</string>
+
     <string name="toggle_file_visibility">Visa/dölj fil</string>
     <string name="faq_1_title">Hur kan jag göra Fossify Gallery till enhetens standardgalleri?</string>
     <string name="faq_2_title">Jag låste appen med ett lösenord, men jag glömde det. Vad kan jag göra\?</string>

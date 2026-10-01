@@ -181,7 +181,7 @@
     <string name="allow_zooming_videos">Bij video\'s inzoomen met dubbelklikken</string>
     <string name="folder_thumbnail_style">Stijl voor miniaturen van mappen</string>
     <string name="file_thumbnail_style">Stijl voor miniaturen van bestanden</string>
-    <string name="mark_favorite_items">Favoriete items markeren</string>
+
     <string name="thumbnail_spacing">Afstand tussen miniaturen</string>
     <string name="show_file_count_line">Aantal bestanden op aparte regel tonen</string>
     <string name="show_file_count_brackets">Aantal bestanden tussen haakjes tonen</string>
@@ -189,8 +189,8 @@
     <string name="limit_folder_title">Lange mapnamen tot 1 regel beperken</string>
     <string name="square">Vierkant</string>
     <string name="rounded_corners">Afgeronde hoeken</string>
-    <string name="export_favorite_paths">Favorieten exporteren</string>
-    <string name="import_favorite_paths">Favorieten importeren</string>
+
+
     <string name="paths_imported_successfully">Locaties zijn geïmporteerd</string>
     <string name="media_management_prompt">Maak van deze app in de systeeminstellingen een mediabeheer-app om er zeker van te zijn dat alle bestandsoperaties betrouwbaar werken.</string>
     <string name="password_protect_excluded">Zichtbaarheid van uitgesloten mappen met wachtwoord beveiligen</string>
@@ -207,7 +207,7 @@
     <string name="extended_details">Uitgebreide informatie</string>
     <string name="bottom_actions">Acties onderin het scherm</string>
     <string name="manage_bottom_actions">Actieknoppen onderaan beheren</string>
-    <string name="toggle_favorite">Favoriet in-/uitschakelen</string>
+
     <string name="toggle_file_visibility">Bestand tonen/verbergen</string>
     <string name="faq_2_title">Ik heb de app beveiligd met een wachtwoord, maar ben het wachtwoord nu vergeten. Wat kan ik doen\?</string>
     <string name="faq_2_text">De-installeer en herinstalleer de app, of ga naar de app in de Android-instellingen via \"Apps (en meldingen)\" -&gt; \"App-info\" en kies via \"Opslagruimte\" voor \"Gegevens wissen\". Hiermee worden alleen de instellingen van deze app gewist.</string>
