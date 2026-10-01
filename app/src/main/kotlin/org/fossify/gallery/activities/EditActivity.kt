@@ -36,6 +36,7 @@ class EditActivity : SimpleActivity() {
     private var uri: Uri? = null
     private var generation = 0
     private var saving = false
+    private var rendering = false
     private var ready = false
     private lateinit var image: ImageView
     private lateinit var undoButton: Button
@@ -198,9 +199,9 @@ class EditActivity : SimpleActivity() {
     }
 
     private fun updateControls() {
-        editButtons.forEach { it.isEnabled = ready && !saving }
-        undoButton.isEnabled = ready && !saving && undo.isNotEmpty()
-        redoButton.isEnabled = ready && !saving && redo.isNotEmpty()
+        editButtons.forEach { it.isEnabled = ready && !saving && !rendering }
+        undoButton.isEnabled = ready && !saving && !rendering && undo.isNotEmpty()
+        redoButton.isEnabled = ready && !saving && !rendering && redo.isNotEmpty()
         values["saturation"]?.text = state.saturation.toString(); values["temperature"]?.text = state.temperature.toString()
         values["brightness"]?.text = state.brightness.toString(); values["contrast"]?.text = state.contrast.toString()
     }
@@ -249,12 +250,14 @@ class EditActivity : SimpleActivity() {
     private fun renderPreview() {
         val input = previewSource ?: return
         val edit = state; val ticket = ++generation
+        rendering = true
         updateControls()
         worker.execute {
             try {
                 val output = render(input, edit, false)
                 runOnUiThread {
                     if (!isDestroyed && ticket == generation) {
+                        rendering = false; updateControls()
                         val old = preview; preview = output; image.setImageBitmap(output); old?.recycle()
                         val (w,h) = dimensions(edit)
                         status.text = getString(R.string.easy_dimensions, w, h, edit.quality)
@@ -286,7 +289,7 @@ class EditActivity : SimpleActivity() {
     private fun cropDialog() {
         val shown = preview ?: return
         // The established cropper handles touch gestures; edit history stores only its normalized rectangle.
-        val cropper = CropImageView(this).apply { setImageBitmap(shown); setAutoZoomEnabled(false) }
+        val cropper = CropImageView(this).apply { setImageBitmap(shown); isAutoZoomEnabled = false }
         val dialog = AlertDialog.Builder(this).setTitle(R.string.easy_crop).setView(cropper)
             .setNegativeButton(R.string.easy_cancel, null).setPositiveButton(R.string.easy_apply) { _, _ ->
                 cropper.cropRect?.let { rect ->
@@ -355,7 +358,7 @@ class EditActivity : SimpleActivity() {
     }
 
     private fun showFailure(message: String?) = runOnUiThread {
-        if (!isDestroyed) { status.text=message ?: label(R.string.easy_read_error); updateControls() }
+        if (!isDestroyed) { rendering = false; status.text=message ?: label(R.string.easy_read_error); updateControls() }
     }
 
     @Deprecated("Handled for the prototype's discard confirmation")

@@ -987,6 +987,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         openPath(
             path = path,
             forceChooser = false,
+            extras = hashMapOf<String, Boolean>().apply {
                 if (path.startsWith(recycleBinPath)) put(IS_IN_RECYCLE_BIN, true)
                 if (shouldSkipAuthentication()) put(SKIP_AUTHENTICATION, true)
             }

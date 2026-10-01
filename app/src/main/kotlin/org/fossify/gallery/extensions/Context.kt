@@ -992,8 +992,6 @@ fun Context.getCachedMedia(
                     try {
                         mediaDB.deleteMedia(*mediaToDelete.toTypedArray())
 
-.forEach {
-                        }
                     } catch (ignored: Exception) {
                     }
                 }
@@ -1022,7 +1020,7 @@ fun Context.updateDBMediaPath(oldPath: String, newPath: String) {
     val newFilename = newPath.getFilenameFromPath()
     val newParentPath = newPath.getParentPath()
     try {
-        mediaDB.updateMedium(newFilename, newPath, newParentPath, oldPath)
+        mediaDB.updateMedium(oldPath = oldPath, newParentPath = newParentPath, newFilename = newFilename, newFullPath = newPath)
     } catch (ignored: Exception) {
     }
 }
@@ -1227,7 +1225,7 @@ fun Context.createDirectoryFromMedia(
     }
 
     val isSortingAscending = config.directorySorting.isSortingAscending()
-    val defaultMedium = Medium(0, "", "", "", 0L, 0L, 0L, 0, 0, false, 0L, 0L)
+    val defaultMedium = Medium(0, "", "", "", 0L, 0L, 0L, 0, 0, 0L, 0L)
     val firstItem = curMedia.firstOrNull() ?: defaultMedium
     val lastItem = curMedia.lastOrNull() ?: defaultMedium
     val dirName = checkAppendingHidden(path, hiddenString, includedFolders, noMediaFolders)
