@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Галерия</string>
     <string name="edit">Редакция</string>
-    <string name="open_camera">Камера</string>
     <string name="hidden">(скрито)</string>
     <string name="excluded">(изключено)</string>
     <string name="pin_folder">Закачане на папката</string>
     <string name="unpin_folder">Премахване от закачените</string>
     <string name="pin_to_the_top">Закачане най-горе</string>
-    <string name="show_all">Показване на всички медийни файлове</string>
     <string name="all_folders">Всички папки</string>
-    <string name="folder_view">Показване на папки</string>
     <string name="other_folder">Избор на папка</string>
     <string name="show_on_map">Показване на картата</string>
     <string name="unknown_location">Неизвестно местоположение</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Подреждане на папките с влачене</string>
     <string name="reorder_by_dragging_pro">Подреждане на папките с влачене (про)</string>
     <string name="restore_to_path">Възстановяване в „%s“</string>
-    <string name="filter_media">Филтриране</string>
     <string name="images">Изображения</string>
     <string name="videos">Видео</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">Портрети</string>
-    <string name="no_media_with_filters">На зададените филтри не отговарят файлове.</string>
-    <string name="change_filters_underlined"><u>Променяне на филтрите</u></string>
     <string name="hide_folder_description">По този начин ще бъде добавен файл „.nomedia“, който скрива папката и нейното съдържание от приложението. Можете да прегледате скритото съдържание като изберете „Показване на скрити елементи“ от настройките. Продължаване?</string>
     <string name="exclude_folder_parent">Изключване на родителската папката?</string>
     <string name="hidden_folders">Скрити папки</string>

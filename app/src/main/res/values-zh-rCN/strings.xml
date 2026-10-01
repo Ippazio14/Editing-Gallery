@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">图库</string>
     <string name="edit">编辑</string>
-    <string name="open_camera">打开相机</string>
     <string name="hidden">(隐藏)</string>
     <string name="excluded">(排除)</string>
     <string name="pin_folder">靠前固定文件夹</string>
     <string name="unpin_folder">取消靠前固定文件夹</string>
     <string name="pin_to_the_top">靠前固定</string>
-    <string name="show_all">显示所有文件夹的内容</string>
     <string name="all_folders">所有文件夹</string>
-    <string name="folder_view">切换为文件夹视图</string>
     <string name="other_folder">其他文件夹</string>
     <string name="show_on_map">在地图上显示</string>
     <string name="unknown_location">未知位置</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">通过拖动重新排列文件夹</string>
     <string name="reorder_by_dragging_pro">通过拖动重新排列文件夹 (专业版)</string>
     <string name="restore_to_path">恢复至“%s”</string>
-    <string name="filter_media">过滤显示的文件</string>
     <string name="images">图片</string>
     <string name="videos">视频</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">RAW 图像</string>
     <string name="svgs">SVG</string>
     <string name="portraits">竖向</string>
-    <string name="no_media_with_filters">没有找到符合该过滤条件的媒体文件。</string>
-    <string name="change_filters_underlined"><u>更改过滤条件</u></string>
     <string name="hide_folder_description">此隐藏方式将在文件夹中添加“.nomedia”文件来隐藏文件夹，这也将隐藏它的所有子文件夹。您可以通过启用设置中的“显示隐藏的项目”选项来显示被隐藏的内容。您确定要继续操作吗？</string>
     <string name="exclude_folder_description">这将只在本应用中排除指定的文件夹和它的子文件夹。您可以在设置中管理排除的文件夹。</string>
     <string name="exclude_folder_parent">是否排除上级文件夹？</string>

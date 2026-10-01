@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Галерея</string>
     <string name="edit">Редактировать</string>
-    <string name="open_camera">Камера</string>
     <string name="hidden">(скрыто)</string>
     <string name="excluded">(исключено)</string>
     <string name="pin_folder">Закрепить папку</string>
     <string name="unpin_folder">Открепить папку</string>
     <string name="pin_to_the_top">Закрепить сверху</string>
-    <string name="show_all">Показать все медиафайлы</string>
     <string name="all_folders">Все медиафайлы</string>
-    <string name="folder_view">Папки</string>
     <string name="other_folder">Выбор папки</string>
     <string name="show_on_map">Показать место съёмки</string>
     <string name="unknown_location">Место съёмки не указано</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Сортировка папок перетаскиванием</string>
     <string name="reorder_by_dragging_pro">Сортировка папок перетаскиванием (Pro)</string>
     <string name="restore_to_path">Восстановление в \"%s\"</string>
-    <string name="filter_media">Фильтр медиа</string>
     <string name="images">Изображения</string>
     <string name="videos">Видео</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">Портреты</string>
-    <string name="no_media_with_filters">При заданных фильтрах медиафайлы не найдены.</string>
-    <string name="change_filters_underlined"><u>Изменить фильтры</u></string>
     <string name="hide_folder_description">Эта функция скрывает папку, добавляя в неё файл \".nomedia\". Также будут скрыты все подпапки. Можно показать их, переключая \"Показывать скрытые папки\" в настройках. Продолжить?</string>
     <string name="exclude_folder_parent">Исключить только родительскую папку\?</string>
     <string name="hidden_folders">Скрытые папки</string>

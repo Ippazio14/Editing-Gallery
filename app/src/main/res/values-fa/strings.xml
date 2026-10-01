@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">گالری</string>
     <string name="edit">ویرایش</string>
-    <string name="open_camera">باز کردن دوربین</string>
     <string name="hidden">(پنهان)</string>
     <string name="pin_folder">سنجاق کردن پوشه</string>
     <string name="unpin_folder">برداشتن سنجاق پوشه</string>
     <string name="pin_to_the_top">سنجاق کردن به بالا</string>
-    <string name="show_all">نمایش محتویات همه پوشه‌ها</string>
     <string name="all_folders">همه‌ی پوشه‌ها</string>
-    <string name="folder_view">تغییر به نمای پوشه‌ها</string>
     <string name="other_folder">دیگر پوشه‌ها</string>
     <string name="show_on_map">نمایش روی نقشه</string>
     <string name="unknown_location">مکان نامعلوم</string>
@@ -31,15 +28,12 @@
     <string name="unset_as_default_folder">برداشتن تنظیم به عنوان پوشه‌ی پیش‌گزیده</string>
     <string name="reorder_by_dragging">مرتب‌سازی پوشه‌ها با کشیدن</string>
     <string name="reorder_by_dragging_pro">مرتب‌سازی پوشه‌ها با کشیدن (حرفه‌ای)</string>
-    <string name="filter_media">پالایش رسانه</string>
     <string name="images">تصاویر</string>
     <string name="videos">ویدیوها</string>
     <string name="gifs">گیف‌ها</string>
     <string name="raw_images">تصاویر خام</string>
     <string name="svgs">اس‌وی‌جی‌ها</string>
     <string name="portraits">پرتره‌ها</string>
-    <string name="no_media_with_filters">هیچ پروندهٔ رسانه‌ای با پالایه‌های انتخاب‌شده یافت نشد.</string>
-    <string name="change_filters_underlined"><u>تغییر پالایه‌ها</u></string>
     <string name="hide_folder_description">این قابلیت، با افزودن پروندهٔ «‎.nomedia» به پوشه، آن را پنهان می‌کند؛ این کار باعث پنهان شدن تمام زیرشاخه‌ها نیز خواهد شد. شما می‌توانید با تغییر حالت «نمایش موارد پنهان» در تنظیمات آن‌ها را ببینید. همین را می‌خواهید؟</string>
     <string name="crop_thumbnails">تصویر بند‌انگشتی را مربعی برش بزن</string>
     <string name="autoplay_videos">پخش خودکار ویدیو‌ها</string>

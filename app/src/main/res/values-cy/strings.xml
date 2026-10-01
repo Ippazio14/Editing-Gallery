@@ -3,9 +3,7 @@
     <string name="share_resized">Rhannu fersiwn wedi\'i ailfeintio</string>
     <string name="app_launcher_name">Oriel</string>
     <string name="edit">Golygu</string>
-    <string name="open_camera">Agor y camera</string>
     <string name="hidden">(cudd)</string>
-    <string name="show_all">Dangos cynnwys o bob ffolder</string>
     <string name="excluded">(wedi\'i eithrio)</string>
     <string name="pin_folder">Pinio\'r ffolder</string>
     <string name="unpin_folder">Dadbinio\'r ffolder</string>
@@ -26,7 +24,6 @@
     <string name="dates_fixed_successfully">Dyddiadau wedi\'u cywiro\'n llwyddiannus</string>
     <string name="set_as_default_folder">Gosod fel ffolder ddiofyn</string>
     <string name="unset_as_default_folder">Dad-osod fel ffolder ddiofyn</string>
-    <string name="filter_media">Hidlo cyfryngau</string>
     <string name="images">Delweddau</string>
     <string name="videos">Fideos</string>
     <string name="raw_images">delweddau RAW</string>
@@ -39,7 +36,6 @@
     <string name="free_aspect_ratio">Rhydd</string>
     <string name="hidden_folders">Ffolderi cudd</string>
     <string name="manage_hidden_folders">Rheoli ffolderi cudd</string>
-    <string name="change_filters_underlined"><u>Newid hidlyddion</u></string>
     <string name="include_folders">Ffolderi cynwysedig</string>
     <string name="width">Lled</string>
     <string name="height">Uchder</string>
@@ -96,7 +92,6 @@
     <string name="max_brightness">Defnyddio disgleirdeb mwyaf wrth edrych ar gyfryngau sgrin lawn</string>
     <string name="allow_photo_gestures">Caniatáu rheoli disgleirdeb y llun gydag ystumiau fertigol</string>
     <string name="allow_video_gestures">Caniatáu rheoli uchder sain y fideo a disgleirdeb gydag ystumiau fertigol</string>
-    <string name="folder_view">Newid i\'r golwg ffolder</string>
     <string name="no_date_takens_found">Ni chanfuwyd unrhyw werthoedd Dyddiad y\'i Cymerwyd</string>
     <string name="switch_to_file_search">Newid i chwilio ffeiliau ar draws pob ffolder weladwy</string>
     <string name="resize_multiple_images">Ailfeintio mwy nag un delwedd</string>
@@ -163,7 +158,6 @@
     <string name="reorder_by_dragging">Aildrefnu ffolderi drwy lusgo</string>
     <string name="paths_imported_successfully">Wedi mewnforio\'r llwybrau\'n llwyddiannus</string>
     <string name="toggle_file_visibility">Newid gwelededd y ffeil</string>
-    <string name="no_media_with_filters">Ni chanfuwyd unrhyw ffeiliau cyfryngau gyda\'r hidlyddion a ddewiswyd.</string>
     <string name="show_media_count">Dangos nifer y cyfryngau mewn ffolderi ar y prif olyg</string>
     <string name="allow_changing_aspect_ratio">Caniatáu i newid cymhareb yr agwedd</string>
     <string name="by_last_modified">Wedi\'i addasu yn ddiwethaf</string>

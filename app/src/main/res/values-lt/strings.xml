@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerija</string>
     <string name="edit">Redaguoti</string>
-    <string name="open_camera">Atidaryti fotoaparatą</string>
     <string name="hidden">(paslėpta)</string>
     <string name="excluded">(neįtraukta)</string>
     <string name="pin_folder">Prisegti aplanką</string>
     <string name="unpin_folder">Atsegti aplanką</string>
     <string name="pin_to_the_top">Prisegti į viršų</string>
-    <string name="show_all">Rodyti visų aplankų turinį</string>
     <string name="all_folders">Visi aplankai</string>
-    <string name="folder_view">Perjungti į aplankų peržiūrą</string>
     <string name="other_folder">Kitas aplankas</string>
     <string name="show_on_map">Rodyti žemėlapyje</string>
     <string name="unknown_location">Nežinoma vieta</string>
@@ -19,12 +16,9 @@
     <string name="lock_orientation">Užrakinti orientaciją</string>
     <string name="unlock_orientation">Atrakinti orientaciją</string>
     <string name="change_orientation">Keisti orientaciją</string>
-    <string name="filter_media">Filtruoti mediją</string>
     <string name="images">Vaizdai</string>
     <string name="videos">Vaizdo įrašai</string>
     <string name="gifs">GIF\'ai</string>
-    <string name="no_media_with_filters">Su pasirinktais filtrais nerasta medijos bylų.</string>
-    <string name="change_filters_underlined"><u>Pakeisti filtrus</u></string>
     <string name="hide_folder_description">Ši funkcija slepia aplanką, pridedant į jį \'. Nomedia \' bylą, jis taip pat slėps visus subaplankus. Galite juos peržiūrėti, perjunkite parinktį Rodyti paslėptus elementus \" skiltyje Nustatymai. Tęsti\?</string>
     <string name="exclude_folder_parent">Vietoj to išskirti tėvinį\?</string>
     <string name="hidden_folders">Paslėpti aplankai</string>

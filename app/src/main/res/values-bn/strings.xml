@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">গ্যালারি</string>
     <string name="edit">সম্পাদনা</string>
-    <string name="open_camera">ক্যামেরা খুলুন</string>
     <string name="hidden">(লুকানো)</string>
     <string name="pin_folder">ফোল্ডার পিন করুন</string>
     <string name="unpin_folder">ফোল্ডার আনপিন করুন</string>
     <string name="pin_to_the_top">একদম উপরে পিন করুন</string>
-    <string name="show_all">সব ফোল্ডারের ভেতরে কি আছে দেখান</string>
     <string name="all_folders">সব ফোল্ডার</string>
-    <string name="folder_view">ফোল্ডার ভিউতে সুইচ করুন</string>
     <string name="other_folder">অন্যান্য ফোল্ডার</string>
     <string name="show_on_map">মানচিত্রে দেখান</string>
     <string name="unknown_location">অজানা স্থান</string>
@@ -29,15 +26,12 @@
     <string name="switch_to_file_search">সব দেখা যাওয়া ফোল্ডারে ফাইল সার্চে চলে যান</string>
     <string name="set_as_default_folder">ডিফল্ট ফোল্ডার হিশেবে সেট করুন</string>
     <string name="unset_as_default_folder">ডিফল্ট ফোল্ডার হিশেবে আর রাখবেন না</string>
-    <string name="filter_media">মিডিয়া ফিল্টার করুন</string>
     <string name="images">ছবিসমূহ</string>
     <string name="videos">ভিডিওসমূহ</string>
     <string name="gifs">গিফসমূহ</string>
     <string name="raw_images">র ছবিসমূহ</string>
     <string name="svgs">এসভিজি সমূহ</string>
     <string name="portraits">পোট্রেইট</string>
-    <string name="no_media_with_filters">এ নির্দিষ্ট ফিল্টারে কোন মিডিয়া ফাইল পাওয়া যায়নি।</string>
-    <string name="change_filters_underlined"><u>ফিল্টার পরিবর্তন করুন</u></string>
     <string name="hidden_folders">লুকানো ফোল্ডারগুলো</string>
     <string name="manage_hidden_folders">লুকানো ফোল্ডারগুলি পরিচালনা করুন</string>
     <string name="hidden_folders_placeholder">দেখে মনে হচ্ছে আপনার সাথে কোনও ফোল্ডার লুকানো নেই \".nomedia\" ফাইল।</string>

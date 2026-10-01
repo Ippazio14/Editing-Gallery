@@ -39,7 +39,6 @@ data class Directory(
         else -> taken.formatDate(context)
     }
 
-
     fun isRecycleBin() = path == RECYCLE_BIN
 
     fun getKey() = ObjectKey("$path-$modified")

@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerii</string>
     <string name="edit">Muuda</string>
-    <string name="open_camera">Ava kaamera</string>
     <string name="hidden">(peidetud)</string>
     <string name="excluded">(välistatud)</string>
     <string name="pin_folder">Tõsta kaust esile</string>
     <string name="unpin_folder">Eemalda kausta esiletõstmine</string>
     <string name="pin_to_the_top">Tõsta esile ülaosas</string>
-    <string name="show_all">Näita kõikide kaustade sisu</string>
     <string name="all_folders">Kõik kaustad</string>
-    <string name="folder_view">Kasuta kaustavaadet</string>
     <string name="other_folder">Muu kaust</string>
     <string name="show_on_map">Näita kaardil</string>
     <string name="unknown_location">Teadmata asukoht</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Muuda kaustade järjekorda lohistades</string>
     <string name="reorder_by_dragging_pro">Muuda kaustade järjekorda lohistades (Pro)</string>
     <string name="restore_to_path">Taastame kausta „%s“</string>
-    <string name="filter_media">Sirvi meediat</string>
     <string name="images">Pildid</string>
     <string name="videos">Videod</string>
     <string name="gifs">GIF\'id</string>
     <string name="raw_images">RAW-failid</string>
     <string name="svgs">SVG\'d</string>
     <string name="portraits">Portreed</string>
-    <string name="no_media_with_filters">Valitud päringu alusel ei leidu meediafaile.</string>
-    <string name="change_filters_underlined"><u>Muuda filtreid</u></string>
     <string name="hide_folder_description">See funktsioon peidab kausta koos alamkaustadega, lisades sinna faili „.nomedia“. Neid näed, lülitades seadetes sisse valiku „Kuva peidetud kirjed“. Kas jätkame\?</string>
     <string name="exclude_folder_parent">Kas selle asemel jätame ülemkirjed välja\?</string>
     <string name="hidden_folders">Peidetud kaustad</string>

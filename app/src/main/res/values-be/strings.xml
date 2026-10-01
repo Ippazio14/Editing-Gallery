@@ -2,13 +2,11 @@
 <resources>
     <string name="app_launcher_name">Галерэя</string>
     <string name="edit">Рэдагаваць</string>
-    <string name="open_camera">Адкрыць камеру</string>
     <string name="hidden">(схаваны)</string>
     <string name="excluded">(выключана)</string>
     <string name="pin_folder">Замацаваць папку</string>
     <string name="unpin_folder">Адмацаваць тэчку</string>
     <string name="pin_to_the_top">Замацаваць зверху</string>
-    <string name="show_all">Паказаць змесціва ўсіх папак</string>
     <string name="videos">Відэа</string>
     <string name="gifs">GIF-файлы</string>
     <string name="raw_images">Выявы RAW</string>
@@ -43,7 +41,6 @@
     <string name="faq_17_text">Гэта перастала працаваць з-за змяненняў у сістэме, якія таксама ўвайшлі ў Android 11, праграма больш не можа праглядаць рэальныя папкі, яна спадзяецца на так званы MediaStore для атрымання даных.</string>
     <string name="faq_18_title">Чаму я бачу рэкламу падчас прайгравання відэа\?</string>
     <string name="all_folders">Усе папкі</string>
-    <string name="folder_view">Пераключыцца ў рэжым прагляду тэчак</string>
     <string name="brightness">Яркасць</string>
     <string name="lock_orientation">Замацаваць арыентацыю</string>
     <string name="unlock_orientation">Адмацаваць арыентацыю</string>
@@ -66,11 +63,8 @@
     <string name="show_on_map">Паказаць на карце</string>
     <string name="reorder_by_dragging_pro">Змяніць парадак папак перацягваннем (Pro)</string>
     <string name="restore_to_path">Аднаўленне да «%s»</string>
-    <string name="filter_media">Носьбіт фільтра</string>
     <string name="images">Выявы</string>
     <string name="exclude_folder_parent">Выключыць аднаго з бацькоў\?</string>
-    <string name="no_media_with_filters">З выбранымі фільтрамі не знойдзены медыяфайлы.</string>
-    <string name="change_filters_underlined"><u>Змяніць фільтры</u></string>
     <string name="hide_folder_description">Гэтая функцыя хавае тэчку, дадаючы ў яе файл «.nomedia»; ён таксама схавае ўсе ўкладзеныя тэчкі. Вы можаце ўбачыць іх, пераключыўшы опцыю «Паказваць схаваныя элементы» ў наладах. Працягваць?</string>
     <string name="hidden_folders">Схаваныя тэчкі</string>
     <string name="manage_hidden_folders">Кіраванне схаванымі папкамі</string>

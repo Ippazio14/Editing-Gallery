@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galeria</string>
     <string name="edit">Edytuj</string>
-    <string name="open_camera">Otwórz aparat</string>
     <string name="hidden">(ukryte)</string>
     <string name="excluded">(wykluczone)</string>
     <string name="pin_folder">Przypnij folder</string>
     <string name="unpin_folder">Odepnij folder</string>
     <string name="pin_to_the_top">Przypnij na górze</string>
-    <string name="show_all">Pokaż zawartość wszystkich folderów</string>
     <string name="all_folders">Wszystkie foldery</string>
-    <string name="folder_view">Przełącz na widok folderów</string>
     <string name="other_folder">Inny folder</string>
     <string name="show_on_map">Pokaż na mapie</string>
     <string name="unknown_location">Nieznana lokalizacja</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Przeorganizuj foldery przeciągając</string>
     <string name="reorder_by_dragging_pro">Przeorganizuj foldery przeciągając (Pro)</string>
     <string name="restore_to_path">Przywracanie do „%s”</string>
-    <string name="filter_media">Filtruj multimedia</string>
     <string name="images">Obrazy</string>
     <string name="videos">Wideo</string>
     <string name="gifs">GIF-y</string>
     <string name="raw_images">Obrazy RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">Portrety</string>
-    <string name="no_media_with_filters">Nie znaleziono plików multimedialnych z wybranymi filtrami.</string>
-    <string name="change_filters_underlined"><u>Zmień filtry</u></string>
     <string name="hide_folder_description">Ta funkcja ukrywa folder, dodając do niego plik „.nomedia”, i ukryje również wszystkie podfoldery. Możesz je zobaczyć, przełączając opcję „Pokazuj ukryte elementy” w Ustawieniach. Kontynuować\?</string>
     <string name="exclude_folder_description">Spowoduje to wykluczenie wybranego folderu i jego podfolderów z Fossify Gallery. Możesz zarządzać wykluczonymi folderami w Ustawieniach.</string>
     <string name="exclude_folder_parent">Czy zamiast tego wykluczyć folder nadrzędny\?</string>

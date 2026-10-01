@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerie</string>
     <string name="edit">Upravit</string>
-    <string name="open_camera">Spustit fotoaparát</string>
     <string name="hidden">(skryté)</string>
     <string name="excluded">(vyloučené)</string>
     <string name="pin_folder">Připnout složku</string>
     <string name="unpin_folder">Odepnout složku</string>
     <string name="pin_to_the_top">Připnout nahoru</string>
-    <string name="show_all">Zobrazit obsah všech složek</string>
     <string name="all_folders">Všechny složky</string>
-    <string name="folder_view">Přepnout na zobrazení složek</string>
     <string name="other_folder">Jiná složka</string>
     <string name="show_on_map">Zobrazit na mapě</string>
     <string name="unknown_location">Neznámá poloha</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Seřadit složky přetažením</string>
     <string name="reorder_by_dragging_pro">Seřadit složky přetažením (Pro)</string>
     <string name="restore_to_path">Obnovuje se do \'%s\'</string>
-    <string name="filter_media">Filtr médií</string>
     <string name="images">Obrázky</string>
     <string name="videos">Videa</string>
     <string name="gifs">Soubory GIF</string>
     <string name="raw_images">Obrázky RAW</string>
     <string name="svgs">Soubory SVG</string>
     <string name="portraits">Portréty</string>
-    <string name="no_media_with_filters">Se zvolenými filtry nebyly nalezeny žádné mediální soubory.</string>
-    <string name="change_filters_underlined"><u>Změnit filtry</u></string>
     <string name="hide_folder_description">Tato funkce skryje složku včetně podsložek přidáním souboru \'.nomedia\'. Zobrazíte je zvolením možnosti \'Zobrazit skryté položky\' v nastavení. Pokračovat\?</string>
     <string name="exclude_folder_parent">Chcete vyloučit nadřazenou složku\?</string>
     <string name="hidden_folders">Skryté složky</string>

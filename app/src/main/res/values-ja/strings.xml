@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">ギャラリー</string>
     <string name="edit">編集</string>
-    <string name="open_camera">カメラを開く</string>
     <string name="hidden">(非表示)</string>
     <string name="excluded">(除外)</string>
     <string name="pin_folder">フォルダーをピン留めする</string>
     <string name="unpin_folder">フォルダーのピン留めを外す</string>
     <string name="pin_to_the_top">上部にピン留めする</string>
-    <string name="show_all">すべてを表示</string>
     <string name="all_folders">すべてのフォルダー</string>
-    <string name="folder_view">フォルダー表示に切り替え</string>
     <string name="other_folder">その他のフォルダー</string>
     <string name="show_on_map">地図上で表示</string>
     <string name="unknown_location">位置情報がありません</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">ドラッグによるフォルダーの並べ替え</string>
     <string name="reorder_by_dragging_pro">ドラッグによるフォルダーの並べ替え (Pro)</string>
     <string name="restore_to_path">\'%s\' に復元しています</string>
-    <string name="filter_media">表示する形式</string>
     <string name="images">画像</string>
     <string name="videos">動画</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">ポートレイト</string>
-    <string name="no_media_with_filters">条件に該当するメディアがありません。</string>
-    <string name="change_filters_underlined"><u>絞り込み条件を変更</u></string>
     <string name="hide_folder_description">対象のフォルダーに「.nomedia」ファイルを作成し、フォルダーを非表示にします。そのフォルダーの中にあるすべてのサブフォルダーも非表示となります。非表示のフォルダーを見るには、「設定」の中にある「非表示のアイテムを表示する」を有効にしてください。このフォルダーを非表示にしますか？</string>
     <string name="exclude_folder_parent">親フォルダーを代わりに除外しますか？</string>
     <string name="hidden_folders">非表示フォルダー</string>

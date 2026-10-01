@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.exifinterface.media.ExifInterface
@@ -27,6 +26,7 @@ class EditActivity : SimpleActivity() {
     private data class State(val saturation: Int = 0, val temperature: Int = 0, val brightness: Int = 0, val contrast: Int = 0,
         val width: Int = 0, val quality: Int = 85, val geometry: List<Geometry> = emptyList()) : Serializable
     private var state = State()
+    private var lastSavedState: State? = null
     private val undo = ArrayList<State>()
     private val redo = ArrayList<State>()
     private val worker = Executors.newSingleThreadExecutor()
@@ -70,7 +70,7 @@ class EditActivity : SimpleActivity() {
                 // Fail clearly rather than silently exporting a reduced original.
                 require(bounds.outWidth.toLong() * bounds.outHeight <= 40_000_000) { label(R.string.easy_image_too_large) }
                 val decoded = stream(input).use { BitmapFactory.decodeStream(it) } ?: error(label(R.string.easy_read_error))
-                val orientation = stream(input).use { ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1) }
+                val orientation = runCatching { stream(input).use { ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1) } }.getOrDefault(1)
                 val matrix = Matrix().apply {
                     when (orientation) {
                         2 -> setScale(-1f, 1f)
@@ -352,7 +352,7 @@ class EditActivity : SimpleActivity() {
                 val result=render(input,edit,true)
                 try { requireNotNull(contentResolver.openOutputStream(destination,"w")).use { check(result.compress(Bitmap.CompressFormat.JPEG,edit.quality,it)) } }
                 finally { result.recycle() }
-                runOnUiThread { if(!isDestroyed) { saving=false; updateControls(); status.text=label(R.string.easy_saved); setResult(Activity.RESULT_OK) } }
+                runOnUiThread { if(!isDestroyed) { saving=false; lastSavedState=edit; updateControls(); status.text=label(R.string.easy_saved); setResult(Activity.RESULT_OK, Intent().setData(destination).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)) } }
             } catch(e:Exception) { saving=false; showFailure(e.message) } catch(_:OutOfMemoryError) { saving=false; showFailure(label(R.string.easy_memory_error)) }
         }
     }
@@ -364,7 +364,7 @@ class EditActivity : SimpleActivity() {
     @Deprecated("Handled for the prototype's discard confirmation")
     override fun onBackPressed() {
         if(saving)return
-        if(undo.isEmpty()) { super.onBackPressed(); return }
+        if(undo.isEmpty() || state == lastSavedState) { super.onBackPressed(); return }
         val dialog=AlertDialog.Builder(this).setMessage(R.string.easy_discard).setNegativeButton(R.string.easy_cancel,null)
             .setPositiveButton(R.string.easy_exit) { _,_-> finish() }.create()
         dialog.setOnShowListener { enlargeDialogButtons(dialog) }; dialog.show()

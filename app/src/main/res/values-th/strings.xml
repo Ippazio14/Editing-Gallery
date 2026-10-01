@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">แกลเลอรี</string>
     <string name="edit">แก้ไข</string>
-    <string name="open_camera">เปิดกล้อง</string>
     <string name="hidden">(ซ่อนอยู่)</string>
     <string name="excluded">(ยกเว้นแล้ว)</string>
     <string name="pin_folder">ปักหมุดโฟลเดอร์</string>
     <string name="unpin_folder">เลิกปักหมุดโฟลเดอร์</string>
     <string name="pin_to_the_top">ปักหมุดไว้ด้านบน</string>
-    <string name="show_all">แสดงเนื้อหาทุกโฟลเดอร์</string>
     <string name="all_folders">ทุกโฟลเดอร์</string>
-    <string name="folder_view">สลับไปมุมมองโฟลเดอร์</string>
     <string name="other_folder">โฟลเดอร์อื่น</string>
     <string name="show_on_map">แสดงบนแผนที่</string>
     <string name="unknown_location">ตำแหน่งที่ไม่รู้จัก</string>
@@ -38,15 +35,12 @@
         <item quantity="other">คุณแน่ใจหรือไม่ว่าต้องการกู้คืนไฟล์ %d?</item>
     </plurals>
     <string name="full_storage_permission_required">Fossify Gallery ต้องการสิทธิ์เข้าถึงแบบเต็มเพื่อแสดงรูปภาพและวิดีโอทั้งหมดของคุณ ไปที่ ตั้งค่า &gt; สิทธิ์ &gt; รูปภาพและวิดีโอ &gt; อนุญาตทั้งหมด</string>
-    <string name="filter_media">กรองสื่อ</string>
     <string name="images">รูปภาพ</string>
     <string name="videos">วิดีโอ</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">ภาพ RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">ภาพถ่ายบุคคล</string>
-    <string name="no_media_with_filters">ไม่พบไฟล์สื่อที่ตรงกับตัวกรองที่เลือก</string>
-    <string name="change_filters_underlined"><u>เปลี่ยนตัวกรอง</u></string>
     <string name="hide_folder_description">ฟังก์ชันนี้ซ่อนโฟลเดอร์โดยเพิ่มไฟล์ \'.nomedia\' เข้าไป โฟลเดอร์ย่อยทั้งหมดจะถูกซ่อนด้วย คุณสามารถดูได้โดยเปิดตัวเลือก \'แสดงรายการที่ซ่อน\' ในการตั้งค่า ดำเนินการต่อหรือไม่?</string>
     <string name="exclude_folder_description">การดำเนินการนี้จะยกเว้นรายการที่เลือกพร้อมกับโฟลเดอร์ย่อยจาก Fossify Gallery เท่านั้น คุณสามารถจัดการโฟลเดอร์ที่ยกเว้นได้ในการตั้งค่า</string>
     <string name="exclude_folder_parent">ยกเว้นโฟลเดอร์แม่แทนหรือไม่?</string>

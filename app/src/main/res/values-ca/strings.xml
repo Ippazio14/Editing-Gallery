@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galeria</string>
     <string name="edit">Edita</string>
-    <string name="open_camera">Obre la càmera</string>
     <string name="hidden">(ocult)</string>
     <string name="excluded">(exclòs)</string>
     <string name="pin_folder">Fixa la carpeta</string>
     <string name="unpin_folder">No fixis la carpeta</string>
     <string name="pin_to_the_top">Fixa a dalt</string>
-    <string name="show_all">Mostra el contingut de totes les carpetes</string>
     <string name="all_folders">Totes les carpetes</string>
-    <string name="folder_view">Canvia a la vista de carpeta</string>
     <string name="other_folder">Una altra carpeta</string>
     <string name="show_on_map">Mostra en el mapa</string>
     <string name="unknown_location">Ubicació desconeguda</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Reordeneu les carpetes arrossegant-les</string>
     <string name="reorder_by_dragging_pro">Reordeneu les carpetes arrossegant-les (Pro)</string>
     <string name="restore_to_path">S\'està restaurant a «%s»</string>
-    <string name="filter_media">Filtre multimèdia</string>
     <string name="images">Imatges</string>
     <string name="videos">Vídeos</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">Imatges RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">Retrats</string>
-    <string name="no_media_with_filters">No s\'ha trobat cap fitxer multimèdia amb els filtres seleccionats.</string>
-    <string name="change_filters_underlined"><u>Canvia els filtres</u></string>
     <string name="hide_folder_description">Aquesta funció oculta la carpeta agregant un fitxer «.nomedia» a dins d\'ella. També ocultarà les subcarpetes. Podeu veure-les canviant l\'opció «Mostra els elements ocults» a la configuració. Continuo\?</string>
     <string name="exclude_folder_parent">Voleu excloure la carpeta superior\?</string>
     <string name="hidden_folders">Carpetes ocultes</string>

@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Галерея</string>
     <string name="edit">Редагувати</string>
-    <string name="open_camera">Запустити камеру</string>
     <string name="hidden">(приховане)</string>
     <string name="excluded">(виключено)</string>
     <string name="pin_folder">Закріпити теку</string>
     <string name="unpin_folder">Відкріпити теку</string>
     <string name="pin_to_the_top">Закріпити зверху</string>
-    <string name="show_all">Показати вміст усіх тек</string>
     <string name="all_folders">Усі теки</string>
-    <string name="folder_view">Перемкнути у перегляд за теками</string>
     <string name="other_folder">Інша тека</string>
     <string name="show_on_map">Показати на мапі</string>
     <string name="unknown_location">Невідоме розташування</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Сортувати теки шляхом переміщення</string>
     <string name="reorder_by_dragging_pro">Сортувати теки шляхом переміщення (Pro)</string>
     <string name="restore_to_path">Відновлення в «%s»</string>
-    <string name="filter_media">Фільтр мультимедійних файлів</string>
     <string name="images">Зображення</string>
     <string name="videos">Відео</string>
     <string name="gifs">GIF-зображення</string>
     <string name="raw_images">RAW-зображення</string>
     <string name="svgs">SVG-зображення</string>
     <string name="portraits">Портрети</string>
-    <string name="no_media_with_filters">З вибраними фільтрами мультимедійні файли не знайдено.</string>
-    <string name="change_filters_underlined"><u>Змінити фільтри</u></string>
     <string name="hide_folder_description">Ця функція приховує теку шляхом додавання в неї файлу «.nomedia»; це також приховає і підтеки. Ви можете побачити приховані теки, обравши опцію «Показати приховані елементи» в «Налаштуваннях». Продовжити?</string>
     <string name="exclude_folder_parent">Виключити батьківську теку?</string>
     <string name="hidden_folders">Приховані теки</string>

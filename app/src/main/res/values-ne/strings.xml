@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">ग्यालरी</string>
     <string name="edit">सम्पादन</string>
-    <string name="open_camera">क्यामेरा खोल्नुहोस</string>
     <string name="hidden">(लुकेको)</string>
     <string name="pin_folder">फोल्डरलाई पिन गर्नुहोस</string>
     <string name="unpin_folder">फोल्डरलाई पिन गर्नुहोस</string>
     <string name="pin_to_the_top">सबैभन्दा माथि पिन गर्नुहोस</string>
-    <string name="show_all">फोल्डरको सबै बिषयबस्तु देखाउनुहोस</string>
     <string name="all_folders">सबै फोल्डरहरु</string>
-    <string name="folder_view">फोल्डर भ्यू</string>
     <string name="other_folder">अन्य फोल्डर</string>
     <string name="show_on_map">नक्सामा देखाउनुहोस</string>
     <string name="unknown_location">थाहानभएको ठाउ</string>

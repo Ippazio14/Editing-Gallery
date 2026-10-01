@@ -7,7 +7,6 @@
     <string name="reorder_by_dragging">Athordaigh fillteáin trí tharraingt</string>
     <string name="reorder_by_dragging_pro">Athordaigh fillteáin trí tharraingt (Pro)</string>
     <string name="full_storage_permission_required">Teastaíonn rochtain iomlán ó Ghailearaí Fossify chun do ghrianghraif agus físeáin go léir a thaispeáint. Téigh go Socruithe &gt; Ceadanna &gt; Grianghraif agus físeáin &gt; Ceadaigh gach rud.</string>
-    <string name="change_filters_underlined"><u>Athraigh na scagairí</u></string>
     <string name="exclude_folder_parent">Tuismitheoir a eisiamh ina ionad?</string>
     <string name="excluded_activity_placeholder">Gan fillteáin a áireamh, beidh siad mar aon lena bhfofhillteáin i bhfolach díreach i nGailearaí Fossify, beidh siad fós le feiceáil in iarratais eile.\n\nMás mian leat iad a cheilt ó fheidhmchláir eile freisin, bain úsáid as an bhfeidhm Folaigh.</string>
     <string name="hidden_folders">Fillteáin fholaithe</string>
@@ -49,7 +48,6 @@
     <string name="faq_14_title">Tá comhad/fillteán curtha i bhfolach agam. Conas is féidir liom é a unhide?</string>
     <string name="faq_15_title">Cén fáth a dtógann an aip an oiread sin spáis?</string>
     <string name="faq_18_text">Níl aon fhógraí ar bith ag ár n-aipeanna. Má fheiceann tú iad le linn athsheinm físe, ní mór duit a bheith ag baint úsáide as roinnt seinnteoir físe apps eile. Bain triail as do sheinnteoir físe réamhshocraithe a aimsiú i socruithe an ghléis, ansin déan \"Réamhshocruithe soiléire\" air. An chéad uair eile a agraíonn tú roinnt rún físe feicfidh tú leid roghnóir feidhmchláir, áit ar féidir leat an aip is mian leat a úsáid a roghnú.</string>
-    <string name="open_camera">Oscail ceamara</string>
     <string name="hidden">(folaithe)</string>
     <string name="app_launcher_name">Gailearaí</string>
     <string name="edit">Cuir in eagar</string>
@@ -57,9 +55,7 @@
     <string name="pin_folder">Fillteán bioráin</string>
     <string name="unpin_folder">Díphionnáil fillteán</string>
     <string name="pin_to_the_top">Bioráin go dtí an barr</string>
-    <string name="show_all">Taispeáin inneachar gach fillteáin</string>
     <string name="all_folders">Gach fillteán</string>
-    <string name="folder_view">Athraigh go hamharc an fhillteáin</string>
     <string name="volume">Toirt</string>
     <string name="brightness">Gile</string>
     <string name="lock_orientation">Cuir treoshuíomh faoi ghlas</string>
@@ -76,14 +72,12 @@
     <string name="switch_to_file_search">Athraigh go cuardach comhad i ngach fillteán infheicthe</string>
     <string name="set_as_default_folder">Socraigh mar fhillteán réamhshocraithe</string>
     <string name="restore_to_path">Ag aischur go \'%s\'</string>
-    <string name="filter_media">Scag meáin</string>
     <string name="images">Íomhánna</string>
     <string name="videos">Físeáin</string>
     <string name="gifs">GIFanna</string>
     <string name="raw_images">Íomhánna RAW</string>
     <string name="svgs">SVGanna</string>
     <string name="portraits">Portráidí</string>
-    <string name="no_media_with_filters">Níor aimsíodh aon chomhaid meán leis na scagairí roghnaithe.</string>
     <string name="exclude_folder_description">Ní fhágfaidh sé seo an roghnú mar aon lena fofhillteáin ó Ghailearaí Fossify amháin. Is féidir leat fillteáin eisiata a bhainistiú i Socruithe.</string>
     <string name="manage_hidden_folders">Bainistigh fillteáin fholaithe</string>
     <string name="hidden_folders_placeholder">Dealraíonn sé cosúil nach bhfuil aon fillteáin i bhfolach le comhad \".nomedia\".</string>

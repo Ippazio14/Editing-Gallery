@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galeria</string>
     <string name="edit">Editar</string>
-    <string name="open_camera">Abrir câmera</string>
     <string name="hidden">(oculto)</string>
     <string name="excluded">(ignorado)</string>
     <string name="pin_folder">Fixar pasta</string>
     <string name="unpin_folder">Desafixar pasta</string>
     <string name="pin_to_the_top">Fixar no topo</string>
-    <string name="show_all">Exibir conteúdo de todas as pastas</string>
     <string name="all_folders">Todas as pastas</string>
-    <string name="folder_view">Alternar para a visualização de pastas</string>
     <string name="other_folder">Outra pasta</string>
     <string name="show_on_map">Exibir no mapa</string>
     <string name="unknown_location">Localização desconhecida</string>
@@ -32,13 +29,10 @@
     <string name="reorder_by_dragging">Reordenar as pastas ao arrastar</string>
     <string name="reorder_by_dragging_pro">Reordenar as pastas ao arrastar (Pro)</string>
     <string name="restore_to_path">Restaurando para \'%s\'</string>
-    <string name="filter_media">Filtrar mídia</string>
     <string name="images">Imagens</string>
     <string name="videos">Vídeos</string>
     <string name="raw_images">Imagens RAW</string>
     <string name="portraits">Retratos</string>
-    <string name="no_media_with_filters">Nenhum arquivo de mídia encontrado a partir dos filtros selecionados.</string>
-    <string name="change_filters_underlined"><u>Alterar filtros</u></string>
     <string name="hide_folder_description">Esta opção oculta a pasta ao adicionar um arquivo \".nomedia\" dentro dela, o que também ocultará todas as suas subpastas. Você poderá voltar a exibir estas pastas com a opção \"Exibir pastas ocultas\". Continuar\?</string>
     <string name="exclude_folder_parent">Ignorar a pasta raiz ao invés desta\?</string>
     <string name="hidden_folders">Pastas ocultas</string>

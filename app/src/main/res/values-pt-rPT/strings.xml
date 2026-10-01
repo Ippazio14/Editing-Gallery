@@ -4,8 +4,6 @@
     <string name="set_as_default_folder">Utilizar como pasta padrão</string>
     <string name="images">Imagens</string>
     <string name="share_resized">Partilhar foto redimensionada</string>
-    <string name="filter_media">Filtrar multimédia</string>
-    <string name="no_media_with_filters">Não foram encontrados ficheiros que cumpram os requisitos.</string>
     <string name="lock_orientation">Bloquear orientação</string>
     <string name="force_landscape">Impor modo horizontal</string>
     <string name="reorder_by_dragging_pro">Organizar pastas por arrasto (Pro)</string>
@@ -27,18 +25,14 @@
     <string name="unpin_folder">Desafixar pasta</string>
     <string name="portraits">Retratos</string>
     <string name="pin_folder">Fixar pasta</string>
-    <string name="change_filters_underlined"><u>Alterar filtros</u></string>
     <string name="dates_fixed_successfully">Dados corrigidos com sucesso</string>
     <string name="show_on_map">Mostrar no mapa</string>
-    <string name="folder_view">Alternar para a vista de pastas</string>
     <string name="restore_to_path">A restaurar para \'%s\'</string>
     <string name="raw_images">Imagens RAW</string>
     <string name="switch_to_file_search">Trocar para pesquisa de ficheiros em todas as pastas visíveis</string>
     <string name="other_folder">Outra pasta</string>
     <string name="brightness">Brilho</string>
     <string name="unset_as_default_folder">Deixar de utilizar como pasta padrão</string>
-    <string name="open_camera">Abrir câmara</string>
-    <string name="show_all">Mostrar conteúdo de todas as pastas</string>
     <string name="no_media_add_included">Não foram encontrados ficheiros multimédia. Pode adicionar manualmente as pastas que contenham esses ficheiros.</string>
     <plurals name="failed_to_resize_images">
         <item quantity="one">Falha ao redimensionar %d imagem</item>

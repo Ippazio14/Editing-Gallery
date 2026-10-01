@@ -26,17 +26,14 @@ import org.fossify.commons.extensions.deleteFiles
 import org.fossify.commons.extensions.getDoesFilePathExist
 import org.fossify.commons.extensions.getFileCount
 import org.fossify.commons.extensions.getFilePublicUri
-import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getLatestMediaByDateId
 import org.fossify.commons.extensions.getLatestMediaId
 import org.fossify.commons.extensions.getMimeType
-import org.fossify.commons.extensions.getProperBackgroundColor
 import org.fossify.commons.extensions.getProperPrimaryColor
 import org.fossify.commons.extensions.getProperSize
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.getStorageDirectories
 import org.fossify.commons.extensions.getTimeFormat
-import org.fossify.commons.extensions.handleHiddenFolderPasswordProtection
 import org.fossify.commons.extensions.handleLockedFolderOpening
 import org.fossify.commons.extensions.hasAllPermissions
 import org.fossify.commons.extensions.hasOTGConnected
@@ -44,14 +41,9 @@ import org.fossify.commons.extensions.hasPermission
 import org.fossify.commons.extensions.hideKeyboard
 import org.fossify.commons.extensions.internalStoragePath
 import org.fossify.commons.extensions.isExternalStorageManager
-import org.fossify.commons.extensions.isGif
 import org.fossify.commons.extensions.isGone
-import org.fossify.commons.extensions.isImageFast
 import org.fossify.commons.extensions.isMediaFile
 import org.fossify.commons.extensions.isPathOnOTG
-import org.fossify.commons.extensions.isRawFast
-import org.fossify.commons.extensions.isSvg
-import org.fossify.commons.extensions.isVideoFast
 import org.fossify.commons.extensions.launchMoreAppsFromUsIntent
 import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.sdCardPath
@@ -82,8 +74,6 @@ import org.fossify.gallery.databases.GalleryDatabase
 import org.fossify.gallery.databinding.ActivityMainBinding
 import org.fossify.gallery.dialogs.ChangeSortingDialog
 import org.fossify.gallery.dialogs.ChangeViewTypeDialog
-import org.fossify.gallery.dialogs.FilterMediaDialog
-import org.fossify.gallery.dialogs.GrantAllFilesDialog
 import org.fossify.gallery.extensions.addTempFolderIfNeeded
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.createDirectoryFromMedia
@@ -96,11 +86,9 @@ import org.fossify.gallery.extensions.getDistinctPath
 import org.fossify.gallery.extensions.getNoMediaFoldersSync
 import org.fossify.gallery.extensions.getOTGFolderChildrenNames
 import org.fossify.gallery.extensions.getSortedDirectories
-import org.fossify.gallery.extensions.handleExcludedFolderPasswordProtection
 import org.fossify.gallery.extensions.handleMediaManagementPrompt
 import org.fossify.gallery.extensions.isDownloadsFolder
 import org.fossify.gallery.extensions.launchAbout
-import org.fossify.gallery.extensions.launchCamera
 import org.fossify.gallery.extensions.launchSettings
 import org.fossify.gallery.extensions.mediaDB
 import org.fossify.gallery.extensions.movePathsInRecycleBin
@@ -128,14 +116,8 @@ import org.fossify.gallery.helpers.PICKED_PATHS
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.SET_WALLPAPER_INTENT
 import org.fossify.gallery.helpers.SHOW_ALL
-import org.fossify.gallery.helpers.SHOW_TEMP_HIDDEN_DURATION
+import org.fossify.gallery.helpers.TEMP_DELETE_OPTIONS_DURATION
 import org.fossify.gallery.helpers.SKIP_AUTHENTICATION
-import org.fossify.gallery.helpers.TYPE_GIFS
-import org.fossify.gallery.helpers.TYPE_IMAGES
-import org.fossify.gallery.helpers.TYPE_RAWS
-import org.fossify.gallery.helpers.TYPE_SVGS
-import org.fossify.gallery.helpers.TYPE_VIDEOS
-import org.fossify.gallery.helpers.getDefaultFileFilter
 import org.fossify.gallery.helpers.getPermissionToRequest
 import org.fossify.gallery.helpers.getPermissionsToRequest
 import org.fossify.gallery.interfaces.DirectoryOperationsListener
@@ -182,7 +164,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     private var mDateFormat = ""
     private var mTimeFormat = ""
     private var mLastMediaHandler = Handler()
-    private var mTempShowHiddenHandler = Handler()
+    private var mTemporaryDeleteOptionsHandler = Handler()
     private var mZoomListener: MyRecyclerView.MyZoomListener? = null
     private var mLastMediaFetcher: MediaFetcher? = null
     private var mDirs = ArrayList<Directory>()
@@ -205,8 +187,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         appLaunched(BuildConfig.APPLICATION_ID)
 
         if (savedInstanceState == null) {
-            config.temporarilyShowHidden = false
-            config.temporarilyShowExcluded = false
             config.tempSkipDeleteConfirmation = false
             config.tempSkipRecycleBin = false
             removeTempFolder()
@@ -240,19 +220,10 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         checkWhatsNewDialog()
         setupLatestMediaId()
 
-
-
         if (!config.wasRecycleBinPinned) {
             config.addPinnedFolders(hashSetOf(RECYCLE_BIN))
             config.wasRecycleBinPinned = true
             config.saveFolderGrouping(SHOW_ALL, GROUP_BY_DATE_TAKEN_DAILY or GROUP_DESCENDING)
-        }
-
-        if (!config.wasSVGShowingHandled) {
-            config.wasSVGShowingHandled = true
-            if (config.filterMedia and TYPE_SVGS == 0) {
-                config.filterMedia += TYPE_SVGS
-            }
         }
 
         if (!config.wasSortingByNumericValueAdded) {
@@ -283,7 +254,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
     override fun onStart() {
         super.onStart()
-        mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+        mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onResume() {
@@ -360,33 +331,28 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     override fun onStop() {
         super.onStop()
 
-        if (config.temporarilyShowHidden || config.tempSkipDeleteConfirmation || config.temporarilyShowExcluded) {
-            mTempShowHiddenHandler.postDelayed({
-                config.temporarilyShowHidden = false
-                config.temporarilyShowExcluded = false
+        if (config.tempSkipDeleteConfirmation || config.tempSkipRecycleBin) {
+            mTemporaryDeleteOptionsHandler.postDelayed({
                 config.tempSkipDeleteConfirmation = false
                 config.tempSkipRecycleBin = false
-            }, SHOW_TEMP_HIDDEN_DURATION)
+            }, TEMP_DELETE_OPTIONS_DURATION)
         } else {
-            mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+            mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         if (!isChangingConfigurations) {
-            config.temporarilyShowHidden = false
-            config.temporarilyShowExcluded = false
             config.tempSkipDeleteConfirmation = false
             config.tempSkipRecycleBin = false
-            mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+            mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
             removeTempFolder()
             unregisterFileUpdateListener()
 
-            if (!config.showAll) {
-                mLastMediaFetcher?.shouldStop = true
-                GalleryDatabase.destroyInstance()
-            }
+            mLastMediaFetcher?.shouldStop = true
+            GalleryDatabase.destroyInstance()
+
         }
     }
 
@@ -457,14 +423,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             }
         }
 
-        binding.mainMenu.requireToolbar().menu.apply {
-            findItem(R.id.temporarily_show_hidden).isVisible = !config.shouldShowHidden
-            findItem(R.id.stop_showing_hidden).isVisible =
-                (!isRPlus() || isExternalStorageManager()) && config.temporarilyShowHidden
-
-            findItem(R.id.temporarily_show_excluded).isVisible = !config.temporarilyShowExcluded
-            findItem(R.id.stop_showing_excluded).isVisible = config.temporarilyShowExcluded
-        }
     }
 
     private fun setupOptionsMenu() {
@@ -494,14 +452,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         binding.mainMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> showSortingDialog()
-                R.id.filter -> showFilterMediaDialog()
-                R.id.open_camera -> launchCamera()
-                R.id.show_all -> showAllMedia()
                 R.id.change_view_type -> changeViewType()
-                R.id.temporarily_show_hidden -> tryToggleTemporarilyShowHidden()
-                R.id.stop_showing_hidden -> tryToggleTemporarilyShowHidden()
-                R.id.temporarily_show_excluded -> tryToggleTemporarilyShowExcluded()
-                R.id.stop_showing_excluded -> tryToggleTemporarilyShowExcluded()
                 R.id.create_new_folder -> createNewFolder()
                 R.id.open_recycle_bin -> openRecycleBin()
                 R.id.column_count -> changeColumnCount()
@@ -610,11 +561,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             checkOTGPath()
             checkDefaultSpamFolders()
 
-            if (config.showAll) {
-                showAllMedia()
-            } else {
-                getDirectories()
-            }
+            getDirectories()
 
             setupLayoutManager()
         }
@@ -661,30 +608,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
     }
 
-    private fun showFilterMediaDialog() {
-        FilterMediaDialog(this) {
-            mShouldStopFetching = true
-            binding.directoriesRefreshLayout.isRefreshing = true
-            binding.directoriesGrid.adapter = null
-            getDirectories()
-        }
-    }
-
-    private fun showAllMedia() {
-        config.showAll = true
-        Intent(this, MediaActivity::class.java).apply {
-            putExtra(DIRECTORY, "")
-
-            if (mIsThirdPartyIntent) {
-                handleMediaIntent(this)
-            } else {
-                hideKeyboard()
-                startActivity(this)
-                finish()
-            }
-        }
-    }
-
     private fun changeViewType() {
         ChangeViewTypeDialog(this, true) {
             refreshMenuItems()
@@ -692,46 +615,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             binding.directoriesGrid.adapter = null
             setupAdapter(getRecyclerAdapter()?.dirs ?: mDirs)
         }
-    }
-
-    private fun tryToggleTemporarilyShowHidden() {
-        if (config.temporarilyShowHidden) {
-            toggleTemporarilyShowHidden(false)
-        } else {
-            if (isRPlus() && !isExternalStorageManager()) {
-                GrantAllFilesDialog(this)
-            } else {
-                handleHiddenFolderPasswordProtection {
-                    toggleTemporarilyShowHidden(true)
-                }
-            }
-        }
-    }
-
-    private fun toggleTemporarilyShowHidden(show: Boolean) {
-        mLoadedInitialPhotos = false
-        config.temporarilyShowHidden = show
-        binding.directoriesGrid.adapter = null
-        getDirectories()
-        refreshMenuItems()
-    }
-
-    private fun tryToggleTemporarilyShowExcluded() {
-        if (config.temporarilyShowExcluded) {
-            toggleTemporarilyShowExcluded(false)
-        } else {
-            handleExcludedFolderPasswordProtection {
-                toggleTemporarilyShowExcluded(true)
-            }
-        }
-    }
-
-    private fun toggleTemporarilyShowExcluded(show: Boolean) {
-        mLoadedInitialPhotos = false
-        config.temporarilyShowExcluded = show
-        binding.directoriesGrid.adapter = null
-        getDirectories()
-        refreshMenuItems()
     }
 
     override fun deleteFolders(folders: ArrayList<File>) {
@@ -772,18 +655,13 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         val itemsToDelete = ArrayList<FileDirItem>()
-        val filter = config.filterMedia
+
         val showHidden = config.shouldShowHidden
         fileDirItems.filter { it.isDirectory }.forEach {
             val files = File(it.path).listFiles()
             files?.filter {
                 it.absolutePath.isMediaFile()
                         && (showHidden || !it.name.startsWith('.'))
-                        && ((it.isImageFast() && filter and TYPE_IMAGES != 0)
-                        || (it.isVideoFast() && filter and TYPE_VIDEOS != 0)
-                        || (it.isGif() && filter and TYPE_GIFS != 0)
-                        || (it.isRawFast() && filter and TYPE_RAWS != 0)
-                        || (it.isSvg() && filter and TYPE_SVGS != 0))
             }?.mapTo(itemsToDelete) { it.toFileDirItem(applicationContext) }
         }
 
@@ -1094,8 +972,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     private fun gotDirectories(newDirs: ArrayList<Directory>) {
         mIsGettingDirs = false
         mShouldStopFetching = false
-
-
 
         val dirs = getSortedDirectories(newDirs)
         if (config.groupDirectSubfolders) {
@@ -1411,7 +1287,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             binding.directoriesEmptyPlaceholder.text =
                 getString(org.fossify.commons.R.string.no_items_found)
             binding.directoriesEmptyPlaceholder2.beGone()
-        } else if (dirs.isEmpty() && config.filterMedia == getDefaultFileFilter()) {
+        } else if (dirs.isEmpty()) {
             if (isRPlus() && !isExternalStorageManager()) {
                 binding.directoriesEmptyPlaceholder.text =
                     getString(org.fossify.commons.R.string.no_items_found)
@@ -1425,14 +1301,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                 showAddIncludedFolderDialog {
                     refreshItems()
                 }
-            }
-        } else {
-            binding.directoriesEmptyPlaceholder.text = getString(R.string.no_media_with_filters)
-            binding.directoriesEmptyPlaceholder2.text =
-                getString(R.string.change_filters_underlined)
-
-            binding.directoriesEmptyPlaceholder2.setOnClickListener {
-                showFilterMediaDialog()
             }
         }
 
@@ -1543,8 +1411,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                 }
             }
         }
-
-
 
         if (config.useRecycleBin) {
             try {

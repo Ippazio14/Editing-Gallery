@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">காட்சியகம்</string>
     <string name="edit">திருத்து</string>
-    <string name="open_camera">படக்கருவியைத் திற</string>
     <string name="hidden">(மறைந்த)</string>
     <string name="pin_folder">அடைவை முள்ளிடு</string>
     <string name="unpin_folder">அடைவை முள்ளெடு</string>
     <string name="pin_to_the_top">மேலே முள்ளிடு</string>
-    <string name="show_all">எல்லா அடைவு உள்ளடக்கம் காட்டு</string>
     <string name="all_folders">எல்லா அடைவுகள்</string>
-    <string name="folder_view">அடைவு பார்வைக்கு மாறு</string>
     <string name="other_folder">பிற அடைவு</string>
     <string name="show_on_map">வரைபடத்தில் காட்டு</string>
     <string name="unknown_location">அறியா இடம்</string>
@@ -31,15 +28,12 @@
     <string name="unset_as_default_folder">இயல்புநிலை அடைவாக அமைக்காதே</string>
     <string name="reorder_by_dragging">பிடித்திழுத்து அடைவுகளை மறுசீரமை</string>
     <string name="reorder_by_dragging_pro">பிடித்திழுத்து அடைவுகளை மறுசீரமை (Pro)</string>
-    <string name="filter_media">ஊடகத்தை வடிகட்டு</string>
     <string name="images">படங்கள்</string>
     <string name="videos">காணொளிகள்</string>
     <string name="gifs">GIFகள்</string>
     <string name="raw_images">RAW படங்கள்</string>
     <string name="svgs">SVGகள்</string>
     <string name="portraits">உருவப்படங்கள்</string>
-    <string name="no_media_with_filters">தேர்ந்தெடுத்த வடிகட்டிகளுடன் ஊடக கோப்புகள் ஏதுமில்லை.</string>
-    <string name="change_filters_underlined"><u>வடிகட்டிகளை மாற்று</u></string>
     <string name="hide_folder_description">இச்செயல்பாடு ஒரு \'.nomedia\' கோப்பைச் சேர்த்து அடைவை மறைக்கிறது, இது எல்லா துணையடைவுகளையும் மறைக்கும். அமைப்புகளில் \'மறைந்த உருப்படிகளைக் காட்டு\' விருப்பத்தை மாற்றிஅவற்றைக் காணலாம். தொடரவா\?</string>
     <string name="exclude_folder_parent">பதிலாக ஒரு பெற்றோரை விலக்கவா\?</string>
     <string name="hidden_folders">மறைத்த அடைவுகள்</string>

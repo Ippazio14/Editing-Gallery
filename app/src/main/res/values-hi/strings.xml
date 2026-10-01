@@ -3,9 +3,7 @@
     <string name="videos">वीडियो</string>
     <string name="pin_to_the_top">शीर्ष पर पिन करें</string>
     <string name="switch_to_file_search">सभी दृश्यमान फ़ोल्डरों में फाइल खोज पर स्विच करें</string>
-    <string name="show_all">सभी फोल्डर सामग्री दिखाएँ</string>
     <string name="all_folders">सभी फोल्डर</string>
-    <string name="folder_view">फोल्डर दृश्य पर स्विच करें</string>
     <string name="other_folder">अन्य फोल्डर</string>
     <string name="show_on_map">मानचित्र पर दिखाएँ</string>
     <string name="unknown_location">अज्ञात स्थान</string>
@@ -17,8 +15,6 @@
     <string name="raw_images">RAW छवियां</string>
     <string name="svgs">SVGs</string>
     <string name="portraits">पोर्ट्रेट्स</string>
-    <string name="no_media_with_filters">चयनित फिल्टर के साथ कोई मीडिया फाइल नहीं मिली है।</string>
-    <string name="change_filters_underlined"><u>फिल्टर बदलें</u></string>
     <string name="hide_folder_description">यह फ़ंक्शन इसमें \'.nomedia\' फाइल जोड़कर फ़ोल्डर को छुपाता है, यह सभी सबफोल्डर्स को भी छिपा देगा। आप सेटिंग्स में \'छिपे हुए आइटम दिखाएं\' विकल्प को टॉगल करके उन्हें देख सकते हैं। जारी रखना?</string>
     <string name="hidden_all_files">आपको छिपी हुई फाइलों को देखने के लिए ऐप को ऑल फाइल्स एक्सेस देना होगा, अन्यथा यह काम नहीं कर पाएगा।</string>
     <string name="include_folders">शामिल फोल्डर</string>
@@ -137,7 +133,6 @@
     <string name="faq_11_title">क्या मैं किसी तरह मीडिया फाइल थंबनेल को समूहीकृत कर सकता हूँ?</string>
     <string name="app_launcher_name">गैलरी</string>
     <string name="edit">संपादित करें</string>
-    <string name="open_camera">कैमरा खोलें</string>
     <string name="hidden">(छिपा हुआ)</string>
     <string name="excluded">(छोड़ा गया)</string>
     <string name="pin_folder">फोल्डर पिन करें</string>
@@ -156,7 +151,6 @@
     <string name="unset_as_default_folder">डिफ़ॉल्ट फोल्डर के रूप में अनसेट करें</string>
     <string name="reorder_by_dragging">फोल्डरों को खींचकर पुनः व्यवस्थित करें</string>
     <string name="restore_to_path">\'%s\' पर पुनर्स्थापित किया जा रहा है</string>
-    <string name="filter_media">मीडिया को फिल्टर करें</string>
     <string name="exclude_folder_parent">इसके बजाय किसी अभिभावक को बाहर निकालें?</string>
     <string name="manage_hidden_folders">छुपे हुए फोल्डर प्रबंधित करें</string>
     <string name="hidden_folders">छुपे हुए फोल्डर्स</string>

@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerija</string>
     <string name="edit">Uredi</string>
-    <string name="open_camera">Otvori kameru</string>
     <string name="hidden">(skrivene)</string>
     <string name="excluded">(isključene)</string>
     <string name="pin_folder">Prikvači mapu</string>
     <string name="unpin_folder">Otkvači mapu</string>
     <string name="pin_to_the_top">Prikvači na vrh</string>
-    <string name="show_all">Prikaži sadržaj svih mapa</string>
     <string name="all_folders">Sve mape</string>
-    <string name="folder_view">Prijeđi na prikaz mape</string>
     <string name="other_folder">Ostale mape</string>
     <string name="show_on_map">Prikaži na karti</string>
     <string name="unknown_location">Nepoznata lokacija</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Promijeni redoslijed mapa povlačenjem</string>
     <string name="reorder_by_dragging_pro">Promijeni redoslijed mapa povlačenjem (Pro)</string>
     <string name="restore_to_path">Obnavlja se u „%s”</string>
-    <string name="filter_media">Filtar medija</string>
     <string name="images">Slike</string>
     <string name="videos">Videa</string>
     <string name="gifs">GIF-ovi</string>
     <string name="raw_images">RAW slike</string>
     <string name="svgs">SVG-ovi</string>
     <string name="portraits">Portreti</string>
-    <string name="no_media_with_filters">Nije pronađena nijedna datoteka s odabranim filtrom.</string>
-    <string name="change_filters_underlined"><u>Promijeni filtre</u></string>
     <string name="hide_folder_description">Ova funkcija skriva mapu dodavanjem „.nomedia” datoteke u mapu. Također će sakriti i sve podmape. Možeš ih vidjeti uključivanjem opcije „Prikaži skrivene mape” u postavkama. Nastaviti\?</string>
     <string name="exclude_folder_parent">Isključiti glavnu mapu umjesto toga\?</string>
     <string name="hidden_folders">Skrivene mape</string>

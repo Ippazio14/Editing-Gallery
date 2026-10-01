@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galleria</string>
     <string name="edit">Muokkaa</string>
-    <string name="open_camera">Avaa kamera</string>
     <string name="hidden">(piilotettu)</string>
     <string name="excluded">(ohitettu)</string>
     <string name="pin_folder">Kiinnitä kansio</string>
     <string name="unpin_folder">Poista kiinnitys</string>
     <string name="pin_to_the_top">Kiinnitä ylimmäksi</string>
-    <string name="show_all">Näytä kaikkien kansioiden sisältö</string>
     <string name="all_folders">Kaikki kansiot</string>
-    <string name="folder_view">Vaihda kansionäkymään</string>
     <string name="other_folder">Muu kansio</string>
     <string name="show_on_map">Näytä kartalla</string>
     <string name="unknown_location">Tuntematon sijainti</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Järjestä kansiot uudelleen vetämällä</string>
     <string name="reorder_by_dragging_pro">Järjestä kansiot uudelleen vetämällä (Pro)</string>
     <string name="restore_to_path">Palautetaan kohteeseen \'%s\'</string>
-    <string name="filter_media">Suodata media</string>
     <string name="images">Kuvat</string>
     <string name="videos">Videot</string>
     <string name="gifs">GIFit</string>
     <string name="raw_images">RAW-kuvat</string>
     <string name="svgs">SVG:t</string>
     <string name="portraits">Potretit</string>
-    <string name="no_media_with_filters">Mediaa ei löytynyt valituilla suotimilla.</string>
-    <string name="change_filters_underlined"><u>Muuta suotimia</u></string>
     <string name="hide_folder_description">Tämä piilottaa kansion ja alikansiot lisäämällä \'.nomedia\' tiedoston kansioon. Näet ne valitsemalla \'Näytä piilotetut kansiot\' asetuksissa. Jatketaanko\?</string>
     <string name="exclude_folder_parent">Poissulje yläkansio tämän sijaan\?</string>
     <string name="hidden_folders">Piilotetut kansiot</string>

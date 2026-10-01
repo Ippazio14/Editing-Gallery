@@ -16,7 +16,6 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Files
 import android.provider.MediaStore.Images
-import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.exifinterface.media.ExifInterface
@@ -99,16 +98,11 @@ fun Activity.launchGesturePlayer(path: String, extras: HashMap<String, Boolean> 
 fun Activity.openEditor(path: String, forceChooser: Boolean = false) {
     val newPath = path.removePrefix("file://")
     if (!forceChooser && !newPath.isVideoFast()) {
-        val source = if (newPath.startsWith("content://")) Uri.parse(newPath) else Uri.fromFile(File(newPath))
-        startActivityForResult(Intent(this, org.fossify.gallery.activities.EditActivity::class.java).setData(source), REQUEST_EDIT_IMAGE)
+        val source = if (newPath.startsWith("content://")) Uri.parse(newPath) else getFinalUriFromPath(newPath, BuildConfig.APPLICATION_ID) ?: return
+        startActivityForResult(Intent(this, org.fossify.gallery.activities.EditActivity::class.java).setData(source).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION), REQUEST_EDIT_IMAGE)
     } else {
         openEditorIntent(newPath, forceChooser, BuildConfig.APPLICATION_ID)
     }
-}
-
-fun Activity.launchCamera() {
-    val intent = Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
-    launchActivityIntent(intent)
 }
 
 fun SimpleActivity.launchSettings() {

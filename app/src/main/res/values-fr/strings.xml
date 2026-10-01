@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerie</string>
     <string name="edit">Modifier</string>
-    <string name="open_camera">Ouvrir l\'appareil photo</string>
     <string name="hidden">(caché)</string>
     <string name="excluded">(exclu)</string>
     <string name="pin_folder">Épingler le dossier</string>
     <string name="unpin_folder">Libérer le dossier</string>
     <string name="pin_to_the_top">Épingler en haut</string>
-    <string name="show_all">Afficher tout les contenus des dossiers</string>
     <string name="all_folders">Dossiers</string>
-    <string name="folder_view">Basculer vers l\'affichage par dossiers</string>
     <string name="other_folder">Autre dossier</string>
     <string name="show_on_map">Afficher sur une carte</string>
     <string name="unknown_location">Position inconnue</string>
@@ -32,13 +29,10 @@
     <string name="reorder_by_dragging">Réordonner par glissement</string>
     <string name="reorder_by_dragging_pro">Réordonner par glissement (Pro)</string>
     <string name="restore_to_path">Restauration vers "%s"</string>
-    <string name="filter_media">Filtrer les médias</string>
     <string name="videos">Vidéos</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">Images RAW</string>
     <string name="svgs">SVG</string>
-    <string name="no_media_with_filters">Aucun fichier média trouvé avec les filtres sélectionnés.</string>
-    <string name="change_filters_underlined"><u>Modifier les filtres</u></string>
     <string name="hide_folder_description">Cette option cache le dossier en y ajoutant un fichier \".nomedia\", elle cachera aussi tous les sous-dossiers. Vous pouvez afficher ces dossiers avec l\'option \"Afficher les fichiers cachés\" dans les paramètres. Continuer ?</string>
     <string name="exclude_folder_description">Ceci exclura la sélection et ses sous-dossiers de Fossify Gallery uniquement. Vous pouvez gérer les dossiers exclus dans Paramètres.</string>
     <string name="exclude_folder_parent">Exclure un dossier parent \?</string>

@@ -18,13 +18,11 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import org.fossify.commons.dialogs.CreateNewFolderDialog
 import org.fossify.commons.dialogs.RadioGroupDialog
-import org.fossify.commons.extensions.appLockManager
 import org.fossify.commons.extensions.areSystemAnimationsEnabled
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.deleteFiles
-import org.fossify.commons.extensions.getDoesFilePathExist
 import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getIsPathDirectory
 import org.fossify.commons.extensions.getLatestMediaByDateId
@@ -32,10 +30,8 @@ import org.fossify.commons.extensions.getLatestMediaId
 import org.fossify.commons.extensions.getProperPrimaryColor
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.getTimeFormat
-import org.fossify.commons.extensions.handleHiddenFolderPasswordProtection
 import org.fossify.commons.extensions.handleLockedFolderOpening
 import org.fossify.commons.extensions.hideKeyboard
-import org.fossify.commons.extensions.isExternalStorageManager
 import org.fossify.commons.extensions.isGone
 import org.fossify.commons.extensions.isMediaFile
 import org.fossify.commons.extensions.isVideoFast
@@ -50,7 +46,6 @@ import org.fossify.commons.helpers.SORT_BY_RANDOM
 import org.fossify.commons.helpers.VIEW_TYPE_GRID
 import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
-import org.fossify.commons.helpers.isRPlus
 import org.fossify.commons.models.FileDirItem
 import org.fossify.commons.models.RadioItem
 import org.fossify.commons.views.MyGridLayoutManager
@@ -58,13 +53,10 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.gallery.R
 import org.fossify.gallery.adapters.MediaAdapter
 import org.fossify.gallery.asynctasks.GetMediaAsynctask
-import org.fossify.gallery.databases.GalleryDatabase
 import org.fossify.gallery.databinding.ActivityMediaBinding
 import org.fossify.gallery.dialogs.ChangeGroupingDialog
 import org.fossify.gallery.dialogs.ChangeSortingDialog
 import org.fossify.gallery.dialogs.ChangeViewTypeDialog
-import org.fossify.gallery.dialogs.FilterMediaDialog
-import org.fossify.gallery.dialogs.GrantAllFilesDialog
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.deleteDBPath
 import org.fossify.gallery.extensions.directoryDB
@@ -74,7 +66,6 @@ import org.fossify.gallery.extensions.getCachedMedia
 import org.fossify.gallery.extensions.getHumanizedFilename
 import org.fossify.gallery.extensions.isDownloadsFolder
 import org.fossify.gallery.extensions.launchAbout
-import org.fossify.gallery.extensions.launchCamera
 import org.fossify.gallery.extensions.launchSettings
 import org.fossify.gallery.extensions.launchGesturePlayer
 import org.fossify.gallery.extensions.mediaDB
@@ -98,9 +89,8 @@ import org.fossify.gallery.helpers.PATH
 import org.fossify.gallery.helpers.PICKED_PATHS
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.SET_WALLPAPER_INTENT
-import org.fossify.gallery.helpers.SHOW_ALL
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
-import org.fossify.gallery.helpers.SHOW_TEMP_HIDDEN_DURATION
+import org.fossify.gallery.helpers.TEMP_DELETE_OPTIONS_DURATION
 import org.fossify.gallery.helpers.SKIP_AUTHENTICATION
 import org.fossify.gallery.helpers.SLIDESHOW_START_ON_ENTER
 import org.fossify.gallery.helpers.VIDEO_PLAYER_APP
@@ -123,7 +113,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private var mIsGetAnyIntent = false
     private var mIsGettingMedia = false
     private var mAllowPickingMultiple = false
-    private var mShowAll = false
     private var mLoadedInitialPhotos = false
     private var mShowLoadingIndicator = true
     private var mWasFullscreenViewOpen = false
@@ -131,7 +120,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private var mLatestMediaId = 0L
     private var mLatestMediaDateId = 0L
     private var mLastMediaHandler = Handler()
-    private var mTempShowHiddenHandler = Handler()
+    private var mTemporaryDeleteOptionsHandler = Handler()
     private var mCurrAsyncTask: GetMediaAsynctask? = null
     private var mZoomListener: MyRecyclerView.MyZoomListener? = null
 
@@ -178,20 +167,12 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             padBottomImeAndSystem = listOf(binding.mediaGrid)
         )
 
-        if (mShowAll) {
-            registerFileUpdateListener()
-        }
-
-        binding.mediaEmptyTextPlaceholder2.setOnClickListener {
-            showFilterMediaDialog()
-        }
-
         updateWidgets()
     }
 
     override fun onStart() {
         super.onStart()
-        mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+        mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onResume() {
@@ -243,8 +224,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
         binding.loadingIndicator.setIndicatorColor(getProperPrimaryColor())
         binding.mediaEmptyTextPlaceholder.setTextColor(getProperTextColor())
-        binding.mediaEmptyTextPlaceholder2.setTextColor(getProperPrimaryColor())
-        binding.mediaEmptyTextPlaceholder2.bringToFront()
 
         // do not refresh Random sorted files after opening a fullscreen image and going Back
         val isRandomSorting = config.getFolderSorting(mPath) and SORT_BY_RANDOM != 0
@@ -278,28 +257,20 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     override fun onStop() {
         super.onStop()
 
-        if (config.temporarilyShowHidden || config.tempSkipDeleteConfirmation) {
-            mTempShowHiddenHandler.postDelayed({
-                config.temporarilyShowHidden = false
+        if (config.tempSkipDeleteConfirmation || config.tempSkipRecycleBin) {
+            mTemporaryDeleteOptionsHandler.postDelayed({
                 config.tempSkipDeleteConfirmation = false
                 config.tempSkipRecycleBin = false
-            }, SHOW_TEMP_HIDDEN_DURATION)
+            }, TEMP_DELETE_OPTIONS_DURATION)
         } else {
-            mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+            mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (config.showAll && !isChangingConfigurations) {
-            config.temporarilyShowHidden = false
-            config.tempSkipDeleteConfirmation = false
-            config.tempSkipRecycleBin = false
-            unregisterFileUpdateListener()
-            GalleryDatabase.destroyInstance()
-        }
 
-        mTempShowHiddenHandler.removeCallbacksAndMessages(null)
+        mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onBackPressedCompat(): Boolean {
@@ -307,9 +278,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             binding.mediaMenu.closeSearch()
             true
         } else {
-            if (config.showAll) {
-                appLockManager.lock()
-            }
 
             false
         }
@@ -336,26 +304,20 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
             findItem(R.id.empty_recycle_bin).isVisible = mPath == RECYCLE_BIN
             findItem(R.id.empty_disable_recycle_bin).isVisible = mPath == RECYCLE_BIN
-            findItem(R.id.transfer_paste).isVisible = MediaTransferClipboard.hasItems && !mShowAll && mPath != RECYCLE_BIN
+            findItem(R.id.transfer_paste).isVisible = MediaTransferClipboard.hasItems && mPath != RECYCLE_BIN
             findItem(R.id.transfer_paste).isEnabled = !MediaTransferClipboard.busy
             findItem(R.id.transfer_cancel).isVisible = MediaTransferClipboard.hasItems && !MediaTransferClipboard.busy
             findItem(R.id.restore_all_files).isVisible = mPath == RECYCLE_BIN
 
-            findItem(R.id.folder_view).isVisible = mShowAll
-            findItem(R.id.open_camera).isVisible = mShowAll
-            findItem(R.id.about).isVisible = mShowAll
+            findItem(R.id.about).isVisible = false
             findItem(R.id.create_new_folder).isVisible =
-                !mShowAll && mPath != RECYCLE_BIN
+                mPath != RECYCLE_BIN
             findItem(R.id.open_recycle_bin).isVisible = config.useRecycleBin && mPath != RECYCLE_BIN
-
-            findItem(R.id.temporarily_show_hidden).isVisible = !config.shouldShowHidden
-            findItem(R.id.stop_showing_hidden).isVisible =
-                (!isRPlus() || isExternalStorageManager()) && config.temporarilyShowHidden
 
             findItem(R.id.set_as_default_folder).isVisible = !isDefaultFolder
             findItem(R.id.unset_as_default_folder).isVisible = isDefaultFolder
 
-            val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+            val viewType = config.getFolderViewType(mPath)
             findItem(R.id.column_count).isVisible = viewType == VIEW_TYPE_GRID
             findItem(R.id.toggle_filename).isVisible = viewType == VIEW_TYPE_GRID
         }
@@ -377,19 +339,14 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 R.id.transfer_paste -> pasteMediaTransfer(mPath) { refreshItems(); refreshMenuItems() }
                 R.id.transfer_cancel -> { MediaTransferClipboard.clear(); refreshMenuItems() }
                 R.id.sort -> showSortingDialog()
-                R.id.filter -> showFilterMediaDialog()
                 R.id.empty_recycle_bin -> emptyRecycleBin()
                 R.id.empty_disable_recycle_bin -> emptyAndDisableRecycleBin()
                 R.id.restore_all_files -> restoreAllFiles()
                 R.id.toggle_filename -> toggleFilenameVisibility()
-                R.id.open_camera -> launchCamera()
-                R.id.folder_view -> switchToFolderView()
                 R.id.change_view_type -> changeViewType()
                 R.id.group -> showGroupByDialog()
                 R.id.create_new_folder -> createNewFolder()
                 R.id.open_recycle_bin -> openRecycleBin()
-                R.id.temporarily_show_hidden -> tryToggleTemporarilyShowHidden()
-                R.id.stop_showing_hidden -> tryToggleTemporarilyShowHidden()
                 R.id.column_count -> changeColumnCount()
                 R.id.set_as_default_folder -> setAsDefaultFolder()
                 R.id.unset_as_default_folder -> unsetAsDefaultFolder()
@@ -409,7 +366,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 val item = mMedia.firstOrNull { it is Medium } as? Medium ?: return
                 putExtra(SKIP_AUTHENTICATION, shouldSkipAuthentication())
                 putExtra(PATH, item.path)
-                putExtra(SHOW_ALL, mShowAll)
+
                 putExtra(SLIDESHOW_START_ON_ENTER, true)
                 startActivity(this)
             }
@@ -430,7 +387,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             mStoredShowFileTypes = showThumbnailFileTypes
             mStoredThumbnailSpacing = thumbnailSpacing
             mStoredRoundedCorners = fileRoundedCorners
-            mShowAll = showAll && mPath != RECYCLE_BIN
         }
     }
 
@@ -470,18 +426,13 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 else -> getHumanizedFilename(mPath)
             }
 
-            val searchHint = if (mShowAll) {
-                getString(org.fossify.commons.R.string.search_files)
-            } else {
-                getString(org.fossify.commons.R.string.search_in_placeholder, dirName)
-            }
+            val searchHint = getString(org.fossify.commons.R.string.search_in_placeholder, dirName)
 
             binding.mediaMenu.updateHintText(searchHint)
-            if (!mShowAll) {
-                binding.mediaMenu.toggleForceArrowBackIcon(true)
-                binding.mediaMenu.onNavigateBackClickListener = {
-                    performDefaultBack()
-                }
+
+            binding.mediaMenu.toggleForceArrowBackIcon(true)
+            binding.mediaMenu.onNavigateBackClickListener = {
+                performDefaultBack()
             }
 
             if (mShowLoadingIndicator) {
@@ -497,7 +448,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private fun getMediaAdapter() = binding.mediaGrid.adapter as? MediaAdapter
 
     private fun setupAdapter() {
-        if (!mShowAll && isDirEmpty()) {
+        if (isDirEmpty()) {
             return
         }
 
@@ -521,7 +472,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 binding.mediaGrid.adapter = this
             }
 
-            val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+            val viewType = config.getFolderViewType(mPath)
             if (viewType == VIEW_TYPE_LIST && areSystemAnimationsEnabled) {
                 binding.mediaGrid.scheduleLayoutAnimation()
             }
@@ -539,7 +490,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun setupScrollDirection() {
-        val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+        val viewType = config.getFolderViewType(mPath)
         val scrollHorizontally = config.scrollHorizontally && viewType == VIEW_TYPE_GRID
         binding.mediaFastscroller.setScrollVertically(!scrollHorizontally)
     }
@@ -570,15 +521,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private fun showSortingDialog() {
         ChangeSortingDialog(this, false, true, mPath) {
             mLoadedInitialPhotos = false
-            binding.mediaGrid.adapter = null
-            getMedia()
-        }
-    }
-
-    private fun showFilterMediaDialog() {
-        FilterMediaDialog(this) {
-            mLoadedInitialPhotos = false
-            binding.mediaRefreshLayout.isRefreshing = true
             binding.mediaGrid.adapter = null
             getMedia()
         }
@@ -615,13 +557,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private fun toggleFilenameVisibility() {
         config.displayFileNames = !config.displayFileNames
         getMediaAdapter()?.updateDisplayFilenames(config.displayFileNames)
-    }
-
-    private fun switchToFolderView() {
-        hideKeyboard()
-        config.showAll = false
-        startActivity(Intent(this, MainActivity::class.java))
-        finish()
     }
 
     private fun changeViewType() {
@@ -689,7 +624,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             mPath = mPath,
             isPickImage = mIsGetImageIntent && !mIsGetVideoIntent,
             isPickVideo = mIsGetVideoIntent && !mIsGetImageIntent,
-            showAll = mShowAll
+            showAll = false
         ) {
             ensureBackgroundThread {
                 val oldMedia = mMedia.clone() as ArrayList<ThumbnailItem>
@@ -714,18 +649,15 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun isDirEmpty(): Boolean {
-        return if (mMedia.isEmpty() && config.filterMedia > 0) {
+        return if (mMedia.isEmpty()) {
             if (mPath != RECYCLE_BIN) {
                 deleteDirectoryIfEmpty()
                 deleteDBDirectory()
             }
 
-
-
             if (mPath == RECYCLE_BIN) {
                 binding.mediaEmptyTextPlaceholder.setText(org.fossify.commons.R.string.no_items_found)
                 binding.mediaEmptyTextPlaceholder.beVisible()
-                binding.mediaEmptyTextPlaceholder2.beGone()
             } else {
                 finish()
             }
@@ -751,29 +683,8 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         }
     }
 
-    private fun tryToggleTemporarilyShowHidden() {
-        if (config.temporarilyShowHidden) {
-            toggleTemporarilyShowHidden(false)
-        } else {
-            if (isRPlus() && !isExternalStorageManager()) {
-                GrantAllFilesDialog(this)
-            } else {
-                handleHiddenFolderPasswordProtection {
-                    toggleTemporarilyShowHidden(true)
-                }
-            }
-        }
-    }
-
-    private fun toggleTemporarilyShowHidden(show: Boolean) {
-        mLoadedInitialPhotos = false
-        config.temporarilyShowHidden = show
-        getMedia()
-        refreshMenuItems()
-    }
-
     private fun setupLayoutManager() {
-        val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+        val viewType = config.getFolderViewType(mPath)
         if (viewType == VIEW_TYPE_GRID) {
             setupGridLayoutManager()
         } else {
@@ -822,7 +733,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun handleGridSpacing(media: ArrayList<ThumbnailItem> = mMedia) {
-        val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+        val viewType = config.getFolderViewType(mPath)
         if (viewType == VIEW_TYPE_GRID) {
             val spanCount = config.mediaColumnCnt
             val spacing = config.thumbnailSpacing
@@ -853,7 +764,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun initZoomListener() {
-        val viewType = config.getFolderViewType(if (mShowAll) SHOW_ALL else mPath)
+        val viewType = config.getFolderViewType(mPath)
         if (viewType == VIEW_TYPE_GRID) {
             val layoutManager = binding.mediaGrid.layoutManager as MyGridLayoutManager
             mZoomListener = object : MyRecyclerView.MyZoomListener {
@@ -976,7 +887,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         Intent(this, ViewPagerActivity::class.java).apply {
             putExtra(SKIP_AUTHENTICATION, shouldSkipAuthentication())
             putExtra(PATH, path)
-            putExtra(SHOW_ALL, mShowAll)
+
             putExtra(SHOW_RECYCLE_BIN, mPath == RECYCLE_BIN)
             putExtra(IS_FROM_GALLERY, true)
             startActivity(this)
@@ -1003,10 +914,9 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             binding.loadingIndicator.hide()
             binding.mediaRefreshLayout.isRefreshing = false
             binding.mediaEmptyTextPlaceholder.beVisibleIf(media.isEmpty() && !isFromCache)
-            binding.mediaEmptyTextPlaceholder2.beVisibleIf(media.isEmpty() && !isFromCache)
 
             if (binding.mediaEmptyTextPlaceholder.isVisible()) {
-                binding.mediaEmptyTextPlaceholder.text = getString(R.string.no_media_with_filters)
+                binding.mediaEmptyTextPlaceholder.text = getString(org.fossify.commons.R.string.no_items_found)
             }
             binding.mediaFastscroller.beVisibleIf(binding.mediaEmptyTextPlaceholder.isGone())
             setupAdapter()

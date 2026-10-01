@@ -41,7 +41,6 @@ import org.fossify.commons.extensions.isPathOnOTG
 import org.fossify.commons.extensions.isRestrictedWithSAFSdk30
 import org.fossify.commons.extensions.needsStupidWritePermissions
 import org.fossify.commons.extensions.recycleBinPath
-import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
@@ -66,7 +65,6 @@ import org.fossify.gallery.extensions.launchResizeMultipleImagesDialog
 import org.fossify.gallery.extensions.loadImage
 import org.fossify.gallery.extensions.openEditor
 import org.fossify.gallery.extensions.openPath
-import org.fossify.gallery.extensions.rescanFolderMedia
 import org.fossify.gallery.extensions.restoreRecycleBinPaths
 import org.fossify.gallery.extensions.saveRotatedImageToFile
 import org.fossify.gallery.extensions.setAs
@@ -74,15 +72,12 @@ import org.fossify.gallery.extensions.shareMediaPaths
 import org.fossify.gallery.extensions.shareMediumPath
 import org.fossify.gallery.extensions.showRestoreConfirmationDialog
 import org.fossify.gallery.extensions.toggleFileVisibility
-import org.fossify.gallery.extensions.tryCopyMoveFilesTo
 import org.fossify.gallery.extensions.updateDBMediaPath
-import org.fossify.gallery.extensions.updateMovedMediaPaths
 import org.fossify.gallery.helpers.PATH
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_BIG
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_NONE
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_SMALL
-import org.fossify.gallery.helpers.SHOW_ALL
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
 import org.fossify.gallery.helpers.TYPE_GIFS
 import org.fossify.gallery.helpers.TYPE_RAWS
@@ -108,7 +103,7 @@ class MediaAdapter(
     private val ITEM_MEDIUM_PHOTO = 2
 
     private val config = activity.config
-    private val viewType = config.getFolderViewType(if (config.showAll) SHOW_ALL else path)
+    private val viewType = config.getFolderViewType(path)
     private val isListViewType = viewType == VIEW_TYPE_LIST
     private var rotatedImagePaths = ArrayList<String>()
     private var currentMediaHash = media.hashCode()
@@ -120,7 +115,7 @@ class MediaAdapter(
     private var displayFilenames = config.displayFileNames
     private var showFileTypes = config.showThumbnailFileTypes
 
-    var sorting = config.getFolderSorting(if (config.showAll) SHOW_ALL else path)
+    var sorting = config.getFolderSorting(path)
     var dateFormat = config.dateFormat
     var timeFormat = activity.getTimeFormat()
 
@@ -260,8 +255,6 @@ class MediaAdapter(
         menu.findItem(R.id.cab_unhide).isVisible = (!isRPlus() || isExternalStorageManager()) && !isInRecycleBin && selectedItems.any { it.isHidden() }
     }
 
-
-
     private fun confirmSelection() {
         listener?.selectedPaths(getSelectedPaths())
     }
@@ -366,8 +359,6 @@ class MediaAdapter(
         }
     }
 
-
-
     private fun restoreFiles() {
         val paths = getSelectedPaths()
         if (paths.size > 1) {
@@ -451,7 +442,7 @@ class MediaAdapter(
             activity.getShortcutImage(path, drawable) {
                 val intent = Intent(activity, ViewPagerActivity::class.java).apply {
                     putExtra(PATH, path)
-                    putExtra(SHOW_ALL, config.showAll)
+
                     putExtra(SHOW_RECYCLE_BIN, path == RECYCLE_BIN)
                     action = Intent.ACTION_VIEW
                     flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -613,7 +604,6 @@ class MediaAdapter(
             }
 
             mediaItemHolder.setPadding(padding, padding, padding, padding)
-
 
             playPortraitOutline?.beVisibleIf(medium.isVideo() || medium.isPortrait())
             if (medium.isVideo()) {

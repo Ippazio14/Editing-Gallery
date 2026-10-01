@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galeri</string>
     <string name="edit">Düzenle</string>
-    <string name="open_camera">Kamerayı aç</string>
     <string name="hidden">(gizli)</string>
     <string name="excluded">(hariç)</string>
     <string name="pin_folder">Klasörü sabitle</string>
     <string name="unpin_folder">Klasörü ayır</string>
     <string name="pin_to_the_top">Üste sabitle</string>
-    <string name="show_all">Tüm klasör içeriğini göster</string>
     <string name="all_folders">Tüm klasörler</string>
-    <string name="folder_view">Klasör görünümüne geç</string>
     <string name="other_folder">Diğer klasör</string>
     <string name="show_on_map">Haritada göster</string>
     <string name="unknown_location">Bilinmeyen konum</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Sürükleyerek klasörleri yeniden sırala</string>
     <string name="reorder_by_dragging_pro">Sürükleyerek klasörleri yeniden sırala (Pro)</string>
     <string name="restore_to_path">\'%s\' konumuna geri yükle</string>
-    <string name="filter_media">Medyayı süzgeçle</string>
     <string name="images">Resimler</string>
     <string name="videos">Videolar</string>
     <string name="gifs">GIFler</string>
     <string name="raw_images">RAW resimler</string>
     <string name="svgs">SVGler</string>
     <string name="portraits">Portreler</string>
-    <string name="no_media_with_filters">Seçilen süzgeçlerle hiçbir medya dosyası bulunamadı.</string>
-    <string name="change_filters_underlined"><u>Süzgeçleri değiştir</u></string>
     <string name="hide_folder_description">Bu işlev, klasöre bir \'.nomedia\' dosyası ekleyerek gizler, tüm alt klasörleri de gizler. Ayarlar\'dan \'Gizli ögeleri göster\' seçeneğini değiştirerek onları görebilirsiniz. Devam edilsin mi\?</string>
     <string name="exclude_folder_description">Bu, alt klasörleriyle birlikte seçimi yalnızca Fossify Galeriden hariç tutacaktır. Hariç tutulan klasörleri Ayarlar\'dan yönetebilirsiniz.</string>
     <string name="exclude_folder_parent">Bunun yerine bir üst dizin hariç tutulsun mu\?</string>

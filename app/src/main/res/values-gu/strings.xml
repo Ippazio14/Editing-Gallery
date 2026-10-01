@@ -2,7 +2,6 @@
 <resources>
     <string name="app_launcher_name">ગેલેરી</string>
     <string name="edit">ફેરફાર કરો</string>
-    <string name="open_camera">કેમેરા ખોલો</string>
     <string name="hidden">(ચૂપૈલું)</string>
     <string name="excluded">(બાકાત)</string>
     <string name="pin_folder">ફોલ્ડર પિન કરો</string>
@@ -15,13 +14,11 @@
     <string name="videos">વિડિયો</string>
     <string name="resize_and_save">સિલેક્ટ કરેલા ની સાઈઝ બદલો અને સાચવો</string>
     <string name="resize_factor_error">૧૦ થી ૯૦ વચ્ચે ના અંક નાખો</string>
-    <string name="folder_view">ફોલ્ડર વ્યુ મા બદલો</string>
     <string name="unlock_orientation">સ્ક્રીન ફેરવી સકો</string>
     <string name="hidden_folders">છુપાઈલા ફોલ્ડરો</string>
     <string name="show_folder_name">ફોલ્ડર ઓ નું નામ દેખાળો</string>
     <string name="force_landscape">આદિ સ્ક્રીન રાખો</string>
     <string name="dates_fixed_successfully">તારીખ સુધારવાનું સફળ થયું</string>
-    <string name="show_all">બધા ફોલ્ડર ની વસ્તુઓ દેખાડો</string>
     <string name="all_folders">બધા ફોલ્ડરો</string>
     <string name="other_folder">બીજા ફોલ્ડરો</string>
     <string name="show_on_map">નકશા પર દેખાડો</string>
@@ -35,11 +32,8 @@
     <string name="share_resized">સાઇઝ બદલેલી આવૃત્તિ શૈર કરો</string>
     <string name="reorder_by_dragging">ફોલ્ડરો નો ક્રમ એને ખેંચીને બદલો</string>
     <string name="restore_to_path">\'%s\' પર પુનઃસ્થાપિત કરી રહ્યું છે</string>
-    <string name="filter_media">મીડિયા ફિલ્ટર કરો</string>
     <string name="images">ફોટા</string>
     <string name="gifs">જીયાઇએફો</string>
-    <string name="no_media_with_filters">પસંદ કરેલા ફિલ્ટર થી કઈ ના મળ્યું.</string>
-    <string name="change_filters_underlined"><u>ફિલ્ટર બદલો</u></string>
     <string name="manage_hidden_folders">છુપાઈલા ફોલ્ડરો મેનેજ કરો</string>
     <string name="manage_included_folders">સમાવિષ્ટ ફોલ્ડરો મેનેજ કરો</string>
     <string name="add_folder">ફોલ્ડર જોડો</string>

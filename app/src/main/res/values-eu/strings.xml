@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galeria</string>
     <string name="edit">Editatu</string>
-    <string name="open_camera">Ireki kamera</string>
     <string name="hidden">(ezkutatuta)</string>
     <string name="excluded">(baztertuta)</string>
     <string name="pin_folder">Ainguratu karpeta</string>
     <string name="unpin_folder">Kendu aingura karpetari</string>
     <string name="pin_to_the_top">Ainguratu goian</string>
-    <string name="show_all">Erakutsi karpeta guztien edukia</string>
     <string name="all_folders">Karpeta guztiak</string>
-    <string name="folder_view">Aldatu karpeta-ikuspegira</string>
     <string name="other_folder">Bestelako karpeta</string>
     <string name="show_on_map">Erakutsi mapan</string>
     <string name="unknown_location">Kokapen ezezaguna</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Berrordenatu karpetak arrastatuz</string>
     <string name="reorder_by_dragging_pro">Berrordenatu karpetak arrastatuz (Pro)</string>
     <string name="restore_to_path">\'%s\'-ra leheneratzen</string>
-    <string name="filter_media">Iragazi multimedia</string>
     <string name="images">Irudiak</string>
     <string name="videos">Bideoak</string>
     <string name="gifs">GIFak</string>
     <string name="raw_images">RAW irudiak</string>
     <string name="svgs">SVGak</string>
     <string name="portraits">Erretratuak</string>
-    <string name="no_media_with_filters">Hautatutako filtroa duen multimedia fitxategirik ez da aurkitu.</string>
-    <string name="change_filters_underlined"><u>Aldatu filtroak</u></string>
     <string name="hide_folder_description">Funtzio honek karpeta \'.nomedia\' fitxategi bat gehituz ezkutatzen du, azpikarpeta guztiak ere ezkutatuko ditu. Ezarpenetako \'Erakutsi ezkutatutako elementuak\' aukera aldatuz ikus ditzakezu. Jarraitu\?</string>
     <string name="exclude_folder_parent">Baztertu nagusia horren ordez\?</string>
     <string name="hidden_folders">Ezkutatutako karpetak</string>

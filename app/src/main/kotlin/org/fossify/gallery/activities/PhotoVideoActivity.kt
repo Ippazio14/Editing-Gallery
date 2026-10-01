@@ -27,7 +27,6 @@ import org.fossify.commons.extensions.hideKeyboard
 import org.fossify.commons.extensions.isExternalStorageManager
 import org.fossify.commons.extensions.isGif
 import org.fossify.commons.extensions.isGone
-import org.fossify.commons.extensions.isImageFast
 import org.fossify.commons.extensions.isPortrait
 import org.fossify.commons.extensions.isRawFast
 import org.fossify.commons.extensions.isSvg
@@ -200,40 +199,40 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
                 val preventShowingHiddenFile = (isRPlus() && !isExternalStorageManager()) && isFileFolderHidden
                 if (!preventShowingHiddenFile) {
                     if (realPath.getFilenameFromPath().contains('.') || filename.contains('.')) {
-                        if (isFileTypeVisible(realPath)) {
-                            binding.bottomActions.root.beGone()
-                            sendViewPagerIntent(realPath)
-                            finish()
-                            return
-                        }
-                    } else {
-                        filename = realPath.getFilenameFromPath()
-                    }
+
+                    binding.bottomActions.root.beGone()
+                    sendViewPagerIntent(realPath)
+                    finish()
+                    return
+
+                } else {
+                    filename = realPath.getFilenameFromPath()
                 }
             }
         }
+    }
 
-        if (mUri!!.scheme == "file") {
-            if (filename.contains('.')) {
-                binding.bottomActions.root.beGone()
-                rescanPaths(arrayListOf(mUri!!.path!!))
-                sendViewPagerIntent(mUri!!.path!!)
-                finish()
-            }
-            return
-        } else {
-            val realPath = applicationContext.getRealPathFromURI(mUri!!) ?: ""
-            val isFileFolderHidden = (File(realPath).isHidden || File(realPath.getParentPath(), NOMEDIA).exists() || realPath.contains("/."))
-            val preventShowingHiddenFile = (isRPlus() && !isExternalStorageManager()) && isFileFolderHidden
-            if (!preventShowingHiddenFile) {
-                if (realPath != mUri.toString() && realPath.isNotEmpty() && mUri!!.authority != "mms" && filename.contains('.') && getDoesFilePathExist(realPath)) {
-                    if (isFileTypeVisible(realPath)) {
-                        binding.bottomActions.root.beGone()
-                        rescanPaths(arrayListOf(mUri!!.path!!))
-                        sendViewPagerIntent(realPath)
-                        finish()
-                        return
-                    }
+    if (mUri!!.scheme == "file") {
+        if (filename.contains('.')) {
+            binding.bottomActions.root.beGone()
+            rescanPaths(arrayListOf(mUri!!.path!!))
+            sendViewPagerIntent(mUri!!.path!!)
+            finish()
+        }
+        return
+    } else {
+        val realPath = applicationContext.getRealPathFromURI(mUri!!) ?: ""
+        val isFileFolderHidden = (File(realPath).isHidden || File(realPath.getParentPath(), NOMEDIA).exists() || realPath.contains("/."))
+        val preventShowingHiddenFile = (isRPlus() && !isExternalStorageManager()) && isFileFolderHidden
+        if (!preventShowingHiddenFile) {
+            if (realPath != mUri.toString() && realPath.isNotEmpty() && mUri!!.authority != "mms" && filename.contains('.') && getDoesFilePathExist(realPath)) {
+
+                    binding.bottomActions.root.beGone()
+                    rescanPaths(arrayListOf(mUri!!.path!!))
+                    sendViewPagerIntent(realPath)
+                    finish()
+                    return
+
                 }
             }
         }
@@ -339,16 +338,6 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
 
     private fun showProperties() {
         PropertiesDialog(this, mUri!!.path!!)
-    }
-
-    private fun isFileTypeVisible(path: String): Boolean {
-        val filter = config.filterMedia
-        return !(path.isImageFast() && filter and TYPE_IMAGES == 0 ||
-            path.isVideoFast() && filter and TYPE_VIDEOS == 0 ||
-            path.isGif() && filter and TYPE_GIFS == 0 ||
-            path.isRawFast() && filter and TYPE_RAWS == 0 ||
-            path.isSvg() && filter and TYPE_SVGS == 0 ||
-            path.isPortrait() && filter and TYPE_PORTRAITS == 0)
     }
 
     private fun initBottomActions() {

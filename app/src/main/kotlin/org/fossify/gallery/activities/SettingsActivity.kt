@@ -1,11 +1,9 @@
 package org.fossify.gallery.activities
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
-import android.widget.Toast
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.fossify.commons.dialogs.*
@@ -20,7 +18,6 @@ import org.fossify.gallery.helpers.*
 import org.fossify.gallery.models.AlbumCover
 import java.io.File
 import java.io.InputStream
-import java.io.OutputStream
 import java.util.Locale
 import kotlin.system.exitProcess
 
@@ -667,10 +664,6 @@ class SettingsActivity : SimpleActivity() {
         }
     )
 
-
-
-
-
     private fun setupUseRecycleBin() {
         updateRecycleBinButtons()
         binding.settingsUseRecycleBin.isChecked = config.useRecycleBin
@@ -758,16 +751,6 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
     private fun setupExportSettings() {
         binding.settingsExportHolder.setOnClickListener {
             val configItems = LinkedHashMap<String, Any>().apply {
@@ -829,10 +812,8 @@ class SettingsActivity : SimpleActivity() {
                 put(GROUP_DIRECT_SUBFOLDERS, config.groupDirectSubfolders)
                 put(PINNED_FOLDERS, TextUtils.join(",", config.pinnedFolders))
                 put(DISPLAY_FILE_NAMES, config.displayFileNames)
-                put(FILTER_MEDIA, config.filterMedia)
                 put(DIR_COLUMN_CNT, config.dirColumnCnt)
                 put(MEDIA_COLUMN_CNT, config.mediaColumnCnt)
-                put(SHOW_ALL, config.showAll)
                 put(SHOW_WIDGET_FOLDER_NAME, config.showWidgetFolderName)
                 put(VIEW_TYPE_FILES, config.viewTypeFiles)
                 put(VIEW_TYPE_FOLDERS, config.viewTypeFolders)
@@ -974,10 +955,8 @@ class SettingsActivity : SimpleActivity() {
                 GROUP_DIRECT_SUBFOLDERS -> config.groupDirectSubfolders = value.toBoolean()
                 PINNED_FOLDERS -> config.addPinnedFolders(value.toStringSet())
                 DISPLAY_FILE_NAMES -> config.displayFileNames = value.toBoolean()
-                FILTER_MEDIA -> config.filterMedia = value.toInt()
                 DIR_COLUMN_CNT -> config.dirColumnCnt = value.toInt()
                 MEDIA_COLUMN_CNT -> config.mediaColumnCnt = value.toInt()
-                SHOW_ALL -> config.showAll = value.toBoolean()
                 SHOW_WIDGET_FOLDER_NAME -> config.showWidgetFolderName = value.toBoolean()
                 VIEW_TYPE_FILES -> config.viewTypeFiles = value.toInt()
                 VIEW_TYPE_FOLDERS -> config.viewTypeFolders = value.toInt()

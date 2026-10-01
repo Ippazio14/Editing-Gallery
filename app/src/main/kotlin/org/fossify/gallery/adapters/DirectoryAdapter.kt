@@ -43,7 +43,6 @@ import org.fossify.commons.extensions.handleLockedFolderOpening
 import org.fossify.commons.extensions.isAStorageRootFolder
 import org.fossify.commons.extensions.isExternalStorageManager
 import org.fossify.commons.extensions.isGif
-import org.fossify.commons.extensions.isImageFast
 import org.fossify.commons.extensions.isMediaFile
 import org.fossify.commons.extensions.isRawFast
 import org.fossify.commons.extensions.isSvg
@@ -80,7 +79,6 @@ import org.fossify.gallery.extensions.fixDateTaken
 import org.fossify.gallery.extensions.getShortcutImage
 import org.fossify.gallery.extensions.isThisOrParentFolderHidden
 import org.fossify.gallery.extensions.loadImage
-import org.fossify.gallery.extensions.mediaDB
 import org.fossify.gallery.extensions.removeNoMedia
 import org.fossify.gallery.extensions.showRecycleBinEmptyingDialog
 import org.fossify.gallery.extensions.tryCopyMoveFilesTo
@@ -588,15 +586,10 @@ class DirectoryAdapter(
         val paths = ArrayList<String>()
         val showHidden = config.shouldShowHidden
         selectedPaths.forEach {
-            val filter = config.filterMedia
+
             File(it).listFiles()?.filter {
                 !File(it.absolutePath).isDirectory &&
-                    it.absolutePath.isMediaFile() && (showHidden || !it.name.startsWith('.')) &&
-                    ((it.isImageFast() && filter and TYPE_IMAGES != 0) ||
-                        (it.isVideoFast() && filter and TYPE_VIDEOS != 0) ||
-                        (it.isGif() && filter and TYPE_GIFS != 0) ||
-                        (it.isRawFast() && filter and TYPE_RAWS != 0) ||
-                        (it.isSvg() && filter and TYPE_SVGS != 0))
+                    it.absolutePath.isMediaFile() && (showHidden || !it.name.startsWith('.'))
             }?.mapTo(paths) { it.absolutePath }
         }
 

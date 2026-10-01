@@ -15,7 +15,6 @@ import org.fossify.gallery.databinding.DialogMediumPickerBinding
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.getCachedMedia
 import org.fossify.gallery.helpers.GridSpacingItemDecoration
-import org.fossify.gallery.helpers.SHOW_ALL
 import org.fossify.gallery.models.Medium
 import org.fossify.gallery.models.ThumbnailItem
 import org.fossify.gallery.models.ThumbnailSection
@@ -25,7 +24,7 @@ class PickMediumDialog(val activity: BaseSimpleActivity, val path: String, val c
     private var shownMedia = ArrayList<ThumbnailItem>()
     private val binding = DialogMediumPickerBinding.inflate(activity.layoutInflater)
     private val config = activity.config
-    private val viewType = config.getFolderViewType(if (config.showAll) SHOW_ALL else path)
+    private val viewType = config.getFolderViewType(path)
     private var isGridViewType = viewType == VIEW_TYPE_GRID
 
     init {

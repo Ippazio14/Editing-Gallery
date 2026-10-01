@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">גלריה</string>
     <string name="edit">עריכה</string>
-    <string name="open_camera">פתיחת מצלמה</string>
     <string name="hidden">(מוסתרת)</string>
     <string name="pin_folder">הצמדת תיקייה</string>
     <string name="unpin_folder">ביטול הצמדת תיקייה</string>
     <string name="pin_to_the_top">הצמדה לחלק העליון</string>
-    <string name="show_all">הצגת תכולת כל התיקיות</string>
     <string name="all_folders">כל התיקיות</string>
-    <string name="folder_view">מעבר לתצוגת תיקיות</string>
     <string name="other_folder">תיקייה אחרת</string>
     <string name="show_on_map">הצגה במפה</string>
     <string name="unknown_location">מיקום לא ידוע</string>
@@ -32,14 +29,11 @@
     <string name="reorder_by_dragging">ארגון מחדש של התיקיות על ידי גרירה</string>
     <string name="reorder_by_dragging_pro">ארגון מחדש של התיקיות על ידי גרירה (Pro)</string>
     <string name="restore_to_path">שחזור ל-\'%s\'</string>
-    <string name="filter_media">סינון מדיה</string>
     <string name="images">תמונות</string>
     <string name="videos">סרטונים</string>
     <string name="gifs">קובצי GIF</string>
     <string name="raw_images">תמונות RAW</string>
     <string name="portraits">דיוקנים</string>
-    <string name="no_media_with_filters">לא נמצאו קבצי מדיה עם המסננים שנבחרו.</string>
-    <string name="change_filters_underlined"><u>שינוי מסננים</u></string>
     <string name="hide_folder_description">פעולה זו מסתירה את התיקיה על ידי הוספת קובץ \'.nomedia\' לתוכה, היא תסתיר גם את כל תיקיות המשנה. ניתן לראות אותם על ידי שינוי האפשרות \'הצגת פריטים מוסתרים\' בהגדרות. להמשיך?</string>
     <string name="exclude_folder_parent">להחריג תיקיית מכילה במקום?</string>
     <string name="hidden_folders">תיקיות מוסתרות</string>

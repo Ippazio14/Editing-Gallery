@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">圖庫</string>
     <string name="edit">編輯</string>
-    <string name="open_camera">開啟相機</string>
     <string name="hidden">（已隱藏）</string>
     <string name="excluded">（已排除）</string>
     <string name="pin_folder">釘選資料夾</string>
     <string name="unpin_folder">取消釘選資料夾</string>
     <string name="pin_to_the_top">釘選至頂部</string>
-    <string name="show_all">顯示全部資料夾內容</string>
     <string name="all_folders">全部資料夾</string>
-    <string name="folder_view">切換為資料夾檢視</string>
     <string name="other_folder">其他資料夾</string>
     <string name="show_on_map">在地圖上顯示</string>
     <string name="unknown_location">未知的位置</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">拖曳以重新排序資料夾</string>
     <string name="reorder_by_dragging_pro">拖曳以重新排序資料夾（專業版）</string>
     <string name="restore_to_path">還原至「%s」</string>
-    <string name="filter_media">篩選媒體檔案</string>
     <string name="images">圖片</string>
     <string name="videos">影片</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">RAW 圖檔</string>
     <string name="svgs">SVG</string>
     <string name="portraits">直向</string>
-    <string name="no_media_with_filters">未發現符合篩選條件的媒體檔案。</string>
-    <string name="change_filters_underlined"><u>更改篩選條件</u></string>
     <string name="hide_folder_description">啟用此功能將在選定資料夾中建立「.nomedia」檔案，該資料夾及其所有子資料夾將被隱藏。如要檢視隱藏的資料夾，可在設定中啟用「顯示隱藏項目」。是否繼續？</string>
     <string name="exclude_folder_parent">是否排除上層資料夾？</string>
     <string name="hidden_folders">隱藏資料夾</string>

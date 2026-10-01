@@ -28,7 +28,7 @@
             android:paddingStart="@dimen/activity_margin"
             android:paddingTop="@dimen/activity_margin"
             android:paddingEnd="@dimen/activity_margin"
-            android:text="@string/no_media_with_filters"
+            android:text="@string/no_items_found"
             android:textSize="@dimen/bigger_text_size"
             android:textStyle="italic"
             android:visibility="gone" />

@@ -29,7 +29,7 @@ import java.io.File
 
 class SearchActivity : SimpleActivity(), MediaOperationsListener {
     override var isSearchBarEnabled = true
-    
+
     private var mLastSearchedText = ""
 
     private var mCurrAsyncTask: GetMediaAsynctask? = null
@@ -175,7 +175,7 @@ class SearchActivity : SimpleActivity(), MediaOperationsListener {
     private fun openInViewPager(path: String) {
         Intent(this, ViewPagerActivity::class.java).apply {
             putExtra(PATH, path)
-            putExtra(SHOW_ALL, false)
+
             startActivity(this)
         }
     }

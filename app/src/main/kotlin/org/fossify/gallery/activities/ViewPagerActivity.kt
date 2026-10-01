@@ -76,7 +76,6 @@ import org.fossify.commons.extensions.isVideoFast
 import org.fossify.commons.extensions.needsStupidWritePermissions
 import org.fossify.commons.extensions.onGlobalLayout
 import org.fossify.commons.extensions.recycleBinPath
-import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.scanPathRecursively
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
@@ -84,7 +83,6 @@ import org.fossify.commons.extensions.tryGenericMimeType
 import org.fossify.commons.extensions.updateBrightness
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.IS_FROM_GALLERY
-import org.fossify.commons.helpers.NOMEDIA
 import org.fossify.commons.helpers.REAL_FILE_PATH
 import org.fossify.commons.helpers.REQUEST_EDIT_IMAGE
 import org.fossify.commons.helpers.REQUEST_SET_AS
@@ -101,7 +99,6 @@ import org.fossify.gallery.dialogs.DeleteWithRememberDialog
 import org.fossify.gallery.dialogs.SaveAsDialog
 import org.fossify.gallery.dialogs.SlideshowDialog
 import org.fossify.gallery.extensions.config
-import org.fossify.gallery.extensions.fixDateTaken
 import org.fossify.gallery.extensions.getShortcutImage
 import org.fossify.gallery.extensions.handleMediaManagementPrompt
 import org.fossify.gallery.extensions.hideSystemUI
@@ -119,10 +116,8 @@ import org.fossify.gallery.extensions.shareMediumPath
 import org.fossify.gallery.extensions.showFileOnMap
 import org.fossify.gallery.extensions.showSystemUI
 import org.fossify.gallery.extensions.toggleFileVisibility
-import org.fossify.gallery.extensions.tryCopyMoveFilesTo
 import org.fossify.gallery.extensions.tryDeleteFileDirItem
 import org.fossify.gallery.extensions.updateDBMediaPath
-import org.fossify.gallery.extensions.updateMovedMediaPaths
 import org.fossify.gallery.fragments.PhotoFragment
 import org.fossify.gallery.fragments.VideoFragment
 import org.fossify.gallery.fragments.ViewPagerFragment
@@ -154,7 +149,6 @@ import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.ROTATE_BY_ASPECT_RATIO
 import org.fossify.gallery.helpers.ROTATE_BY_DEVICE_ROTATION
 import org.fossify.gallery.helpers.ROTATE_BY_SYSTEM_SETTING
-import org.fossify.gallery.helpers.SHOW_ALL
 import org.fossify.gallery.helpers.SHOW_NEXT_ITEM
 import org.fossify.gallery.helpers.SHOW_PREV_ITEM
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
@@ -189,7 +183,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private var mDirectory = ""
     private var mIsFullScreen = false
     private var mPos = -1
-    private var mShowAll = false
     private var mIsSlideshowActive = false
     private var mPrevHashcode = 0
 
@@ -261,7 +254,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         ColorModeHelper.resetColorMode(this)
 
         if (intent.extras?.containsKey(IS_VIEW_INTENT) == true) {
-            config.temporarilyShowHidden = false
         }
 
         if (config.isThirdPartyIntent) {
@@ -300,8 +292,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
                 findItem(R.id.menu_unhide).isVisible =
                     (!isRPlus() || isExternalStorageManager()) && currentMedium.isHidden() && visibleBottomActions and BOTTOM_ACTION_TOGGLE_VISIBILITY == 0 && !currentMedium.getIsInRecycleBin()
-
-
 
                 findItem(R.id.menu_restore_file).isVisible = currentMedium.path.startsWith(recycleBinPath)
                 findItem(R.id.menu_create_shortcut).isVisible = true
@@ -407,8 +397,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             try {
                 mPath = savedPath.ifEmpty { intent.getStringExtra(PATH).orEmpty() }
 
-                // make sure "Open Recycle Bin" works well with "Show all folders content"
-                mShowAll = config.showAll && (mPath.isNotEmpty() && !mPath.startsWith(recycleBinPath))
             } catch (e: Exception) {
                 showErrorToast(e)
                 finish()
@@ -459,11 +447,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun initContinue() {
         if (intent.extras?.containsKey(IS_VIEW_INTENT) == true) {
-            if (isShowHiddenFlagNeeded()) {
-                if (!config.isHiddenPasswordProtectionOn) {
-                    config.temporarilyShowHidden = true
-                }
-            }
 
             config.isThirdPartyIntent = true
         }
@@ -543,8 +526,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         initBottomActionButtons()
         initBottomActionsLayout()
     }
-
-
 
     private fun setupOrientation() {
         if (!mIsOrientationLocked) {
@@ -842,7 +823,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             getShortcutImage(path, drawable) {
                 val intent = Intent(this, ViewPagerActivity::class.java).apply {
                     putExtra(PATH, path)
-                    putExtra(SHOW_ALL, config.showAll)
+
                     putExtra(SHOW_RECYCLE_BIN, path == RECYCLE_BIN)
                     action = Intent.ACTION_VIEW
                     flags = flags or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -863,27 +844,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun getPortraitPath() = intent.getStringExtra(PORTRAIT_PATH) ?: ""
 
-    private fun isShowHiddenFlagNeeded(): Boolean {
-        val file = File(mPath)
-        if (file.isHidden) {
-            return true
-        }
-
-        var parent = file.parentFile ?: return false
-        while (true) {
-            if (parent.isHidden || parent.list()?.any { it.startsWith(NOMEDIA) } == true) {
-                return true
-            }
-
-            if (parent.absolutePath == "/") {
-                break
-            }
-            parent = parent.parentFile ?: return false
-        }
-
-        return false
-    }
-
     private fun getCurrentFragment() = (binding.viewPager.adapter as? MyPagerAdapter)?.getCurrentFragment(binding.viewPager.currentItem)
 
     private fun showProperties() {
@@ -903,7 +863,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private fun initBottomActionButtons() {
         val currentMedium = getCurrentMedium()
         val visibleBottomActions = if (config.bottomActions) config.visibleBottomActions else 0
-
 
         binding.bottomActions.bottomEdit.beVisibleIf(visibleBottomActions and BOTTOM_ACTION_EDIT != 0 && currentMedium?.isSVG() == false)
         binding.bottomActions.bottomEdit.setOnLongClickListener { toast(R.string.edit); true }
@@ -1017,8 +976,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         binding.bottomActions.bottomRotate.beVisibleIf(config.visibleBottomActions and BOTTOM_ACTION_ROTATE != 0 && getCurrentMedium()?.isImage() == true)
         binding.bottomActions.bottomChangeOrientation.setImageResource(getChangeOrientationIcon())
     }
-
-
 
     private fun printFile() {
         sendPrintIntent(getCurrentPath())
@@ -1254,7 +1211,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     private fun refreshViewPager(refetchPosition: Boolean = false) {
         val isRandomSorting = config.getFolderSorting(mDirectory) and SORT_BY_RANDOM != 0
         if (!isRandomSorting || isExternalIntent()) {
-            GetMediaAsynctask(applicationContext, mDirectory, isPickImage = false, isPickVideo = false, showAll = mShowAll) {
+            GetMediaAsynctask(applicationContext, mDirectory, isPickImage = false, isPickVideo = false, showAll = false) {
                 gotMedia(it, refetchViewPagerPosition = refetchPosition)
             }.execute()
         }

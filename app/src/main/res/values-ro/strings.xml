@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">Galerie</string>
     <string name="edit">Editaţi</string>
-    <string name="open_camera">Deschide camera</string>
     <string name="hidden">(ascuns)</string>
     <string name="pin_folder">Fixează dosarul</string>
     <string name="unpin_folder">Desprinde dosarul</string>
     <string name="pin_to_the_top">Fixează în vârf</string>
-    <string name="show_all">Afișează conținutul tuturor dosarelor</string>
     <string name="all_folders">Toate dosarele</string>
-    <string name="folder_view">Schimbă la vizualizarea pe dosare</string>
     <string name="other_folder">Alt dosar</string>
     <string name="show_on_map">Arată pe hartă</string>
     <string name="unknown_location">Locație necunoscută</string>
@@ -32,15 +29,12 @@
     <string name="reorder_by_dragging">Reordonează dosarele prin tragere</string>
     <string name="reorder_by_dragging_pro">Reordonează dosarele prin tragere (Pro)</string>
     <string name="restore_to_path">Restaurare la \"%s</string>
-    <string name="filter_media">Filtrează elementele media</string>
     <string name="images">Imagini</string>
     <string name="videos">Videoclipuri</string>
     <string name="gifs">GIF-uri</string>
     <string name="raw_images">Imagini RAW</string>
     <string name="svgs">SVG-uri</string>
     <string name="portraits">Portrete</string>
-    <string name="no_media_with_filters">Nu a fost găsit niciun fișier media cu filtrele selectate.</string>
-    <string name="change_filters_underlined"><u>Schimbă filtrele</u></string>
     <string name="hide_folder_description">Această funcție ascunde dosarul prin adăugarea unui fișier \'.nomedia\' în el, ascunzând și toate subdosarele. Le poţi vedea prin activarea opțiunii \'Afișați elementele ascunse\' din Setări. Continuați\?</string>
     <string name="exclude_folder_parent">Exclude dosarul părinte în schimb\?</string>
     <string name="hidden_folders">Dosare ascunse</string>

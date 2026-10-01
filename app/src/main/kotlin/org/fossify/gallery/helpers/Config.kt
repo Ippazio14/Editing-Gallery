@@ -66,19 +66,12 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(HIDE_FOLDER_TOOLTIP_SHOWN, false)
         set(wasShown) = prefs.edit().putBoolean(HIDE_FOLDER_TOOLTIP_SHOWN, wasShown).apply()
 
-    var shouldShowHidden = showHiddenMedia || temporarilyShowHidden
+    val shouldShowHidden: Boolean
+        get() = showHiddenMedia
 
     var showHiddenMedia: Boolean
         get() = prefs.getBoolean(SHOW_HIDDEN_MEDIA, false)
         set(showHiddenFolders) = prefs.edit().putBoolean(SHOW_HIDDEN_MEDIA, showHiddenFolders).apply()
-
-    var temporarilyShowHidden: Boolean
-        get() = prefs.getBoolean(TEMPORARILY_SHOW_HIDDEN, false)
-        set(temporarilyShowHidden) = prefs.edit().putBoolean(TEMPORARILY_SHOW_HIDDEN, temporarilyShowHidden).apply()
-
-    var temporarilyShowExcluded: Boolean
-        get() = prefs.getBoolean(TEMPORARILY_SHOW_EXCLUDED, false)
-        set(temporarilyShowExcluded) = prefs.edit().putBoolean(TEMPORARILY_SHOW_EXCLUDED, temporarilyShowExcluded).apply()
 
     var isThirdPartyIntent: Boolean
         get() = prefs.getBoolean(IS_THIRD_PARTY_INTENT, false)
@@ -87,10 +80,6 @@ class Config(context: Context) : BaseConfig(context) {
     var pinnedFolders: Set<String>
         get() = prefs.getStringSet(PINNED_FOLDERS, HashSet<String>())!!
         set(pinnedFolders) = prefs.edit().putStringSet(PINNED_FOLDERS, pinnedFolders).apply()
-
-    var showAll: Boolean
-        get() = prefs.getBoolean(SHOW_ALL, false)
-        set(showAll) = prefs.edit().putBoolean(SHOW_ALL, showAll).apply()
 
     fun addPinnedFolders(paths: Set<String>) {
         val currPinnedFolders = HashSet<String>(pinnedFolders)
@@ -197,7 +186,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_THUMBNAIL_FILE_TYPES, true)
         set(showThumbnailFileTypes) = prefs.edit().putBoolean(SHOW_THUMBNAIL_FILE_TYPES, showThumbnailFileTypes).apply()
 
-
     var screenRotation: Int
         get() = prefs.getInt(SCREEN_ROTATION, ROTATE_BY_SYSTEM_SETTING)
         set(screenRotation) = prefs.edit().putInt(SCREEN_ROTATION, screenRotation).apply()
@@ -230,10 +218,6 @@ class Config(context: Context) : BaseConfig(context) {
     var blackBackground: Boolean
         get() = prefs.getBoolean(BLACK_BACKGROUND, true)
         set(blackBackground) = prefs.edit().putBoolean(BLACK_BACKGROUND, blackBackground).apply()
-
-    var filterMedia: Int
-        get() = prefs.getInt(FILTER_MEDIA, getDefaultFileFilter())
-        set(filterMedia) = prefs.edit().putInt(FILTER_MEDIA, filterMedia).apply()
 
     var dirColumnCnt: Int
         get() = prefs.getInt(getDirectoryColumnsField(), getDefaultDirectoryColumnCount())
@@ -398,14 +382,9 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(TEMP_SKIP_RECYCLE_BIN, false)
         set(tempSkipRecycleBin) = prefs.edit().putBoolean(TEMP_SKIP_RECYCLE_BIN, tempSkipRecycleBin).apply()
 
-
     var wasRecycleBinPinned: Boolean
         get() = prefs.getBoolean(WAS_RECYCLE_BIN_PINNED, false)
         set(wasRecycleBinPinned) = prefs.edit().putBoolean(WAS_RECYCLE_BIN_PINNED, wasRecycleBinPinned).apply()
-
-    var wasSVGShowingHandled: Boolean
-        get() = prefs.getBoolean(WAS_SVG_SHOWING_HANDLED, false)
-        set(wasSVGShowingHandled) = prefs.edit().putBoolean(WAS_SVG_SHOWING_HANDLED, wasSVGShowingHandled).apply()
 
     var groupBy: Int
         get() = prefs.getInt(GROUP_BY, GROUP_BY_NONE)
@@ -553,7 +532,6 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getFloat(EDITOR_BRUSH_SIZE, 0.05f)
         set(editorBrushSize) = prefs.edit().putFloat(EDITOR_BRUSH_SIZE, editorBrushSize).apply()
 
-
     var showFolderMediaCount: Int
         get() = prefs.getInt(FOLDER_MEDIA_COUNT, FOLDER_MEDIA_CNT_LINE)
         set(showFolderMediaCount) = prefs.edit().putInt(FOLDER_MEDIA_COUNT, showFolderMediaCount).apply()
@@ -585,7 +563,6 @@ class Config(context: Context) : BaseConfig(context) {
     var searchAllFilesByDefault: Boolean
         get() = prefs.getBoolean(SEARCH_ALL_FILES_BY_DEFAULT, false)
         set(searchAllFilesByDefault) = prefs.edit().putBoolean(SEARCH_ALL_FILES_BY_DEFAULT, searchAllFilesByDefault).apply()
-
 
     var showPermissionRationale: Boolean
         get() = prefs.getBoolean(SHOW_PERMISSION_RATIONALE, false)

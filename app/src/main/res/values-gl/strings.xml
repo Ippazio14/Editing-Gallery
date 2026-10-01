@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galería</string>
     <string name="edit">Editar</string>
-    <string name="open_camera">Abrir cámara</string>
     <string name="hidden">(oculto)</string>
     <string name="excluded">(excluído)</string>
     <string name="pin_folder">Fixar cartafol</string>
     <string name="unpin_folder">Soltar cartafol</string>
     <string name="pin_to_the_top">Fixar arriba</string>
-    <string name="show_all">Mostralo contido de todos os cartafoles</string>
     <string name="all_folders">Todolos cartafoles</string>
-    <string name="folder_view">Mudala vista por cartafol</string>
     <string name="other_folder">Outro cartafol</string>
     <string name="show_on_map">Mostrar no mapa</string>
     <string name="unknown_location">Localización descoñecida</string>
@@ -32,13 +29,10 @@
     <string name="reorder_by_dragging">Reordealos cartafois arrastrando</string>
     <string name="reorder_by_dragging_pro">Reordealos cartafoles arrastrando (Pro)</string>
     <string name="restore_to_path">Restaurando a \'%s\'</string>
-    <string name="filter_media">Filtrar medios</string>
     <string name="images">Imaxes</string>
     <string name="videos">Vídeos</string>
     <string name="raw_images">Imaxes RAW</string>
     <string name="portraits">Retratos</string>
-    <string name="no_media_with_filters">Non se atopou multimedia do tipo indicado polo filtro.</string>
-    <string name="change_filters_underlined"><u>Cambiar filtro</u></string>
     <string name="hide_folder_description">Esta función oculta o cartafol engadíndolle ficheiro \'.nomedia\', tamén ocultará os subcartafoles. Podes velos premendo a opción \'Mostrar elementos ocultos\' nos Axustes. Continuar?</string>
     <string name="exclude_folder_description">Isto só excluirá de Fossify Gallery a selección e os seus subcartafoles. Podes xestionar os cartafoles excluídos nos Axustes.</string>
     <string name="exclude_folder_parent">Excluír o cartafol pai no seu lugar\?</string>

@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galleri</string>
     <string name="edit">Redigera</string>
-    <string name="open_camera">Öppna kameran</string>
     <string name="hidden">(dold)</string>
     <string name="excluded">(utesluten)</string>
     <string name="pin_folder">Fäst mapp</string>
     <string name="unpin_folder">Lossa mapp</string>
     <string name="pin_to_the_top">Fäst högst upp</string>
-    <string name="show_all">Visa alla mappars innehåll</string>
     <string name="all_folders">Alla mappar</string>
-    <string name="folder_view">Växla till mappvy</string>
     <string name="other_folder">Annan mapp</string>
     <string name="show_on_map">Visa på karta</string>
     <string name="unknown_location">Okänd plats</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Ordna om mappar genom att dra</string>
     <string name="reorder_by_dragging_pro">Ordna om mappar genom att dra (Pro)</string>
     <string name="restore_to_path">Återställer till \'%s\'</string>
-    <string name="filter_media">Filtrera media</string>
     <string name="images">Bilder</string>
     <string name="videos">Videor</string>
     <string name="gifs">GIF-bilder</string>
     <string name="raw_images">RAW-bilder</string>
     <string name="svgs">SVG-bilder</string>
     <string name="portraits">Porträtt</string>
-    <string name="no_media_with_filters">Inga mediafiler hittades med de valda filtren.</string>
-    <string name="change_filters_underlined"><u>Ändra filter</u></string>
     <string name="hide_folder_description">Denna funktion döljer mappen och alla dess undermappar genom att lägga till en \'.nomedia\'-fil i den. Du kan se dem genom att växla \'Visa dolda objekt\'-alternativet i Inställningar. Vill du fortsätta\?</string>
     <string name="exclude_folder_parent">Vill du utesluta en överordnad mapp istället\?</string>
     <string name="hidden_folders">Dolda mappar</string>

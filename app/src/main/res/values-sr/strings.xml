@@ -2,14 +2,11 @@
 <resources>
     <string name="app_launcher_name">Галерија</string>
     <string name="edit">Уреди</string>
-    <string name="open_camera">Отвори камеру</string>
     <string name="hidden">(скривено)</string>
     <string name="pin_folder">Закачи фасциклу</string>
     <string name="unpin_folder">Откачи фасциклу</string>
     <string name="pin_to_the_top">Закачи на врх</string>
-    <string name="show_all">Прикажи садржај свих фасцикли</string>
     <string name="all_folders">Све фасцикле</string>
-    <string name="folder_view">Пређи на преглед фасцикли</string>
     <string name="other_folder">Друга фасцикла</string>
     <string name="show_on_map">Прикажи на мапи</string>
     <string name="unknown_location">Непозната локација</string>
@@ -32,15 +29,12 @@
     <string name="reorder_by_dragging">Промените редослед фасцикли превлачењем</string>
     <string name="reorder_by_dragging_pro">Промените редослед директоријума превлачењем (Про)</string>
     <string name="restore_to_path">Враћање на \'%s\'</string>
-    <string name="filter_media">Филтрирај медију</string>
     <string name="images">Слике</string>
     <string name="videos">Видео снимци</string>
     <string name="gifs">ГИФови</string>
     <string name="raw_images">Сирове слике</string>
     <string name="svgs">СВГови</string>
     <string name="portraits">Портрети</string>
-    <string name="no_media_with_filters">Нема пронађених медија датотека са изабраним филтерима.</string>
-    <string name="change_filters_underlined"><u>Измени филтере</u></string>
     <string name="hide_folder_description">Ова функција скрива фасциклу додавањем \'.nomedia\' фајла у њу, она ће такође сакрити све подфасцикле. Можете их видети притиском на опцију \'Прикажи скривене ставке\' у подешавањима. Настави\?</string>
     <string name="exclude_folder_parent">Изузми родитеља уместо овог\?</string>
     <string name="hidden_folders">Скривене фасцикле</string>

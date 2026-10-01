@@ -8,8 +8,6 @@ interface MediumDao {
     @Query("SELECT filename, full_path, parent_path, last_modified, date_taken, size, type, video_duration, deleted_ts, media_store_id FROM media WHERE deleted_ts = 0 AND parent_path = :path COLLATE NOCASE")
     fun getMediaFromPath(path: String): List<Medium>
 
-
-
     @Query("SELECT filename, full_path, parent_path, last_modified, date_taken, size, type, video_duration, deleted_ts, media_store_id FROM media WHERE deleted_ts != 0")
     fun getDeletedMedia(): List<Medium>
 
@@ -39,8 +37,6 @@ interface MediumDao {
 
     @Query("UPDATE media SET date_taken = :dateTaken WHERE full_path = :path COLLATE NOCASE")
     fun updateDateTaken(path: String, dateTaken: Long)
-
-
 
     @Query("DELETE FROM media WHERE deleted_ts != 0")
     fun clearRecycleBin()

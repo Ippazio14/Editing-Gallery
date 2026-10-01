@@ -21,3 +21,7 @@ Rimossi modello, DAO, proprietà del modello multimediale, query, logica di scan
 ## Verifiche
 
 `python tools/check_favorites_migration.py` controlla la conservazione dei dati e dei vincoli nel database. La build GitHub compila l’APK. Verificare sul dispositivo: apertura, tre pulsanti, rotazione schermo, ogni strumento, Undo/Redo, salvataggio e ritorno alla galleria. Provare prima con copie di foto.
+
+## Navigazione semplificata
+
+Rimossi filtro dei tipi di file, visibilità temporanea di nascosti/esclusi e avvio fotocamera (menu, preferenze e codice). La schermata iniziale mostra solo le cartelle; la vecchia preferenza per la vista globale viene ignorata. La ricerca globale e l’ordinamento dentro le cartelle restano disponibili. Le restrizioni dei selettori esterni di immagini/video restano operative.

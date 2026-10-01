@@ -71,7 +71,6 @@ class ChangeViewTypeDialog(val activity: BaseSimpleActivity, val fromFoldersView
             }
         }
 
-
         callback()
     }
 }

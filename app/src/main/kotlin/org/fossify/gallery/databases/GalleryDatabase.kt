@@ -20,7 +20,6 @@ abstract class GalleryDatabase : RoomDatabase() {
 
     abstract fun DateTakensDao(): DateTakensDao
 
-
     companion object {
         private var db: GalleryDatabase? = null
 

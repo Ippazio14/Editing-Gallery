@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerija</string>
     <string name="edit">Uredi</string>
-    <string name="open_camera">Zaženi fotoaparat</string>
     <string name="hidden">(skrito)</string>
     <string name="excluded">(izključeno)</string>
     <string name="pin_folder">Pripni mapo</string>
     <string name="unpin_folder">Odpni mapo</string>
     <string name="pin_to_the_top">Pripni na vrh</string>
-    <string name="show_all">Prikaži vso vsebino mape</string>
     <string name="all_folders">Vse mape</string>
-    <string name="folder_view">Preklopi na pogled map</string>
     <string name="other_folder">Druga mapa</string>
     <string name="show_on_map">Prikaži na zemljevidu</string>
     <string name="unknown_location">Neznana lokacija</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Razporedi mape z vlečenjem</string>
     <string name="reorder_by_dragging_pro">Razporedi mape z vlečenjem (Pro)</string>
     <string name="restore_to_path">Obnovitev v \'%s\'</string>
-    <string name="filter_media">Filtriranje datotek</string>
     <string name="images">Slike</string>
     <string name="videos">Video</string>
     <string name="gifs">GIFi</string>
     <string name="raw_images">RAW slike</string>
     <string name="svgs">SVGji</string>
     <string name="portraits">Portreti</string>
-    <string name="no_media_with_filters">Na podlagi izbranih filtrov ne najdem nobenih medijskih datotek.</string>
-    <string name="change_filters_underlined"><u>Spremeni filtre</u></string>
     <string name="hide_folder_description">Ta funkcija skrije mapo tako, da vanjo doda \'.nomedia\' datoteko, kar skrije tudi vse podmape. Ponovno jih lahko prikažete z uporabo možnosti \'Prikaži skrite elemente\' v Nastavitvah. Nadaljujem\?</string>
     <string name="exclude_folder_parent">Namesto tega izključim nadrejeno mapo\?</string>
     <string name="hidden_folders">Skrite mape</string>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="edit">Ẓreg</string>
-    <string name="open_camera">Ldi takamiṛat</string>
     <string name="hidden">(yettwaffer)</string>
     <string name="volume">Ableɣ</string>
     <string name="unknown_location">Adig arussin</string>
@@ -17,9 +16,7 @@
     <string name="pin_folder">Senṭeḍ akaram</string>
     <string name="unpin_folder">Kkes asenteḍ ɣef ukaram</string>
     <string name="pin_to_the_top">Senṭeḍ ɣer tqacuct</string>
-    <string name="show_all">Sken akk agbur n ikaramen</string>
     <string name="all_folders">Akk ikaramen</string>
-    <string name="folder_view">Uɣal ɣer uskan n ukaram</string>
     <string name="other_folder">Akaram nniḍen</string>
     <string name="show_on_map">Sken deg tkarḍa</string>
     <string name="brightness">tifawit</string>
@@ -48,7 +45,6 @@
     <string name="resize_factor">Amgi ubeddel n tisekta</string>
     <string name="resize_factor_info">Ales tisekta n tugniwin s ufmiḍ i d-yettunefken, azal ilaq ad yili gar 10 d 90.</string>
     <string name="resize_factor_error">Sekcem amḍan gar 10 d 90</string>
-    <string name="filter_media">Asizdeg umidya</string>
     <string name="gifs">tugniwin GIF</string>
     <string name="raw_images">Tugniwin RAW</string>
     <string name="unknown_file_location">Adig n ufaylu arussin</string>
@@ -148,8 +144,6 @@
     <string name="full_storage_permission_required">Timidelt n Fossify teḥwaǧ anekcum ummid akken ad d-tesken akk tiwlafin-ik-im d tvidyutin-ik-im. Ruḥ ɣer iɣewwaṛen &gt; Tisirag&gt; Tiwlafin d tvidyutin &gt; Sireg kullec.</string>
     <string name="svgs">Tugniwin SVG</string>
     <string name="portraits">S ibedditin</string>
-    <string name="no_media_with_filters">Ulac ifuyla n umidya s imzizdigen yettwafernen.</string>
-    <string name="change_filters_underlined"><u>Beddel imzizdigen</u></string>
     <string name="hide_folder_description">Tawuri-ya tetteffer akaram-nni s tmerna n ufaylu \'.nomedia\' ɣur-s, ad yeffer ula d ikaramen inaddawen akk. ad ten-twaliḍ s usnifel n \"Sken iferdisen yeffren\" deg iɣewwaṛen. Kemmel?</string>
     <string name="exclude_folder_parent">Sufeɣ-d amaraw?</string>
     <string name="manage_hidden_folders">Sefrek ikaramen yeffren</string>

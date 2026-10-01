@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galleria</string>
     <string name="edit">Modifica</string>
-    <string name="open_camera">Apri fotocamera</string>
     <string name="hidden">(nascosta)</string>
     <string name="excluded">(esclusa)</string>
     <string name="pin_folder">Blocca cartella</string>
     <string name="unpin_folder">Sblocca cartella</string>
     <string name="pin_to_the_top">Fissa in alto</string>
-    <string name="show_all">Mostra tutti i contenuti</string>
     <string name="all_folders">Tutte le cartelle</string>
-    <string name="folder_view">Visualizza a cartelle</string>
     <string name="other_folder">Altra cartella</string>
     <string name="show_on_map">Mostra sulla mappa</string>
     <string name="unknown_location">Posizione sconosciuta</string>
@@ -32,15 +29,12 @@
     <string name="reorder_by_dragging">Riordina cartelle trascinandole</string>
     <string name="reorder_by_dragging_pro">Riordina cartelle trascinandole (Pro)</string>
     <string name="restore_to_path">Ripristino a «%s»</string>
-    <string name="filter_media">Filtra i file</string>
     <string name="images">Immagini</string>
     <string name="videos">Video</string>
     <string name="gifs">GIF</string>
     <string name="raw_images">Immagini RAW</string>
     <string name="svgs">SVG</string>
     <string name="portraits">Ritratti</string>
-    <string name="no_media_with_filters">Nessun file trovato con il filtro selezionato.</string>
-    <string name="change_filters_underlined"><u>Cambia filtro</u></string>
     <string name="hide_folder_description">Questa funzione nasconde la cartella aggiungendo un file .nomedia all\'interno, nasconderà anche tutte le sottocartelle. Si possono vedere attivando l\'opzione «Mostra cartelle nascoste» nelle impostazioni. Continuare\?</string>
     <string name="exclude_folder_description">In questo modo la selezione e le sue sottocartelle saranno escluse solo da Galleria Fossify. È possibile gestire le cartelle escluse nelle impostazioni.</string>
     <string name="exclude_folder_parent">Vuoi invece escluderne una superiore\?</string>

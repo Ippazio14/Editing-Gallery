@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Bộ sưu tập</string>
     <string name="edit">Chỉnh sửa</string>
-    <string name="open_camera">Mở Camera</string>
     <string name="hidden">(ẩn)</string>
     <string name="excluded">(bỏ qua)</string>
     <string name="pin_folder">Ghim thư mục</string>
     <string name="unpin_folder">Bỏ ghim thư mục</string>
     <string name="pin_to_the_top">Ghim lên đầu</string>
-    <string name="show_all">Hiện tất cả nội dung thư mục</string>
     <string name="all_folders">Tất cả các thư mục</string>
-    <string name="folder_view">Chuyển sang xem thư mục</string>
     <string name="other_folder">Thư mục khác</string>
     <string name="show_on_map">Xem trong bản đồ</string>
     <string name="unknown_location">Vị trí chưa rõ</string>
@@ -33,14 +30,11 @@
     <string name="reorder_by_dragging">Đổi vị trí thư mục</string>
     <string name="reorder_by_dragging_pro">Đổi vị trí thư mục (Phiên bản Pro)</string>
     <string name="restore_to_path">Đang khôi phục \'%s\'</string>
-    <string name="filter_media">Lọc</string>
     <string name="images">Hình ảnh</string>
     <string name="videos">Video</string>
     <string name="gifs">Ảnh GIF</string>
     <string name="raw_images">Ảnh RAW</string>
     <string name="portraits">Chân dung</string>
-    <string name="no_media_with_filters">Không tìm thấy tệp phương tiện nào phù hợp với bộ lọc.</string>
-    <string name="change_filters_underlined"><u>Thay đổi bộ lọc</u></string>
     <string name="hide_folder_description">Chức năng này ẩn thư mục bằng cách thêm tệp \'.nomedia\' vào nó, nó cũng sẽ ẩn tất cả các thư mục con. Bạn có thể nhìn thấy chúng bằng cách bật tùy chọn \'Hiển thị các mục bị ẩn\' trong Cài đặt. Tiếp tục\?</string>
     <string name="exclude_folder_parent">Bỏ qua luôn thư mục mẹ?</string>
     <string name="hidden_folders">Thư mục ẩn</string>

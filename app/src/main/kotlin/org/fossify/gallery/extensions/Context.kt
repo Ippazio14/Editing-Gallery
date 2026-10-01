@@ -136,7 +136,6 @@ val Context.mediaDB: MediumDao get() = GalleryDatabase.getInstance(applicationCo
 val Context.directoryDB: DirectoryDao
     get() = GalleryDatabase.getInstance(applicationContext).DirectoryDao()
 
-
 val Context.dateTakensDB: DateTakensDao
     get() = GalleryDatabase.getInstance(applicationContext).DateTakensDao()
 
@@ -423,8 +422,6 @@ fun Context.getDirectParentSubfolders(
     if (currentPathPrefix.isEmpty() && folders.contains(RECYCLE_BIN)) {
         currentPaths.add(RECYCLE_BIN)
     }
-
-
 
     if (folders.size == currentPaths.size) {
         return dirs.filter { currentPaths.contains(it.path) } as ArrayList<Directory>
@@ -845,7 +842,7 @@ fun Context.getCachedDirectories(
         }
 
         val shouldShowHidden = config.shouldShowHidden || forceShowHidden
-        val excludedPaths = if (config.temporarilyShowExcluded || forceShowExcluded) {
+        val excludedPaths = if (forceShowExcluded) {
             HashSet()
         } else {
             config.excludedFolders
@@ -870,18 +867,10 @@ fun Context.getCachedDirectories(
             }
         } as ArrayList<Directory>
 
-        val filterMedia = config.filterMedia
         filteredDirectories = (when {
             getVideosOnly -> filteredDirectories.filter { it.types and TYPE_VIDEOS != 0 }
             getImagesOnly -> filteredDirectories.filter { it.types and TYPE_IMAGES != 0 }
-            else -> filteredDirectories.filter {
-                (filterMedia and TYPE_IMAGES != 0 && it.types and TYPE_IMAGES != 0)
-                        || (filterMedia and TYPE_VIDEOS != 0 && it.types and TYPE_VIDEOS != 0)
-                        || (filterMedia and TYPE_GIFS != 0 && it.types and TYPE_GIFS != 0)
-                        || (filterMedia and TYPE_RAWS != 0 && it.types and TYPE_RAWS != 0)
-                        || (filterMedia and TYPE_SVGS != 0 && it.types and TYPE_SVGS != 0)
-                        || (filterMedia and TYPE_PORTRAITS != 0 && it.types and TYPE_PORTRAITS != 0)
-            }
+            else -> filteredDirectories
         }) as ArrayList<Directory>
 
         if (shouldShowHidden) {
@@ -927,21 +916,18 @@ fun Context.getCachedMedia(
 
         var media = ArrayList<Medium>()
 
-
         if (path == RECYCLE_BIN) {
             media.addAll(getUpdatedDeletedMedia())
         }
 
-        if (config.filterMedia and TYPE_PORTRAITS != 0) {
-            val foldersToAdd = ArrayList<String>()
-            for (folder in foldersToScan) {
-                val allFiles = File(folder).listFiles() ?: continue
-                allFiles.filter { it.name.startsWith("img_", true) && it.isDirectory }.forEach {
-                    foldersToAdd.add(it.absolutePath)
-                }
+        val foldersToAdd = ArrayList<String>()
+        for (folder in foldersToScan) {
+            val allFiles = File(folder).listFiles() ?: continue
+            allFiles.filter { it.name.startsWith("img_", true) && it.isDirectory }.forEach {
+                foldersToAdd.add(it.absolutePath)
             }
-            foldersToScan.addAll(foldersToAdd)
         }
+        foldersToScan.addAll(foldersToAdd)
 
         val shouldShowHidden = config.shouldShowHidden
         foldersToScan.filter { path.isNotEmpty() || !config.isFolderProtected(it) }.forEach {
@@ -956,18 +942,10 @@ fun Context.getCachedMedia(
             media = media.filter { !it.path.contains("/.") } as ArrayList<Medium>
         }
 
-        val filterMedia = config.filterMedia
         media = (when {
             getVideosOnly -> media.filter { it.type == TYPE_VIDEOS }
             getImagesOnly -> media.filter { it.type == TYPE_IMAGES }
-            else -> media.filter {
-                (filterMedia and TYPE_IMAGES != 0 && it.type == TYPE_IMAGES)
-                        || (filterMedia and TYPE_VIDEOS != 0 && it.type == TYPE_VIDEOS)
-                        || (filterMedia and TYPE_GIFS != 0 && it.type == TYPE_GIFS)
-                        || (filterMedia and TYPE_RAWS != 0 && it.type == TYPE_RAWS)
-                        || (filterMedia and TYPE_SVGS != 0 && it.type == TYPE_SVGS)
-                        || (filterMedia and TYPE_PORTRAITS != 0 && it.type == TYPE_PORTRAITS)
-            }
+            else -> media
         }) as ArrayList<Medium>
 
         val pathToUse = path.ifEmpty { SHOW_ALL }
@@ -1046,12 +1024,6 @@ fun Context.getOTGFolderChildren(path: String) = getDocumentFile(path)?.listFile
 fun Context.getOTGFolderChildrenNames(path: String): MutableList<String?>? {
     return getOTGFolderChildren(path)?.map { it.name }?.toMutableList()
 }
-
-
-
-
-
-
 
 // remove the "recycle_bin" from the file path prefix, replace it with real bin path /data/user...
 fun Context.getUpdatedDeletedMedia(): ArrayList<Medium> {

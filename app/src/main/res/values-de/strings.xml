@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galerie</string>
     <string name="edit">Bearbeiten</string>
-    <string name="open_camera">Kamera öffnen</string>
     <string name="hidden">(versteckt)</string>
     <string name="excluded">(ausgeschlossen)</string>
     <string name="pin_folder">Ordner anheften</string>
     <string name="unpin_folder">Ordner loslösen</string>
     <string name="pin_to_the_top">Oben anheften</string>
-    <string name="show_all">Ansicht: Alle Medien</string>
     <string name="all_folders">Alle Medien</string>
-    <string name="folder_view">Ansicht: Als Ordner</string>
     <string name="other_folder">Ordnerwahl</string>
     <string name="show_on_map">Auf Karte zeigen</string>
     <string name="unknown_location">Unbekannter Ort</string>
@@ -33,12 +30,9 @@
     <string name="reorder_by_dragging">Ordner durch Ziehen neu anordnen</string>
     <string name="reorder_by_dragging_pro">Ordner durch Ziehen neu anordnen (Pro)</string>
     <string name="restore_to_path">Wiederherstellung nach „%s“</string>
-    <string name="filter_media">Medien filtern</string>
     <string name="images">Bilder</string>
     <string name="raw_images">RAW-Bilder</string>
     <string name="portraits">Porträts</string>
-    <string name="no_media_with_filters">Keine Medien für die ausgewählten Filter gefunden.</string>
-    <string name="change_filters_underlined"><u>Filter ändern</u></string>
     <string name="hide_folder_description">Diese Funktion versteckt den Ordner, indem eine \'.nomedia\'-Datei eingefügt wird, ebenso werden alle Unterordner versteckt. Mit der Einstellung „Versteckte Elemente anzeigen“ werden sie wieder sichtbar. Fortfahren?</string>
     <string name="exclude_folder_parent">Stattdessen einen höherliegenden Ordner ausschließen\?</string>
     <string name="hidden_folders">Versteckte Ordner</string>

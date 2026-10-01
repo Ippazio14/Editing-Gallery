@@ -2,15 +2,12 @@
 <resources>
     <string name="app_launcher_name">Galleri</string>
     <string name="edit">Rediger</string>
-    <string name="open_camera">Åpne kamera</string>
     <string name="hidden">(skjult)</string>
     <string name="excluded">(ekskludert)</string>
     <string name="pin_folder">Fest mappe</string>
     <string name="unpin_folder">Løsne mappe</string>
     <string name="pin_to_the_top">Fest til toppen</string>
-    <string name="show_all">Vis alle mappers innhold</string>
     <string name="all_folders">Alle mapper</string>
-    <string name="folder_view">Skift til mappevisning</string>
     <string name="other_folder">Annen mappe</string>
     <string name="show_on_map">Vis på kart</string>
     <string name="unknown_location">Ukjent plassering</string>
@@ -33,15 +30,12 @@
     <string name="reorder_by_dragging">Endre mapperekkefølge ved å dra</string>
     <string name="reorder_by_dragging_pro">Endre mapperekkefølge ved å dra (Pro)</string>
     <string name="restore_to_path">Gjenoppretter til \'%s\'</string>
-    <string name="filter_media">Filtrer media</string>
     <string name="images">Bilder</string>
     <string name="videos">Videoer</string>
     <string name="gifs">GIF-bilder</string>
     <string name="raw_images">RAW-format-bilder</string>
     <string name="svgs">SVG-bilder</string>
     <string name="portraits">Portretter</string>
-    <string name="no_media_with_filters">Ingen media-filer er funnet med de valgte filtrene.</string>
-    <string name="change_filters_underlined"><u>Endre filtere</u></string>
     <string name="hide_folder_description">Denne funksjonen skjuler mappen ved å legge til filen \'.nomedia\' i den. Alle undermapper blir også skjult. Du kan se dem ved å aktivere alternativet \'Vis skjulte elementer\' i innstillinger. Fortsette\?</string>
     <string name="exclude_folder_parent">Ekskludere en overordnet isteden\?</string>
     <string name="hidden_folders">Skjulte mapper</string>
