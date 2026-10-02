@@ -31,4 +31,5 @@
     <string name="scoped_delete_error">Unable to delete this file.</string>
     <string name="scoped_video_error">Unable to play this video.</string>
     <string name="scoped_play_pause">Play / Pause</string>
+    <string name="scoped_selection_hint">Hold a photo or video to select it for Copy or Cut.</string>
 </resources>

@@ -17,7 +17,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -28,7 +27,7 @@ import org.fossify.gallery.scoped.FolderAccess
 import java.util.concurrent.Executors
 
 /** Folder permissions are real SAF grants, not filters over unrestricted MediaStore access. */
-class MainActivity : AppCompatActivity() {
+class MainActivity : SimpleActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private lateinit var access: FolderAccess
     private lateinit var grid: RecyclerView
@@ -40,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private var albums = emptyList<FolderAccess.Album>()
     private var current: Uri? = null
     private var generation = 0
+    private var scanTask: java.util.concurrent.Future<*>? = null
     private var busy = false
     private val selected = linkedSetOf<FolderAccess.Media>()
     private var clipboard = emptyList<FolderAccess.Media>()
@@ -170,10 +170,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun load() {
         val token = ++generation
+        scanTask?.cancel(true)
         // Do not display cached media during a new permission check.
         albums = emptyList(); selected.clear(); show()
         status.setText(R.string.scoped_loading)
-        worker.execute {
+        scanTask = worker.submit {
             val result = runCatching { access.scan() }
             runOnUiThread {
                 if (isDestroyed || token != generation) return@runOnUiThread
@@ -208,6 +209,7 @@ class MainActivity : AppCompatActivity() {
             access.roots().isEmpty() -> getString(R.string.scoped_empty)
             selected.isNotEmpty() -> getString(R.string.scoped_selected, selected.size)
             album != null && visibleMedia(album).isEmpty() -> getString(R.string.scoped_album_empty)
+            album != null && !picking -> getString(R.string.scoped_selection_hint)
             else -> ""
         }
         grid.adapter = Tiles(album?.let { visibleMedia(it) })

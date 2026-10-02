@@ -31,4 +31,5 @@
     <string name="scoped_delete_error">Impossibile eliminare questo file.</string>
     <string name="scoped_video_error">Impossibile riprodurre questo video.</string>
     <string name="scoped_play_pause">Riproduci / Pausa</string>
+    <string name="scoped_selection_hint">Tieni premuta una foto o un video per selezionarlo e usare Copia o Taglia.</string>
 </resources>

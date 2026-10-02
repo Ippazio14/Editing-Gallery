@@ -171,7 +171,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.WidgetConfigureActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@style/MyWidgetConfigTheme">
+        <activity android:name=".activities.WidgetConfigureActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/MyWidgetConfigTheme">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
@@ -187,7 +187,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".helpers.MyWidgetProvider" android:exported="true" android:icon="@drawable/img_widget_preview" android:label="@string/folder">
+        <receiver android:name=".helpers.MyWidgetProvider" android:enabled="false" android:exported="false" android:icon="@drawable/img_widget_preview" android:label="@string/folder">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>

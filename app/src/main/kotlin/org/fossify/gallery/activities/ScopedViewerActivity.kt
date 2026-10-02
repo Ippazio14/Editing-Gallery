@@ -18,7 +18,6 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
@@ -27,7 +26,7 @@ import org.fossify.gallery.scoped.FolderAccess
 import java.util.concurrent.Executors
 
 /** URI-only viewer: opening a granted document never asks for general storage permissions. */
-class ScopedViewerActivity : AppCompatActivity() {
+class ScopedViewerActivity : SimpleActivity() {
     private val worker = Executors.newSingleThreadExecutor()
     private var video: VideoView? = null
     private var position = 0
