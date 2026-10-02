@@ -33,10 +33,17 @@
     <string name="scoped_play_pause">Riproduci / Pausa</string>
     <string name="scoped_selection_hint">Tieni premuta una foto o un video per selezionarlo e usare Copia o Taglia.</string>
     <string name="scoped_select_title">Scegli le cartelle</string>
-    <string name="scoped_access_intro">Questa applicazione non accede a tutti i file né a tutte le cartelle del dispositivo. Seleziona qui sotto le cartelle alle quali vuoi consentire l’accesso, poi premi Continua.</string>
-    <string name="scoped_check_help">Ogni cartella comprende le sue sottocartelle. Android chiederà conferma per i nuovi accessi.</string>
+    <string name="scoped_access_intro">Questa applicazione gratuita (EasyVision Gallery) e open source (FOSS) è adatta per:\n- visione semplice e modifica di immagini e video\n- semplicità di uso\n- massima privacy (accesso soltanto alle cartelle scelte)\n- persone con ridotta visione\n\nNon è necessario:\n- registrarsi\n- accettare cookie tecnici o di profilazione\n- concedere accesso a tutti i file o tutti i media del dispositivo\n\nPer ogni cartella a cui si desidera concedere accesso, fare clic sul nome e selezionare in seguito \"USA QUESTA CARTELLA\".\n\nAl termine premere Continua.</string>
     <string name="scoped_continue">Continua</string>
     <string name="scoped_selection_cancelled">Selezione annullata. Puoi scegliere un’altra cartella oppure premere Continua.</string>
     <string name="scoped_saving_access">Salvataggio delle autorizzazioni…</string>
     <string name="scoped_checked_count">%1$d cartelle selezionate.</string>
+    <string name="scoped_more">Altro</string>
+    <string name="scoped_search">Cerca</string>
+    <string name="scoped_sort_label">Ordina per</string>
+    <string name="scoped_columns_label">Numero di colonne</string>
+    <string name="scoped_ascending">Nome: A → Z</string>
+    <string name="scoped_descending">Nome: Z → A</string>
+    <string name="scoped_about_label">Informazioni</string>
+    <string name="scoped_no_results">Nessun risultato nelle cartelle autorizzate.</string>
 </resources>

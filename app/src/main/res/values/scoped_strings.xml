@@ -33,10 +33,17 @@
     <string name="scoped_play_pause">Play / Pause</string>
     <string name="scoped_selection_hint">Hold a photo or video to select it for Copy or Cut.</string>
     <string name="scoped_select_title">Choose folders</string>
-    <string name="scoped_access_intro">This application does not access all files or all folders on your device. Select the folders you want to allow access to below, then press Continue.</string>
-    <string name="scoped_check_help">Each folder includes its subfolders. Android will ask you to confirm new permissions.</string>
+    <string name="scoped_access_intro">This free and open-source (FOSS) application, EasyVision Gallery, is suitable for:\n- simple viewing and editing of images and videos\n- ease of use\n- maximum privacy (access only to selected folders)\n- people with low vision\n\nThere is no need to:\n- register\n- accept technical or profiling cookies\n- grant access to all files or all media on your device\n\nFor each folder you want to grant access to, tap its name and then select \"USE THIS FOLDER\".\n\nWhen finished, press Continue.</string>
     <string name="scoped_continue">Continue</string>
     <string name="scoped_selection_cancelled">Selection cancelled. Choose another folder or press Continue.</string>
     <string name="scoped_saving_access">Saving folder permissions…</string>
     <string name="scoped_checked_count">%1$d folders selected.</string>
+    <string name="scoped_more">More</string>
+    <string name="scoped_search">Search</string>
+    <string name="scoped_sort_label">Sort by</string>
+    <string name="scoped_columns_label">Number of columns</string>
+    <string name="scoped_ascending">Name: A → Z</string>
+    <string name="scoped_descending">Name: Z → A</string>
+    <string name="scoped_about_label">About</string>
+    <string name="scoped_no_results">No results in authorized folders.</string>
 </resources>

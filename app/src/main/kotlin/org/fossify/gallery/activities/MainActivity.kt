@@ -8,10 +8,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import org.fossify.commons.views.MySearchMenu
+import org.fossify.gallery.views.AccessibleGalleryTile
+import org.fossify.gallery.views.GalleryGridSpacing
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.ViewCompat
@@ -30,6 +33,10 @@ class MainActivity : SimpleActivity() {
     private lateinit var grid: RecyclerView
     private lateinit var status: TextView
     private lateinit var title: TextView
+    private lateinit var searchMenu: MySearchMenu
+    private var searchQuery = ""
+    private var customColumns = 0
+    private var descending = false
     private lateinit var back: Button
     private lateinit var paste: Button
     private lateinit var actions: LinearLayout
@@ -66,6 +73,8 @@ class MainActivity : SimpleActivity() {
             FolderAccess.Media(Uri.parse(uris[it]), names[it], mimes[it])
         } else emptyList()
         cutting = savedInstanceState?.getBoolean("cutting") ?: false
+        customColumns = getPreferences(MODE_PRIVATE).getInt("scoped_columns", 0)
+        descending = getPreferences(MODE_PRIVATE).getBoolean("scoped_sort_descending", false)
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setBackgroundColor(Color.BLACK)
@@ -76,12 +85,14 @@ class MainActivity : SimpleActivity() {
             view.setPadding(bars.left + dp(8), bars.top + dp(8), bars.right + dp(8), bars.bottom + dp(8))
             insets
         }
+        searchMenu = layoutInflater.inflate(R.layout.view_scoped_search_menu, root, false) as MySearchMenu
+        searchMenu.setApplyWindowInsets(false)
+        root.addView(searchMenu)
         title = text().apply { textSize = 24f }
         root.addView(title)
         val navigation = LinearLayout(this)
-        back = button(getString(R.string.scoped_back)) { current = null; selected.clear(); show() }
+        back = button(getString(R.string.scoped_back)) { current = null; selected.clear(); searchMenu.closeSearch(); show() }
         navigation.addView(back, LinearLayout.LayoutParams(0, -2, 1f))
-        navigation.addView(button(getString(R.string.scoped_folders)) { manage() }, LinearLayout.LayoutParams(0, -2, 1f))
         root.addView(navigation)
         status = text().apply { textSize = 18f; setPadding(0, dp(8), 0, dp(8)) }
         root.addView(status)
@@ -95,14 +106,19 @@ class MainActivity : SimpleActivity() {
         grid = RecyclerView(this).apply {
             layoutManager = GridLayoutManager(this@MainActivity, columns())
             itemAnimator = null
+            addItemDecoration(GalleryGridSpacing(resources.displayMetrics.density))
         }
         root.addView(grid, LinearLayout.LayoutParams(-1, 0, 1f))
-        root.addView(button(getString(R.string.scoped_refresh)) { load() })
+        root.isFocusableInTouchMode = true
+        root.requestFocus()
         setContentView(root)
+        setupSearchMenu()
+        searchMenu.binding.topToolbarSearch.setText(savedInstanceState?.getString("search_query").orEmpty())
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 when {
                     selected.isNotEmpty() -> { selected.clear(); show() }
+                    searchQuery.isNotEmpty() || searchMenu.isSearchOpen -> { searchMenu.closeSearch(); show() }
                     current != null -> { current = null; show() }
                     else -> finish()
                 }
@@ -116,10 +132,12 @@ class MainActivity : SimpleActivity() {
 
     override fun onResume() {
         super.onResume()
+        searchMenu.updateColors()
         if (!busy && !folderSelectionOpen) load()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("search_query", searchQuery)
         outState.putBoolean("folder_selection_open", folderSelectionOpen)
         outState.putString("album", current?.toString())
         outState.putStringArrayList("clipboard_uris", ArrayList(clipboard.map { it.uri.toString() }))
@@ -133,7 +151,7 @@ class MainActivity : SimpleActivity() {
         (grid.layoutManager as GridLayoutManager).spanCount = columns()
     }
     override fun onDestroy() { generation++; worker.shutdownNow(); super.onDestroy() }
-    private fun columns() = (resources.configuration.screenWidthDp / 180).coerceIn(1, 4)
+    private fun columns() = if (customColumns > 0) customColumns else (resources.configuration.screenWidthDp / 180).coerceIn(1, 4)
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     private fun text() = TextView(this).apply { setTextColor(Color.WHITE); textSize = 20f }
     private fun button(label: String, click: () -> Unit) = Button(this).apply {
@@ -142,6 +160,50 @@ class MainActivity : SimpleActivity() {
         setOnClickListener { if (!busy) click() }
     }
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    private fun setupSearchMenu() {
+        searchMenu.setupMenu()
+        searchMenu.updateHintText(getString(R.string.scoped_search))
+        searchMenu.requireToolbar().apply {
+            inflateMenu(R.menu.menu_scoped_gallery)
+            overflowContentDescription = getString(R.string.scoped_more)
+            setOnMenuItemClickListener { item ->
+                if (busy) return@setOnMenuItemClickListener true
+                when (item.itemId) {
+                    R.id.scoped_manage_folders -> manage()
+                    R.id.scoped_reload -> load()
+                    R.id.scoped_sort -> AlertDialog.Builder(this@MainActivity)
+                        .setTitle(R.string.scoped_sort_label)
+                        .setSingleChoiceItems(arrayOf(getString(R.string.scoped_ascending), getString(R.string.scoped_descending)),
+                            if (descending) 1 else 0) { dialog, choice ->
+                            descending = choice == 1
+                            getPreferences(MODE_PRIVATE).edit().putBoolean("scoped_sort_descending", descending).apply()
+                            dialog.dismiss()
+                            show()
+                        }.setNegativeButton(R.string.scoped_cancel, null).show()
+                    R.id.scoped_columns -> AlertDialog.Builder(this@MainActivity)
+                        .setTitle(R.string.scoped_columns_label)
+                        .setSingleChoiceItems((1..6).map(Int::toString).toTypedArray(), columns() - 1) { dialog, choice ->
+                            customColumns = choice + 1
+                            getPreferences(MODE_PRIVATE).edit().putInt("scoped_columns", customColumns).apply()
+                            (grid.layoutManager as GridLayoutManager).spanCount = customColumns
+                            dialog.dismiss()
+                        }.setNegativeButton(R.string.scoped_cancel, null).show()
+                    R.id.scoped_about -> AlertDialog.Builder(this@MainActivity)
+                        .setTitle("EasyVision Gallery")
+                        .setMessage(R.string.scoped_access_intro)
+                        .setPositiveButton(android.R.string.ok, null).show()
+                    else -> return@setOnMenuItemClickListener false
+                }
+                true
+            }
+        }
+        searchMenu.onSearchTextChangedListener = {
+            searchQuery = it.trim()
+            show()
+        }
+        searchMenu.updateColors()
+    }
+
     private fun manage() {
         if (folderSelectionOpen) return
         generation++
@@ -158,6 +220,7 @@ class MainActivity : SimpleActivity() {
         // Do not display cached media during a new permission check.
         albums = emptyList(); selected.clear(); show()
         status.setText(R.string.scoped_loading)
+        status.visibility = View.VISIBLE
         scanTask = worker.submit {
             val result = runCatching { access.scan() }
             runOnUiThread {
@@ -180,9 +243,29 @@ class MainActivity : SimpleActivity() {
         } }
     }
 
+    private data class Entry(val label: String, val album: FolderAccess.Album? = null, val media: FolderAccess.Media? = null)
+
+    private fun shownEntries(album: FolderAccess.Album?): List<Entry> {
+        val query = searchQuery
+        val entries = if (album != null) {
+            visibleMedia(album).filter { it.name.contains(query, ignoreCase = true) }.map { Entry(it.name, media = it) }
+        } else {
+            val folders = albums.filter { it.label.contains(query, ignoreCase = true) }.map { Entry(it.label, album = it) }
+            val files = if (query.isEmpty()) emptyList() else albums.flatMap { parent ->
+                visibleMedia(parent).filter { it.name.contains(query, ignoreCase = true) }
+                    .map { Entry("${parent.label}/${it.name}", media = it) }
+            }
+            folders + files
+        }
+        val sorted = entries.sortedBy { it.label.lowercase() }
+        return if (descending) sorted.reversed() else sorted
+    }
+
     private fun show() {
         val album = albums.firstOrNull { it.uri == current }
-        title.text = album?.label ?: getString(R.string.scoped_title)
+        val entries = shownEntries(album)
+        title.text = album?.label.orEmpty()
+        title.visibility = if (current == null) View.GONE else View.VISIBLE
         back.visibility = if (current == null) View.GONE else View.VISIBLE
         actions.visibility = if (selected.isEmpty() || picking) View.GONE else View.VISIBLE
         paste.visibility = if (album != null && clipboard.isNotEmpty() && !picking) View.VISIBLE else View.GONE
@@ -192,11 +275,13 @@ class MainActivity : SimpleActivity() {
             scanError.isNotEmpty() -> scanError
             access.roots().isEmpty() -> getString(R.string.scoped_empty)
             selected.isNotEmpty() -> getString(R.string.scoped_selected, selected.size)
+            searchQuery.isNotEmpty() && entries.isEmpty() -> getString(R.string.scoped_no_results)
             album != null && visibleMedia(album).isEmpty() -> getString(R.string.scoped_album_empty)
             album != null && !picking -> getString(R.string.scoped_selection_hint)
             else -> ""
         }
-        grid.adapter = Tiles(album?.let { visibleMedia(it) })
+        status.visibility = if (status.text.isEmpty()) View.GONE else View.VISIBLE
+        grid.adapter = Tiles(entries)
     }
 
     private fun open(media: FolderAccess.Media) {
@@ -214,7 +299,7 @@ class MainActivity : SimpleActivity() {
 
     private fun copy(move: Boolean) {
         clipboard = selected.toList(); cutting = move; selected.clear()
-        current = null; show()
+        current = null; searchMenu.closeSearch(); show()
         toast(getString(R.string.scoped_choose_destination))
     }
     private fun paste() {
@@ -238,52 +323,37 @@ class MainActivity : SimpleActivity() {
         }
     }
 
-    private inner class Tiles(private val media: List<FolderAccess.Media>?) : RecyclerView.Adapter<Tile>() {
-        override fun getItemCount() = media?.size ?: albums.size
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tile {
-            val box = LinearLayout(this@MainActivity).apply {
-                orientation = LinearLayout.VERTICAL; setPadding(dp(6), dp(6), dp(6), dp(6))
-                layoutParams = RecyclerView.LayoutParams(-1, -2)
-            }
-            val label = text().apply {
-                setBackgroundColor(Color.BLACK); setPadding(dp(6), dp(6), dp(6), dp(6))
-                // No single-line limit or ellipsis: full path stays readable at large font sizes.
-                setTypeface(typeface, android.graphics.Typeface.BOLD)
-            }
-            val image = ImageView(this@MainActivity).apply {
-                scaleType = ImageView.ScaleType.CENTER_CROP
-                setBackgroundColor(Color.DKGRAY)
-                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            }
-            box.addView(label, LinearLayout.LayoutParams(-1, -2))
-            box.addView(image, LinearLayout.LayoutParams(-1, dp(160)))
-            return Tile(box, label, image)
-        }
+    private inner class Tiles(private val entries: List<Entry>) : RecyclerView.Adapter<Tile>() {
+        override fun getItemCount() = entries.size
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Tile = Tile(
+            AccessibleGalleryTile(this@MainActivity).apply { layoutParams = RecyclerView.LayoutParams(-1, -2) })
+
         override fun onBindViewHolder(holder: Tile, position: Int) {
-            Glide.with(this@MainActivity).clear(holder.image)
-            holder.image.setImageDrawable(null)
-            val item = media?.get(position)
-            val album = if (media == null) albums[position] else null
-            holder.label.text = album?.let { "${it.label}\n${getString(R.string.scoped_counts, it.images, it.videos)}" }
-                ?: "${if (item in selected) "✓ " else ""}${item!!.name}${if (item.isVideo) "\n${getString(R.string.scoped_video)}" else ""}"
-            holder.box.contentDescription = holder.label.text
-            holder.box.isFocusable = true
-            holder.box.setBackgroundColor(if (item in selected) Color.rgb(0, 72, 110) else Color.BLACK)
+            val entry = entries[position]
+            val item = entry.media
+            val album = entry.album
+            val tile = holder.tile
+            Glide.with(this@MainActivity).clear(tile.image)
+            val name = "${if (item in selected) "✓ " else ""}${entry.label}"
+            val counts = album?.let { getString(R.string.scoped_counts, it.images, it.videos) }
+                ?: if (item?.isVideo == true) getString(R.string.scoped_video) else ""
+            tile.bindLabels(name, counts, videoAlbum = album != null && album.videos > 0,
+                emptyAlbum = album != null && album.media.isEmpty(), selected = item in selected)
             val preview = item?.uri ?: album?.media?.firstOrNull()?.uri
-            if (preview != null) Glide.with(this@MainActivity).load(preview).centerCrop()
-                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE).skipMemoryCache(true).into(holder.image)
-            holder.box.setOnClickListener {
+            if (preview != null) Glide.with(this@MainActivity).load(preview).centerCrop().dontAnimate()
+                .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE).skipMemoryCache(true).into(tile.image)
+            tile.setOnClickListener {
                 if (busy) return@setOnClickListener
-                if (album != null) { current = album.uri; selected.clear(); show() }
+                if (album != null) { current = album.uri; selected.clear(); searchMenu.closeSearch(); show() }
                 else if (selected.isNotEmpty() && !picking) { toggle(item!!); show() }
                 else open(item!!)
             }
-            holder.box.setOnLongClickListener {
+            tile.setOnLongClickListener {
                 if (item != null && !picking && !busy) { toggle(item); show(); true } else false
             }
         }
-        override fun onViewRecycled(holder: Tile) { Glide.with(this@MainActivity).clear(holder.image) }
+        override fun onViewRecycled(holder: Tile) { Glide.with(this@MainActivity).clear(holder.tile.image) }
     }
     private fun toggle(item: FolderAccess.Media) { if (!selected.add(item)) selected.remove(item) }
-    private class Tile(val box: LinearLayout, val label: TextView, val image: ImageView) : RecyclerView.ViewHolder(box)
+    private class Tile(val tile: AccessibleGalleryTile) : RecyclerView.ViewHolder(tile)
 }

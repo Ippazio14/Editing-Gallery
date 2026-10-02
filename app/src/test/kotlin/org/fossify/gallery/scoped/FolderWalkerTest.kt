@@ -8,15 +8,36 @@ class FolderWalkerTest {
     private fun contents(vararg folders: String, media: List<String> = emptyList()) =
         FolderWalker.Contents(folders.map(::node), media)
 
-    @Test fun rootAndFourChildrenProduceFiveAlbumsIncludingEmptyFolders() {
+    @Test fun emptyRootRemainsButEmptySubfoldersAreHidden() {
         val tree = mapOf("Pictures" to contents("Pictures/a", "Pictures/b", "Pictures/c", "Pictures/d"),
             "Pictures/a" to contents(media = listOf("photo.jpg", "video.mp4")),
             "Pictures/b" to contents(), "Pictures/c" to contents(), "Pictures/d" to contents())
         val result = FolderWalker.walk(listOf(node("Pictures")), { it }, { tree.getValue(it) })
-        assertEquals(5, result.albums.size)
+        assertEquals(2, result.albums.size)
         assertTrue(result.albums.first().media.isEmpty())
         assertEquals(listOf("photo.jpg", "video.mp4"), result.albums[1].media)
         assertTrue(result.unavailable.isEmpty())
+    }
+
+    @Test fun emptyIntermediateFolderDoesNotHideDeeperMedia() {
+        val tree = mapOf("DCIM" to contents("DCIM/empty"),
+            "DCIM/empty" to contents("DCIM/empty/deep"),
+            "DCIM/empty/deep" to contents(media = listOf("clip.mp4")))
+        val result = FolderWalker.walk(listOf(node("DCIM")), { it }, { tree.getValue(it) })
+        assertEquals(listOf("DCIM", "DCIM/empty/deep"), result.albums.map { it.node.value })
+    }
+
+    @Test fun directlyAuthorizedEmptySubfolderRemainsVisible() {
+        val tree = mapOf("DCIM" to contents("DCIM/empty"), "DCIM/empty" to contents())
+        val result = FolderWalker.walk(listOf(node("DCIM"), node("DCIM/empty")), { it }, { tree.getValue(it) })
+        assertEquals(listOf("DCIM", "DCIM/empty"), result.albums.map { it.node.value })
+    }
+
+    @Test fun nonMediaFilesDoNotTurnAnEmptySubfolderIntoAnAlbum() {
+        // The provider adapter supplies only images/videos; document-only directories have no media.
+        val tree = mapOf("Pictures" to contents("Pictures/documents"), "Pictures/documents" to contents())
+        val result = FolderWalker.walk(listOf(node("Pictures")), { it }, { tree.getValue(it) })
+        assertEquals(listOf("Pictures"), result.albums.map { it.node.value })
     }
 
     @Test fun nestedDescendantsAppearAtTheSameLevelAndCountsAreNotRolledUp() {

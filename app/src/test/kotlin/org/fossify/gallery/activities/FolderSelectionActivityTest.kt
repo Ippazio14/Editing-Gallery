@@ -125,7 +125,7 @@ class FolderSelectionActivityTest {
         }
     }
 
-    @Test fun mainOpensIntroductionThenShowsFiveAlbumsAfterContinue() {
+    @Test fun mainShowsEmptyAuthorizedRootButHidesEmptyDescendantsAndSearchesWithoutRescanning() {
         val reads = AtomicInteger()
         val provider = object : ContentProvider() {
             override fun onCreate() = true
@@ -157,7 +157,17 @@ class FolderSelectionActivityTest {
             access.add(tree("Pictures"), Intent.FLAG_GRANT_READ_URI_PERMISSION)
             access.setupComplete = true
             shadowOf(activity).receiveResult(launched.intent, Activity.RESULT_OK, Intent())
-            awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 5 }
+            awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 1 }
+            assertEquals(5, reads.get())
+            val menu = activity.findViewById<org.fossify.commons.views.MySearchMenu>(R.id.main_menu)
+            assertEquals("Cerca", menu.binding.topToolbarSearch.hint.toString())
+            assertEquals("Altro", menu.requireToolbar().overflowContentDescription.toString())
+            assertNotNull(menu.requireToolbar().menu.findItem(R.id.scoped_manage_folders))
+            menu.binding.topToolbarSearch.setText("non-esiste")
+            awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 0 }
+            menu.binding.topToolbarSearch.setText("pIcTuReS")
+            awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 1 }
+            menu.closeSearch()
             assertEquals(5, reads.get())
             assertNull(shadowOf(activity).nextStartedActivity)
         }

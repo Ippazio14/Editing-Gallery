@@ -13,6 +13,7 @@ internal object FolderWalker {
         read: (T) -> Contents<T, M>,
         cancelled: () -> Boolean = { false }
     ): Result<T, M> {
+        val explicitRoots = roots.map { key(it.value) }.toSet()
         val pending = ArrayDeque(roots)
         val visited = hashSetOf<String>()
         val albums = mutableListOf<Album<T, M>>()
@@ -22,7 +23,11 @@ internal object FolderWalker {
             if (!visited.add(key(node.value))) continue
             try {
                 val contents = read(node.value)
-                albums.add(Album(node, contents.media))
+                // An explicitly authorized folder remains an album even when empty.
+                // Empty descendants are omitted, but must still be traversed to reach deeper media.
+                if (contents.media.isNotEmpty() || key(node.value) in explicitRoots) {
+                    albums.add(Album(node, contents.media))
+                }
                 pending.addAll(contents.folders)
             } catch (_: Exception) {
                 unavailable.add(node.label)

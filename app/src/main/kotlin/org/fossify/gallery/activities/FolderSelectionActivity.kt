@@ -62,7 +62,6 @@ class FolderSelectionActivity : SimpleActivity() {
         val content = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         content.addView(label(getString(R.string.scoped_select_title), 26f))
         content.addView(label(getString(R.string.scoped_access_intro), 22f))
-        content.addView(label(getString(R.string.scoped_check_help), 18f))
         rows = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         content.addView(rows)
         status = label("", 18f).apply { accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE }

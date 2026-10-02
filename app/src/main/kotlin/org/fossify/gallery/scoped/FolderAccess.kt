@@ -78,7 +78,7 @@ class FolderAccess(private val context: Context) {
         }
     }
 
-    /** Empty parents and descendants are albums; overlapping grants are deduplicated. */
+    /** Keep explicit roots, hide empty descendants, and deduplicate overlapping grants. */
     fun scan(): Scan {
         val unavailable = mutableListOf<String>()
         val readableRoots = roots().mapNotNull { root ->
