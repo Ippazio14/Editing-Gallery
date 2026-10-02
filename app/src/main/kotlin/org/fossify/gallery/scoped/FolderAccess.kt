@@ -23,6 +23,17 @@ class FolderAccess(private val context: Context) {
     }
     data class Scan(val albums: List<Album>, val unavailable: List<String>)
 
+    var setupComplete: Boolean
+        get() = preferences.getBoolean("selection_completed_v2", false)
+        set(value) { check(preferences.edit().putBoolean("selection_completed_v2", value).commit()) }
+
+    /** The selection screen remembers unchecked rows without retaining their access. */
+    fun knownRoots(): List<Root> = (preferences.getStringSet("known_roots", emptySet()).orEmpty() +
+        preferences.getStringSet("roots", emptySet()).orEmpty()).map { Uri.parse(it) }
+        .map { Root(it, label(it)) }.sortedBy { it.label.lowercase() }
+
+    fun hasReadAccess(uri: Uri): Boolean = resolver.persistedUriPermissions.any { it.uri == uri && it.isReadPermission }
+
     fun roots(): List<Root> = preferences.getStringSet("roots", emptySet()).orEmpty()
         .map { Uri.parse(it) }.map { Root(it, label(it)) }.sortedBy { it.label.lowercase() }
 
@@ -32,18 +43,23 @@ class FolderAccess(private val context: Context) {
         resolver.takePersistableUriPermission(uri, flags)
         val roots = preferences.getStringSet("roots", emptySet()).orEmpty().toMutableSet()
         roots.add(uri.toString())
-        check(preferences.edit().putStringSet("roots", roots).commit())
+        val known = preferences.getStringSet("known_roots", emptySet()).orEmpty().toMutableSet()
+        known.addAll(roots)
+        check(preferences.edit().putStringSet("roots", roots).putStringSet("known_roots", known).commit())
     }
 
     fun remove(uri: Uri) {
         val roots = preferences.getStringSet("roots", emptySet()).orEmpty().toMutableSet()
-        roots.remove(uri.toString())
-        check(preferences.edit().putStringSet("roots", roots).commit())
+        val known = preferences.getStringSet("known_roots", emptySet()).orEmpty().toMutableSet()
+        known.addAll(roots)
+        // Revoke before clearing the check mark. Failures must not look like a successful revocation.
         resolver.persistedUriPermissions.filter { it.uri == uri }.forEach {
             val flags = (if (it.isReadPermission) Intent.FLAG_GRANT_READ_URI_PERMISSION else 0) or
                 (if (it.isWritePermission) Intent.FLAG_GRANT_WRITE_URI_PERMISSION else 0)
             resolver.releasePersistableUriPermission(uri, flags)
         }
+        roots.remove(uri.toString())
+        check(preferences.edit().putStringSet("roots", roots).putStringSet("known_roots", known).commit())
     }
 
     private fun label(uri: Uri): String {
@@ -53,7 +69,13 @@ class FolderAccess(private val context: Context) {
             val path = id.substringAfter(':')
             return if (volume == "primary") path.ifBlank { "Memoria interna" } else "$volume/$path"
         }
-        return runCatching { DocumentFile.fromTreeUri(context, uri)?.name }.getOrNull() ?: uri.toString()
+        // This method is used while drawing the UI: never query a document provider here.
+        // Downloads providers can return raw filesystem IDs, which are labels only, never read as paths.
+        return when {
+            id.startsWith("raw:/storage/emulated/0/") -> id.removePrefix("raw:/storage/emulated/0/")
+            id.isNotBlank() -> id
+            else -> uri.toString()
+        }
     }
 
     /** Empty parents and descendants are albums; overlapping grants are deduplicated. */

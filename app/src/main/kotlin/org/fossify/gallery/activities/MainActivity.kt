@@ -1,12 +1,10 @@
 package org.fossify.gallery.activities
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -16,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
@@ -46,18 +43,21 @@ class MainActivity : SimpleActivity() {
     private var cutting = false
     private var scanError = ""
     private val picking: Boolean get() = intent.action == Intent.ACTION_PICK || intent.action == Intent.ACTION_GET_CONTENT
-    private val folderPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.let { data -> data.data?.let { uri ->
-                try { access.add(uri, data.flags); load() }
-                catch (_: Exception) { toast(getString(R.string.scoped_grant_error)) }
-            } }
-        }
+    private var folderSelectionOpen = false
+    private val folderSelection = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        folderSelectionOpen = false
+        clipboard = emptyList()
+        selected.clear()
+        current = null
+        scanError = ""
+        // Results normally arrive before onResume. Also handle delivery to an already resumed host.
+        if (lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) load()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         access = FolderAccess(this)
+        folderSelectionOpen = savedInstanceState?.getBoolean("folder_selection_open") ?: false
         current = savedInstanceState?.getString("album")?.let(Uri::parse)
         val uris = savedInstanceState?.getStringArrayList("clipboard_uris").orEmpty()
         val names = savedInstanceState?.getStringArrayList("clipboard_names").orEmpty()
@@ -108,17 +108,19 @@ class MainActivity : SimpleActivity() {
                 }
             }
         })
-        if (intent.action == Intent.ACTION_APPLICATION_PREFERENCES) root.post { manage() }
-        // First launch opens the folder chooser once. Cancelling leaves a useful empty screen.
-        if (savedInstanceState == null && access.roots().isEmpty() &&
-            !getPreferences(MODE_PRIVATE).getBoolean("asked_folders", false)) {
-            getPreferences(MODE_PRIVATE).edit().putBoolean("asked_folders", true).apply()
-            chooseFolder()
+        if (!folderSelectionOpen && savedInstanceState == null &&
+            (intent.action == Intent.ACTION_APPLICATION_PREFERENCES || !access.setupComplete)) {
+            manage()
         }
     }
 
-    override fun onResume() { super.onResume(); if (!busy) load() }
+    override fun onResume() {
+        super.onResume()
+        if (!busy && !folderSelectionOpen) load()
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean("folder_selection_open", folderSelectionOpen)
         outState.putString("album", current?.toString())
         outState.putStringArrayList("clipboard_uris", ArrayList(clipboard.map { it.uri.toString() }))
         outState.putStringArrayList("clipboard_names", ArrayList(clipboard.map { it.name }))
@@ -140,32 +142,14 @@ class MainActivity : SimpleActivity() {
         setOnClickListener { if (!busy) click() }
     }
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    private fun chooseFolder() {
-        try {
-            folderPicker.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
-                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION))
-        } catch (_: android.content.ActivityNotFoundException) { toast(getString(R.string.scoped_grant_error)) }
-    }
-
     private fun manage() {
-        val roots = access.roots()
-        val labels = arrayOf(getString(R.string.scoped_add)) + roots.map { getString(R.string.scoped_remove, it.label) }
-        AlertDialog.Builder(this).setTitle(R.string.scoped_folders).setItems(labels) { _, index ->
-            if (index == 0) chooseFolder() else {
-                val root = roots[index - 1]
-                AlertDialog.Builder(this).setMessage(getString(R.string.scoped_revoke, root.label))
-                    .setPositiveButton(R.string.scoped_remove_action) { _, _ ->
-                        try {
-                            access.remove(root.uri)
-                            clipboard = emptyList(); selected.clear(); current = null
-                            // Clear thumbnails immediately; no stale album survives revocation.
-                            Glide.get(this).clearMemory()
-                            albums = emptyList(); show(); load()
-                        } catch (_: Exception) { toast(getString(R.string.scoped_grant_error)); load() }
-                    }.setNegativeButton(R.string.scoped_cancel, null).show()
-            }
-        }.setNegativeButton(R.string.scoped_cancel, null).show()
+        if (folderSelectionOpen) return
+        generation++
+        scanTask?.cancel(true)
+        albums = emptyList()
+        show()
+        folderSelectionOpen = true
+        folderSelection.launch(Intent(this, FolderSelectionActivity::class.java))
     }
 
     private fun load() {

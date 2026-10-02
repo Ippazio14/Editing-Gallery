@@ -32,4 +32,11 @@
     <string name="scoped_video_error">Impossibile riprodurre questo video.</string>
     <string name="scoped_play_pause">Riproduci / Pausa</string>
     <string name="scoped_selection_hint">Tieni premuta una foto o un video per selezionarlo e usare Copia o Taglia.</string>
+    <string name="scoped_select_title">Scegli le cartelle</string>
+    <string name="scoped_access_intro">Questa applicazione non accede a tutti i file né a tutte le cartelle del dispositivo. Seleziona qui sotto le cartelle alle quali vuoi consentire l’accesso, poi premi Continua.</string>
+    <string name="scoped_check_help">Ogni cartella comprende le sue sottocartelle. Android chiederà conferma per i nuovi accessi.</string>
+    <string name="scoped_continue">Continua</string>
+    <string name="scoped_selection_cancelled">Selezione annullata. Puoi scegliere un’altra cartella oppure premere Continua.</string>
+    <string name="scoped_saving_access">Salvataggio delle autorizzazioni…</string>
+    <string name="scoped_checked_count">%1$d cartelle selezionate.</string>
 </resources>

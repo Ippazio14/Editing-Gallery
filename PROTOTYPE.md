@@ -29,7 +29,7 @@ Rimossi filtro dei tipi di file, visibilità temporanea di nascosti/esclusi e av
 
 ## Cartelle autorizzate e griglia (ramo scoped-folder-access)
 
-Il primo avvio apre il selettore Android di cartelle. Annullando si resta sulla pagina vuota con il pulsante Cartelle. Cartelle → Aggiungi cartella aggiunge un accesso persistente; lo stesso menu consente di revocarlo senza eliminare i file. Gli accessi ereditati da un'altra cartella superiore restano validi.
+Il primo avvio mostra una spiegazione dell’accesso limitato e una schermata con caselle di spunta per DCIM, Pictures, Movies e le altre cartelle aggiunte dall’utente, come Download/festa. Non apre automaticamente il selettore Android. Toccare una casella non autorizzata apre la conferma Android per quella cartella; solo un risultato valido e persistito accende la spunta. Annullare il selettore lascia il menu utilizzabile. Aggiungi cartella permette di scegliere altri percorsi. Togliere una spunta revoca il relativo accesso e mantiene la riga disponibile per una nuova autorizzazione. Continua termina la configurazione e apre la griglia, anche se la selezione è vuota. Il pulsante Cartelle riapre lo stesso menu. Gli accessi ereditati da una cartella superiore restano validi.
 
 La nuova MainActivity legge solo URI dello Storage Access Framework. Ogni cartella autorizzata e ogni discendente, inclusi quelli vuoti, compare nella griglia allo stesso livello. Un padre con quattro sottocartelle produce cinque album. Percorso e conteggi separati di immagini/video sono sopra la miniatura, in bianco su nero, senza troncamento. I conteggi includono solo i file direttamente nella cartella; sovrapposizioni fra accessi non duplicano gli album.
 
@@ -40,3 +40,10 @@ Apertura foto/video, editor fotografico esistente, condivisione e cancellazione 
 La vecchia MainActivity è conservata come LegacyMainActivity non registrata nel manifest. Questa prima migrazione introduce una schermata e un visualizzatore SAF essenziali; i vecchi menu di ordinamento, ricerca globale, cestino e preferenze generali non sono collegati alla nuova schermata. Il selettore esterno restituisce un singolo media, filtrato per MIME; la selezione multipla per app esterne non è ancora implementata.
 
 Test unitari: cartella padre + quattro figli vuoti, discendenti profondi e conteggi locali, accessi sovrapposti/cicli, errori di accesso senza scansione esterna, nessun accesso e cancellazione del lavoro. Verificare su dispositivo il selettore e le revoche, riavvio, file nuovi, font grandi e rotazione, editor, video e trasferimenti, anche da SD e con accesso in sola lettura.
+
+
+### Correzione del flusso di avvio
+
+La scansione dei media parte solo dopo la chiusura della schermata di selezione; il risultato del selettore non avvia scansioni concorrenti in aggiunta a onResume. Il caricamento non interroga più i document provider sul thread grafico per ottenere i nomi delle cartelle. Il riepilogo delle spunte usa gli accessi persistenti effettivi, quindi un accesso revocato da Android non appare autorizzato. La nuova schermata compare una volta anche aggiornando dalla prima versione SAF, senza perdere gli accessi esistenti.
+
+I test Robolectric coprono introduzione e caselle prima di qualsiasi selettore di sistema, annullamento, autorizzazione e Continua, righe Download personalizzate e revoca, accesso perso, ritorno alla galleria e avvii successivi. Le dipendenze di test non entrano nell’APK.
