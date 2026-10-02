@@ -10,10 +10,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.GraphicsMode
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], application = Application::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 class AccessibleGalleryTileTest {
     private fun layout(tile: AccessibleGalleryTile, width: Int = 240) {
         tile.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
