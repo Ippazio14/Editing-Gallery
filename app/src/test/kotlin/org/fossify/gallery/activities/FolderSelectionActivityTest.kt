@@ -21,6 +21,9 @@ import android.widget.TextView
 import org.fossify.gallery.R
 import org.fossify.gallery.scoped.FolderAccess
 import org.junit.Assert.*
+import org.junit.After
+import com.squareup.picasso.Picasso
+import org.robolectric.util.ReflectionHelpers
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -32,6 +35,12 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], qualifiers = "it")
 class FolderSelectionActivityTest {
+    @After fun resetApplicationSingleton() {
+        // Robolectric creates a fresh Application for each test but Picasso retains its static
+        // singleton in the shared sandbox. A real Android process initializes App only once.
+        ReflectionHelpers.setStaticField(Picasso::class.java, "singleton", null)
+    }
+
     private fun descendants(view: View): List<View> = listOf(view) +
         if (view is ViewGroup) (0 until view.childCount).flatMap { descendants(view.getChildAt(it)) } else emptyList()
     private fun views(activity: Activity) = descendants(activity.findViewById(android.R.id.content))

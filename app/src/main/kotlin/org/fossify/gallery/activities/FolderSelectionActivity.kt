@@ -128,6 +128,7 @@ class FolderSelectionActivity : SimpleActivity() {
         for ((uri, path) in choices) {
             val checked = uri in granted
             val row = LinearLayout(this).apply {
+                importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
                 gravity = Gravity.CENTER_VERTICAL
                 minimumHeight = dp(64)
             }
