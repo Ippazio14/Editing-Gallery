@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scoped_title">Cartelle autorizzate</string>
+    <string name="scoped_folders">Cartelle</string>
+    <string name="scoped_add">Aggiungi cartella</string>
+    <string name="scoped_remove">Rimuovi accesso: %1$s</string>
+    <string name="scoped_remove_action">Rimuovi accesso</string>
+    <string name="scoped_revoke">Rimuovere l’accesso a %1$s e alle sue sottocartelle? I file restano sul dispositivo. Una cartella superiore autorizzata separatamente potrebbe consentire ancora l’accesso.</string>
+    <string name="scoped_empty">Galleria per ipovedenti. Scegli Cartelle → Aggiungi cartella per autorizzare cartelle intere e le loro sottocartelle. Qui appariranno soltanto le loro foto e i loro video.</string>
+    <string name="scoped_counts">%1$d immagini, %2$d video</string>
+    <string name="scoped_back">Torna alle cartelle</string>
+    <string name="scoped_cancel">Annulla</string>
+    <string name="scoped_loading">Lettura delle cartelle autorizzate…</string>
+    <string name="scoped_refresh">Aggiorna</string>
+    <string name="scoped_unavailable">Accesso non disponibile: %1$s. Controlla le autorizzazioni alle cartelle.</string>
+    <string name="scoped_grant_error">Impossibile salvare o rimuovere l’accesso alla cartella.</string>
+    <string name="scoped_scan_error">Impossibile leggere le cartelle autorizzate. Prova ad aggiornare.</string>
+    <string name="scoped_album_empty">Nessuna foto o video in questa cartella.</string>
+    <string name="scoped_video">Video</string>
+    <string name="scoped_copy">Copia</string>
+    <string name="scoped_cut">Taglia</string>
+    <string name="scoped_paste">Incolla</string>
+    <string name="scoped_selected">%1$d selezionati</string>
+    <string name="scoped_choose_destination">Apri la cartella di destinazione, poi premi Incolla.</string>
+    <string name="scoped_transferring">Trasferimento dei file…</string>
+    <string name="scoped_transfer_done">Trasferimento completato.</string>
+    <string name="scoped_edit">Modifica</string>
+    <string name="scoped_share">Condividi</string>
+    <string name="scoped_delete">Elimina</string>
+    <string name="scoped_delete_confirm">Eliminare definitivamente questo file? L’operazione non può essere annullata.</string>
+    <string name="scoped_delete_error">Impossibile eliminare questo file.</string>
+    <string name="scoped_video_error">Impossibile riprodurre questo video.</string>
+    <string name="scoped_play_pause">Riproduci / Pausa</string>
+</resources>

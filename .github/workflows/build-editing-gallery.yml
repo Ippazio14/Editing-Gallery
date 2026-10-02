@@ -1,7 +1,7 @@
 name: Build Editing Gallery APK
 on:
   push:
-    branches: [main, accessible-editor]
+    branches: [main, accessible-editor, scoped-folder-access]
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,6 +23,8 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Check database migration
         run: python tools/check_favorites_migration.py
+      - name: Check folder traversal
+        run: ./gradlew :app:testFossDebugUnitTest --console=plain
       - name: Build signed debug APK
         run: |
           chmod +x gradlew
