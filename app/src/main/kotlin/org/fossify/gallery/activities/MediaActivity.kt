@@ -18,12 +18,10 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import org.fossify.commons.dialogs.CreateNewFolderDialog
 import org.fossify.commons.dialogs.RadioGroupDialog
-import org.fossify.commons.extensions.areSystemAnimationsEnabled
 import org.fossify.commons.extensions.beGone
 import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.deleteFiles
-import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getIsPathDirectory
 import org.fossify.commons.extensions.getLatestMediaByDateId
 import org.fossify.commons.extensions.getLatestMediaId
@@ -44,7 +42,6 @@ import org.fossify.commons.helpers.IS_FROM_GALLERY
 import org.fossify.commons.helpers.REQUEST_EDIT_IMAGE
 import org.fossify.commons.helpers.SORT_BY_RANDOM
 import org.fossify.commons.helpers.VIEW_TYPE_GRID
-import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.models.FileDirItem
 import org.fossify.commons.models.RadioItem
@@ -56,7 +53,6 @@ import org.fossify.gallery.asynctasks.GetMediaAsynctask
 import org.fossify.gallery.databinding.ActivityMediaBinding
 import org.fossify.gallery.dialogs.ChangeGroupingDialog
 import org.fossify.gallery.dialogs.ChangeSortingDialog
-import org.fossify.gallery.dialogs.ChangeViewTypeDialog
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.deleteDBPath
 import org.fossify.gallery.extensions.directoryDB
@@ -64,7 +60,6 @@ import org.fossify.gallery.extensions.emptyAndDisableTheRecycleBin
 import org.fossify.gallery.extensions.emptyTheRecycleBin
 import org.fossify.gallery.extensions.getCachedMedia
 import org.fossify.gallery.extensions.getHumanizedFilename
-import org.fossify.gallery.extensions.isDownloadsFolder
 import org.fossify.gallery.extensions.launchAbout
 import org.fossify.gallery.extensions.launchSettings
 import org.fossify.gallery.extensions.launchGesturePlayer
@@ -75,7 +70,6 @@ import org.fossify.gallery.extensions.openRecycleBin
 import org.fossify.gallery.extensions.restoreRecycleBinPaths
 import org.fossify.gallery.extensions.showRecycleBinEmptyingDialog
 import org.fossify.gallery.extensions.showRestoreConfirmationDialog
-import org.fossify.gallery.extensions.tryDeleteFileDirItem
 import org.fossify.gallery.extensions.updateWidgets
 import org.fossify.gallery.helpers.DIRECTORY
 import org.fossify.gallery.helpers.GET_ANY_INTENT
@@ -186,7 +180,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             getMediaAdapter()?.updateCropThumbnails(config.cropThumbnails)
         }
 
-        if (mStoredScrollHorizontally != config.scrollHorizontally) {
+        if (mStoredScrollHorizontally != false) {
             mLoadedInitialPhotos = false
             binding.mediaGrid.adapter = null
             getMedia()
@@ -216,7 +210,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         refreshMenuItems()
 
         binding.mediaFastscroller.updateColors(primaryColor)
-        binding.mediaRefreshLayout.isEnabled = config.enablePullToRefresh
+        binding.mediaRefreshLayout.isEnabled = false
         getMediaAdapter()?.apply {
             dateFormat = config.dateFormat
             timeFormat = getTimeFormat()
@@ -300,7 +294,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 && File(config.defaultFolder).compareTo(File(mPath)) == 0
 
         binding.mediaMenu.requireToolbar().menu.apply {
-            findItem(R.id.group).isVisible = !config.scrollHorizontally
+            findItem(R.id.group).isVisible = !false
 
             findItem(R.id.empty_recycle_bin).isVisible = mPath == RECYCLE_BIN
             findItem(R.id.empty_disable_recycle_bin).isVisible = mPath == RECYCLE_BIN
@@ -317,7 +311,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             findItem(R.id.set_as_default_folder).isVisible = !isDefaultFolder
             findItem(R.id.unset_as_default_folder).isVisible = isDefaultFolder
 
-            val viewType = config.getFolderViewType(mPath)
+            val viewType = VIEW_TYPE_GRID
             findItem(R.id.column_count).isVisible = viewType == VIEW_TYPE_GRID
             findItem(R.id.toggle_filename).isVisible = viewType == VIEW_TYPE_GRID
         }
@@ -325,13 +319,13 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
 
     private fun setupOptionsMenu() {
         binding.mediaMenu.requireToolbar().inflateMenu(R.menu.menu_media)
-        binding.mediaMenu.toggleHideOnScroll(!config.scrollHorizontally)
+        binding.mediaMenu.toggleHideOnScroll(!false)
         binding.mediaMenu.setupMenu()
 
         binding.mediaMenu.onSearchTextChangedListener = { text ->
             mLastSearchedText = text
             searchQueryChanged(text)
-            binding.mediaRefreshLayout.isEnabled = text.isEmpty() && config.enablePullToRefresh
+            binding.mediaRefreshLayout.isEnabled = text.isEmpty() && false
         }
 
         binding.mediaMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
@@ -343,7 +337,6 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 R.id.empty_disable_recycle_bin -> emptyAndDisableRecycleBin()
                 R.id.restore_all_files -> restoreAllFiles()
                 R.id.toggle_filename -> toggleFilenameVisibility()
-                R.id.change_view_type -> changeViewType()
                 R.id.group -> showGroupByDialog()
                 R.id.create_new_folder -> createNewFolder()
                 R.id.open_recycle_bin -> openRecycleBin()
@@ -472,10 +465,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 binding.mediaGrid.adapter = this
             }
 
-            val viewType = config.getFolderViewType(mPath)
-            if (viewType == VIEW_TYPE_LIST && areSystemAnimationsEnabled) {
-                binding.mediaGrid.scheduleLayoutAnimation()
-            }
+            val viewType = VIEW_TYPE_GRID
 
             setupLayoutManager()
             handleGridSpacing()
@@ -490,8 +480,8 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun setupScrollDirection() {
-        val viewType = config.getFolderViewType(mPath)
-        val scrollHorizontally = config.scrollHorizontally && viewType == VIEW_TYPE_GRID
+        val viewType = VIEW_TYPE_GRID
+        val scrollHorizontally = false && viewType == VIEW_TYPE_GRID
         binding.mediaFastscroller.setScrollVertically(!scrollHorizontally)
     }
 
@@ -559,33 +549,11 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
         getMediaAdapter()?.updateDisplayFilenames(config.displayFileNames)
     }
 
-    private fun changeViewType() {
-        ChangeViewTypeDialog(this, false, mPath) {
-            refreshMenuItems()
-            setupLayoutManager()
-            binding.mediaGrid.adapter = null
-            setupAdapter()
-        }
-    }
-
     private fun showGroupByDialog() {
         ChangeGroupingDialog(this, mPath) {
             mLoadedInitialPhotos = false
             binding.mediaGrid.adapter = null
             getMedia()
-        }
-    }
-
-    private fun deleteDirectoryIfEmpty() {
-        if (config.deleteEmptyFolders) {
-            val fileDirItem = FileDirItem(mPath, mPath.getFilenameFromPath(), true)
-            if (!fileDirItem.isDownloadsFolder() && fileDirItem.isDirectory) {
-                ensureBackgroundThread {
-                    if (fileDirItem.getProperFileCount(this, true) == 0) {
-                        tryDeleteFileDirItem(fileDirItem, true, true)
-                    }
-                }
-            }
         }
     }
 
@@ -651,7 +619,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     private fun isDirEmpty(): Boolean {
         return if (mMedia.isEmpty()) {
             if (mPath != RECYCLE_BIN) {
-                deleteDirectoryIfEmpty()
+
                 deleteDBDirectory()
             }
 
@@ -684,29 +652,20 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun setupLayoutManager() {
-        val viewType = config.getFolderViewType(mPath)
-        if (viewType == VIEW_TYPE_GRID) {
+        val viewType = VIEW_TYPE_GRID
+
             setupGridLayoutManager()
-        } else {
-            setupListLayoutManager()
-        }
+
     }
 
     private fun setupGridLayoutManager() {
         val layoutManager = binding.mediaGrid.layoutManager as MyGridLayoutManager
-        if (config.scrollHorizontally) {
-            layoutManager.orientation = RecyclerView.HORIZONTAL
-            binding.mediaRefreshLayout.layoutParams = RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        } else {
+
             layoutManager.orientation = RecyclerView.VERTICAL
             binding.mediaRefreshLayout.layoutParams = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-        }
 
         layoutManager.spanCount = config.mediaColumnCnt
         val adapter = getMediaAdapter()
@@ -733,8 +692,8 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun handleGridSpacing(media: ArrayList<ThumbnailItem> = mMedia) {
-        val viewType = config.getFolderViewType(mPath)
-        if (viewType == VIEW_TYPE_GRID) {
+        val viewType = VIEW_TYPE_GRID
+
             val spanCount = config.mediaColumnCnt
             val spacing = config.thumbnailSpacing
             val useGridPosition = media.firstOrNull() is ThumbnailSection
@@ -749,7 +708,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             val newGridDecoration = GridSpacingItemDecoration(
                 spanCount = spanCount,
                 spacing = spacing,
-                isScrollingHorizontally = config.scrollHorizontally,
+                isScrollingHorizontally = false,
                 addSideSpacing = config.fileRoundedCorners,
                 items = media,
                 useGridPosition = useGridPosition
@@ -760,12 +719,12 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                 }
                 binding.mediaGrid.addItemDecoration(newGridDecoration)
             }
-        }
+
     }
 
     private fun initZoomListener() {
-        val viewType = config.getFolderViewType(mPath)
-        if (viewType == VIEW_TYPE_GRID) {
+        val viewType = VIEW_TYPE_GRID
+
             val layoutManager = binding.mediaGrid.layoutManager as MyGridLayoutManager
             mZoomListener = object : MyRecyclerView.MyZoomListener {
                 override fun zoomIn() {
@@ -782,9 +741,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
                     }
                 }
             }
-        } else {
-            mZoomListener = null
-        }
+
     }
 
     private fun changeColumnCount() {
@@ -996,7 +953,7 @@ class MediaActivity : SimpleActivity(), MediaOperationsListener {
             }
 
             if (mMedia.isEmpty()) {
-                deleteDirectoryIfEmpty()
+
                 deleteDBDirectory()
                 finish()
             }

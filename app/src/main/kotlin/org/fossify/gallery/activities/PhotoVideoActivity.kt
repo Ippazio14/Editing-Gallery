@@ -35,7 +35,6 @@ import org.fossify.commons.extensions.rescanPath
 import org.fossify.commons.extensions.rescanPaths
 import org.fossify.commons.extensions.toHex
 import org.fossify.commons.extensions.toast
-import org.fossify.commons.extensions.updateBrightness
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.IS_FROM_GALLERY
 import org.fossify.commons.helpers.NOMEDIA
@@ -266,7 +265,6 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
             binding.fragmentHolder.background = Color.BLACK.toDrawable()
         }
 
-        mOriginalBrightness = window.updateBrightness(config.maxBrightness, mOriginalBrightness)
         initBottomActions()
     }
 

@@ -10,7 +10,6 @@ import android.provider.MediaStore.Images
 import android.provider.MediaStore.Video
 import android.view.ViewGroup
 import android.widget.RelativeLayout
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import org.fossify.commons.dialogs.CreateNewFolderDialog
 import org.fossify.commons.dialogs.FilePickerDialog
@@ -24,13 +23,11 @@ import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.checkWhatsNew
 import org.fossify.commons.extensions.deleteFiles
 import org.fossify.commons.extensions.getDoesFilePathExist
-import org.fossify.commons.extensions.getFileCount
 import org.fossify.commons.extensions.getFilePublicUri
 import org.fossify.commons.extensions.getLatestMediaByDateId
 import org.fossify.commons.extensions.getLatestMediaId
 import org.fossify.commons.extensions.getMimeType
 import org.fossify.commons.extensions.getProperPrimaryColor
-import org.fossify.commons.extensions.getProperSize
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.getStorageDirectories
 import org.fossify.commons.extensions.getTimeFormat
@@ -44,7 +41,6 @@ import org.fossify.commons.extensions.isExternalStorageManager
 import org.fossify.commons.extensions.isGone
 import org.fossify.commons.extensions.isMediaFile
 import org.fossify.commons.extensions.isPathOnOTG
-import org.fossify.commons.extensions.launchMoreAppsFromUsIntent
 import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.sdCardPath
 import org.fossify.commons.extensions.showErrorToast
@@ -73,7 +69,6 @@ import org.fossify.gallery.adapters.DirectoryAdapter
 import org.fossify.gallery.databases.GalleryDatabase
 import org.fossify.gallery.databinding.ActivityMainBinding
 import org.fossify.gallery.dialogs.ChangeSortingDialog
-import org.fossify.gallery.dialogs.ChangeViewTypeDialog
 import org.fossify.gallery.extensions.addTempFolderIfNeeded
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.createDirectoryFromMedia
@@ -87,16 +82,12 @@ import org.fossify.gallery.extensions.getNoMediaFoldersSync
 import org.fossify.gallery.extensions.getOTGFolderChildrenNames
 import org.fossify.gallery.extensions.getSortedDirectories
 import org.fossify.gallery.extensions.handleMediaManagementPrompt
-import org.fossify.gallery.extensions.isDownloadsFolder
-import org.fossify.gallery.extensions.launchAbout
 import org.fossify.gallery.extensions.launchSettings
 import org.fossify.gallery.extensions.mediaDB
 import org.fossify.gallery.extensions.movePathsInRecycleBin
 import org.fossify.gallery.extensions.movePinnedDirectoriesToFront
-import org.fossify.gallery.extensions.openRecycleBin
 import org.fossify.gallery.extensions.removeInvalidDBDirectories
 import org.fossify.gallery.extensions.storeDirectoryItems
-import org.fossify.gallery.extensions.tryDeleteFileDirItem
 import org.fossify.gallery.extensions.updateDBDirectory
 import org.fossify.gallery.extensions.updateWidgets
 import org.fossify.gallery.helpers.DIRECTORY
@@ -189,7 +180,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         if (savedInstanceState == null) {
             config.tempSkipDeleteConfirmation = false
             config.tempSkipRecycleBin = false
-            removeTempFolder()
+
             checkRecycleBinItems()
             startNewPhotoFetcher()
         }
@@ -209,6 +200,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                 || mIsSetWallpaperIntent
 
         setupOptionsMenu()
+        binding.createFolder.setOnClickListener { createNewFolder() }
         refreshMenuItems()
 
         setupEdgeToEdge(
@@ -274,7 +266,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             getRecyclerAdapter()?.updateCropThumbnails(config.cropThumbnails)
         }
 
-        if (mStoredScrollHorizontally != config.scrollHorizontally) {
+        if (mStoredScrollHorizontally != false) {
             mLoadedInitialPhotos = false
             binding.directoriesGrid.adapter = null
             getDirectories()
@@ -296,7 +288,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         binding.directoriesFastscroller.updateColors(primaryColor)
-        binding.directoriesRefreshLayout.isEnabled = config.enablePullToRefresh
+        binding.directoriesRefreshLayout.isEnabled = false
         getRecyclerAdapter()?.apply {
             dateFormat = config.dateFormat
             timeFormat = getTimeFormat()
@@ -347,7 +339,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             config.tempSkipDeleteConfirmation = false
             config.tempSkipRecycleBin = false
             mTemporaryDeleteOptionsHandler.removeCallbacksAndMessages(null)
-            removeTempFolder()
+
             unregisterFileUpdateListener()
 
             mLastMediaFetcher?.shouldStop = true
@@ -412,17 +404,14 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     }
 
     private fun refreshMenuItems() {
-        if (!mIsThirdPartyIntent) {
-            binding.mainMenu.requireToolbar().menu.apply {
-                findItem(R.id.column_count).isVisible = config.viewTypeFolders == VIEW_TYPE_GRID
-                findItem(R.id.set_as_default_folder).isVisible = !config.defaultFolder.isEmpty()
-                findItem(R.id.open_recycle_bin).isVisible =
-                    config.useRecycleBin && !config.showRecycleBinAtFolders
-                findItem(R.id.more_apps_from_us).isVisible =
-                    !resources.getBoolean(org.fossify.commons.R.bool.hide_google_relations)
-            }
+        binding.groupSubfolders.setOnCheckedChangeListener(null)
+        binding.groupSubfolders.isChecked = config.groupDirectSubfolders
+        binding.groupSubfolders.setOnCheckedChangeListener { _, checked ->
+            config.groupDirectSubfolders = checked
+            mCurrentPathPrefix = ""
+            binding.directoriesGrid.adapter = null
+            getDirectories()
         }
-
     }
 
     private fun setupOptionsMenu() {
@@ -433,33 +422,21 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         binding.mainMenu.requireToolbar().inflateMenu(menuId)
-        binding.mainMenu.toggleHideOnScroll(!config.scrollHorizontally)
+        binding.mainMenu.toggleHideOnScroll(!false)
         binding.mainMenu.setupMenu()
-
-        binding.mainMenu.onSearchOpenListener = {
-            if (config.searchAllFilesByDefault) {
-                launchSearchActivity()
-            }
-        }
 
         binding.mainMenu.onSearchTextChangedListener = { text ->
             setupAdapter(mDirsIgnoringSearch, text)
             binding.directoriesRefreshLayout.isEnabled =
-                text.isEmpty() && config.enablePullToRefresh
+                text.isEmpty() && false
             binding.directoriesSwitchSearching.beVisibleIf(text.isNotEmpty())
         }
 
         binding.mainMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.sort -> showSortingDialog()
-                R.id.change_view_type -> changeViewType()
-                R.id.create_new_folder -> createNewFolder()
-                R.id.open_recycle_bin -> openRecycleBin()
                 R.id.column_count -> changeColumnCount()
-                R.id.set_as_default_folder -> setAsDefaultFolder()
-                R.id.more_apps_from_us -> launchMoreAppsFromUsIntent()
                 R.id.settings -> launchSettings()
-                R.id.about -> launchAbout()
                 else -> return@setOnMenuItemClickListener false
             }
             return@setOnMenuItemClickListener true
@@ -490,28 +467,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
     }
 
-    private fun removeTempFolder() {
-        if (config.tempFolderPath.isNotEmpty()) {
-            val newFolder = File(config.tempFolderPath)
-            if (getDoesFilePathExist(newFolder.absolutePath) && newFolder.isDirectory) {
-                if (
-                    newFolder.getProperSize(true) == 0L
-                    && newFolder.getFileCount(true) == 0
-                    && newFolder.list()?.isEmpty() == true
-                ) {
-                    toast(
-                        String.format(
-                            getString(org.fossify.commons.R.string.deleting_folder),
-                            config.tempFolderPath
-                        ), Toast.LENGTH_LONG
-                    )
-                    tryDeleteFileDirItem(newFolder.toFileDirItem(applicationContext), true, true)
-                }
-            }
-            config.tempFolderPath = ""
-        }
-    }
-
     private fun checkOTGPath() {
         ensureBackgroundThread {
             if (!config.wasOTGHandled && hasPermission(getPermissionToRequest()) && hasOTGConnected() && config.OTGPath.isEmpty()) {
@@ -525,22 +480,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                     config.addIncludedFolder(otgPath)
                 }
             }
-        }
-    }
-
-    private fun checkDefaultSpamFolders() {
-        if (!config.spamFoldersChecked) {
-            val spamFolders = arrayListOf(
-                "/storage/emulated/0/Android/data/com.facebook.orca/files/stickers"
-            )
-
-            val OTGPath = config.OTGPath
-            spamFolders.forEach {
-                if (getDoesFilePathExist(it, OTGPath)) {
-                    config.addExcludedFolder(it)
-                }
-            }
-            config.spamFoldersChecked = true
         }
     }
 
@@ -559,7 +498,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             }
 
             checkOTGPath()
-            checkDefaultSpamFolders()
 
             getDirectories()
 
@@ -605,15 +543,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
             }
 
             getRecyclerAdapter()?.directorySorting = config.directorySorting
-        }
-    }
-
-    private fun changeViewType() {
-        ChangeViewTypeDialog(this, true) {
-            refreshMenuItems()
-            setupLayoutManager()
-            binding.directoriesGrid.adapter = null
-            setupAdapter(getRecyclerAdapter()?.dirs ?: mDirs)
         }
     }
 
@@ -696,26 +625,13 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                     directoryDB.deleteDirPath(it.absolutePath)
                 }
 
-                if (config.deleteEmptyFolders) {
-                    folders.filter {
-                        !it.absolutePath.isDownloadsFolder()
-                                && it.isDirectory
-                                && it.toFileDirItem(this).getProperFileCount(this, true) == 0
-                    }
-                        .forEach {
-                            tryDeleteFileDirItem(it.toFileDirItem(this), true, true)
-                        }
-                }
             }
         }
     }
 
     private fun setupLayoutManager() {
-        if (config.viewTypeFolders == VIEW_TYPE_GRID) {
+
             setupGridLayoutManager()
-        } else {
-            setupListLayoutManager()
-        }
 
         (binding.directoriesRefreshLayout.layoutParams as RelativeLayout.LayoutParams)
             .addRule(RelativeLayout.BELOW, R.id.directories_switch_searching)
@@ -723,21 +639,13 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
     private fun setupGridLayoutManager() {
         val layoutManager = binding.directoriesGrid.layoutManager as MyGridLayoutManager
-        if (config.scrollHorizontally) {
-            layoutManager.orientation = RecyclerView.HORIZONTAL
-            binding.directoriesRefreshLayout.layoutParams =
-                RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-        } else {
+
             layoutManager.orientation = RecyclerView.VERTICAL
             binding.directoriesRefreshLayout.layoutParams =
                 RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-        }
 
         layoutManager.spanCount = config.dirColumnCnt
     }
@@ -754,7 +662,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     }
 
     private fun initZoomListener() {
-        if (config.viewTypeFolders == VIEW_TYPE_GRID) {
+
             val layoutManager = binding.directoriesGrid.layoutManager as MyGridLayoutManager
             mZoomListener = object : MyRecyclerView.MyZoomListener {
                 override fun zoomIn() {
@@ -771,9 +679,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                     }
                 }
             }
-        } else {
-            mZoomListener = null
-        }
+
     }
 
     private fun createNewFolder() {
@@ -1230,16 +1136,12 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
         checkInvalidDirectories(dirs)
         if (mDirs.size > 50) {
-            excludeSpamFolders()
+
         }
 
-        val excludedFolders = config.excludedFolders
         val everShownFolders = config.everShownFolders.toMutableSet() as HashSet<String>
 
-        // do not add excluded folders and their subfolders at everShownFolders
-        dirs.filter { dir ->
-            return@filter !excludedFolders.any { dir.path.startsWith(it) }
-        }.mapTo(everShownFolders) { it.path }
+        dirs.mapTo(everShownFolders) { it.path }
 
         try {
             // scan the internal storage from time to time for new folders
@@ -1254,11 +1156,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         mDirs = dirs.clone() as ArrayList<Directory>
-    }
-
-    private fun setAsDefaultFolder() {
-        config.defaultFolder = ""
-        refreshMenuItems()
     }
 
     private fun openDefaultFolder() {
@@ -1353,7 +1250,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
                     binding.directoriesGrid.adapter = this
                     setupScrollDirection()
 
-                    if (config.viewTypeFolders == VIEW_TYPE_LIST && areSystemAnimationsEnabled) {
+                    if (VIEW_TYPE_GRID == VIEW_TYPE_LIST && areSystemAnimationsEnabled) {
                         binding.directoriesGrid.scheduleLayoutAnimation()
                     }
                 }
@@ -1380,7 +1277,7 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
 
     private fun setupScrollDirection() {
         val scrollHorizontally =
-            config.scrollHorizontally && config.viewTypeFolders == VIEW_TYPE_GRID
+            false && VIEW_TYPE_GRID == VIEW_TYPE_GRID
         binding.directoriesFastscroller.setScrollVertically(!scrollHorizontally)
     }
 
@@ -1492,49 +1389,6 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
     // exclude probably unwanted folders, for example facebook stickers are split between hundreds of separate folders like
     // /storage/emulated/0/Android/data/com.facebook.orca/files/stickers/175139712676531/209575122566323
     // /storage/emulated/0/Android/data/com.facebook.orca/files/stickers/497837993632037/499671223448714
-    private fun excludeSpamFolders() {
-        ensureBackgroundThread {
-            try {
-                val internalPath = internalStoragePath
-                val checkedPaths = ArrayList<String>()
-                val oftenRepeatedPaths = ArrayList<String>()
-                val paths = mDirs
-                    .map { it.path.removePrefix(internalPath) }
-                    .toMutableList() as ArrayList<String>
-                paths.forEach {
-                    val parts = it.split("/")
-                    var currentString = ""
-                    for (i in 0 until parts.size) {
-                        currentString += "${parts[i]}/"
-
-                        if (!checkedPaths.contains(currentString)) {
-                            val cnt = paths.count { it.startsWith(currentString) }
-                            if (cnt > 50 && currentString.startsWith("/Android/data", true)) {
-                                oftenRepeatedPaths.add(currentString)
-                            }
-                        }
-
-                        checkedPaths.add(currentString)
-                    }
-                }
-
-                val substringToRemove = oftenRepeatedPaths.filter {
-                    val path = it
-                    it == "/" || oftenRepeatedPaths.any { it != path && it.startsWith(path) }
-                }
-
-                oftenRepeatedPaths.removeAll(substringToRemove)
-                val OTGPath = config.OTGPath
-                oftenRepeatedPaths.forEach {
-                    val file = File("$internalPath/$it")
-                    if (getDoesFilePathExist(file.absolutePath, OTGPath)) {
-                        config.addExcludedFolder(file.absolutePath)
-                    }
-                }
-            } catch (e: Exception) {
-            }
-        }
-    }
 
     private fun getFoldersWithMedia(path: String): HashSet<String> {
         val folders = HashSet<String>()

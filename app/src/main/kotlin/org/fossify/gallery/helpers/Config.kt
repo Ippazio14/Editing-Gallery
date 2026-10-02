@@ -6,13 +6,11 @@ import android.os.Environment
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.fossify.commons.helpers.BaseConfig
-import org.fossify.commons.helpers.PROTECTION_PATTERN
 import org.fossify.commons.helpers.SORT_BY_DATE_MODIFIED
 import org.fossify.commons.helpers.SORT_DESCENDING
 import org.fossify.commons.helpers.VIEW_TYPE_GRID
 import org.fossify.gallery.R
 import org.fossify.gallery.models.AlbumCover
-import java.util.Arrays
 import java.util.Locale
 
 class Config(context: Context) : BaseConfig(context) {
@@ -46,21 +44,7 @@ class Config(context: Context) : BaseConfig(context) {
 
     fun hasCustomGrouping(path: String) = prefs.contains(GROUP_FOLDER_PREFIX + path.lowercase(Locale.getDefault()))
 
-    fun saveFolderViewType(path: String, value: Int) {
-        if (path.isEmpty()) {
-            viewTypeFiles = value
-        } else {
-            prefs.edit().putInt(VIEW_TYPE_PREFIX + path.lowercase(Locale.getDefault()), value).apply()
-        }
-    }
-
-    fun getFolderViewType(path: String) = prefs.getInt(VIEW_TYPE_PREFIX + path.lowercase(Locale.getDefault()), viewTypeFiles)
-
-    fun removeFolderViewType(path: String) {
-        prefs.edit().remove(VIEW_TYPE_PREFIX + path.lowercase(Locale.getDefault())).apply()
-    }
-
-    fun hasCustomViewType(path: String) = prefs.contains(VIEW_TYPE_PREFIX + path.lowercase(Locale.getDefault()))
+    fun getFolderViewType(path: String) = VIEW_TYPE_GRID
 
     var wasHideFolderTooltipShown: Boolean
         get() = prefs.getBoolean(HIDE_FOLDER_TOOLTIP_SHOWN, false)
@@ -69,9 +53,7 @@ class Config(context: Context) : BaseConfig(context) {
     val shouldShowHidden: Boolean
         get() = showHiddenMedia
 
-    var showHiddenMedia: Boolean
-        get() = prefs.getBoolean(SHOW_HIDDEN_MEDIA, false)
-        set(showHiddenFolders) = prefs.edit().putBoolean(SHOW_HIDDEN_MEDIA, showHiddenFolders).apply()
+    val showHiddenMedia: Boolean = false
 
     var isThirdPartyIntent: Boolean
         get() = prefs.getBoolean(IS_THIRD_PARTY_INTENT, false)
@@ -96,38 +78,6 @@ class Config(context: Context) : BaseConfig(context) {
         pinnedFolders = currPinnedFolders
     }
 
-    fun addExcludedFolder(path: String) {
-        addExcludedFolders(HashSet<String>(Arrays.asList(path)))
-    }
-
-    fun addExcludedFolders(paths: Set<String>) {
-        val currExcludedFolders = HashSet<String>(excludedFolders)
-        currExcludedFolders.addAll(paths)
-        excludedFolders = currExcludedFolders.filter { it.isNotEmpty() }.toHashSet()
-    }
-
-    fun removeExcludedFolder(path: String) {
-        val currExcludedFolders = HashSet<String>(excludedFolders)
-        currExcludedFolders.remove(path)
-        excludedFolders = currExcludedFolders
-    }
-
-    var excludedFolders: MutableSet<String>
-        get() = prefs.getStringSet(EXCLUDED_FOLDERS, HashSet())!!
-        set(excludedFolders) = prefs.edit().remove(EXCLUDED_FOLDERS).putStringSet(EXCLUDED_FOLDERS, excludedFolders).apply()
-
-    var isExcludedPasswordProtectionOn: Boolean
-        get() = prefs.getBoolean(EXCLUDED_PASSWORD_PROTECTION, false)
-        set(isExcludedPasswordProtectionOn) = prefs.edit().putBoolean(EXCLUDED_PASSWORD_PROTECTION, isExcludedPasswordProtectionOn).apply()
-
-    var excludedPasswordHash: String
-        get() = prefs.getString(EXCLUDED_PASSWORD_HASH, "")!!
-        set(excludedPasswordHash) = prefs.edit().putString(EXCLUDED_PASSWORD_HASH, excludedPasswordHash).apply()
-
-    var excludedProtectionType: Int
-        get() = prefs.getInt(EXCLUDED_PROTECTION_TYPE, PROTECTION_PATTERN)
-        set(excludedProtectionType) = prefs.edit().putInt(EXCLUDED_PROTECTION_TYPE, excludedProtectionType).apply()
-
     fun addIncludedFolder(path: String) {
         val currIncludedFolders = HashSet<String>(includedFolders)
         currIncludedFolders.add(path)
@@ -150,21 +100,13 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getStringSet(INCLUDED_FOLDERS, HashSet<String>())!!
         set(includedFolders) = prefs.edit().remove(INCLUDED_FOLDERS).putStringSet(INCLUDED_FOLDERS, includedFolders).apply()
 
-    var autoplayVideos: Boolean
-        get() = prefs.getBoolean(AUTOPLAY_VIDEOS, false)
-        set(autoplayVideos) = prefs.edit().putBoolean(AUTOPLAY_VIDEOS, autoplayVideos).apply()
+    val autoplayVideos: Boolean = false
 
-    var animateGifs: Boolean
-        get() = prefs.getBoolean(ANIMATE_GIFS, false)
-        set(animateGifs) = prefs.edit().putBoolean(ANIMATE_GIFS, animateGifs).apply()
+    val animateGifs: Boolean = false
 
-    var maxBrightness: Boolean
-        get() = prefs.getBoolean(MAX_BRIGHTNESS, false)
-        set(maxBrightness) = prefs.edit().putBoolean(MAX_BRIGHTNESS, maxBrightness).apply()
+    val maxBrightness: Boolean = false
 
-    var ultraHdrRendering: Boolean
-        get() = prefs.getBoolean(ULTRA_HDR_RENDERING, true)
-        set(ultraHdrRendering) = prefs.edit().putBoolean(ULTRA_HDR_RENDERING, ultraHdrRendering).apply()
+    val ultraHdrRendering: Boolean = false
 
     var playbackSpeed: Float
         get() = prefs.getFloat(PLAYBACK_SPEED, 1f)
@@ -174,9 +116,7 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getInt(PLAYBACK_SPEED_PROGRESS, -1)
         set(playbackSpeedProgress) = prefs.edit().putInt(PLAYBACK_SPEED_PROGRESS, playbackSpeedProgress).apply()
 
-    var cropThumbnails: Boolean
-        get() = prefs.getBoolean(CROP_THUMBNAILS, true)
-        set(cropThumbnails) = prefs.edit().putBoolean(CROP_THUMBNAILS, cropThumbnails).apply()
+    val cropThumbnails: Boolean = true
 
     var showThumbnailVideoDuration: Boolean
         get() = prefs.getBoolean(SHOW_THUMBNAIL_VIDEO_DURATION, true)
@@ -186,9 +126,7 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_THUMBNAIL_FILE_TYPES, true)
         set(showThumbnailFileTypes) = prefs.edit().putBoolean(SHOW_THUMBNAIL_FILE_TYPES, showThumbnailFileTypes).apply()
 
-    var screenRotation: Int
-        get() = prefs.getInt(SCREEN_ROTATION, ROTATE_BY_SYSTEM_SETTING)
-        set(screenRotation) = prefs.edit().putInt(SCREEN_ROTATION, screenRotation).apply()
+    val screenRotation: Int = ROTATE_BY_SYSTEM_SETTING
 
     var fileLoadingPriority: Int
         get() = prefs.getInt(FILE_LOADING_PRIORITY, PRIORITY_SPEED)
@@ -227,9 +165,7 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getString(DEFAULT_FOLDER, "")!!
         set(defaultFolder) = prefs.edit().putString(DEFAULT_FOLDER, defaultFolder).apply()
 
-    var allowInstantChange: Boolean
-        get() = prefs.getBoolean(ALLOW_INSTANT_CHANGE, false)
-        set(allowInstantChange) = prefs.edit().putBoolean(ALLOW_INSTANT_CHANGE, allowInstantChange).apply()
+    val allowInstantChange: Boolean = false
 
     private fun getDirectoryColumnsField(): String {
         val isPortrait = context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
@@ -298,17 +234,13 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(HIDE_SYSTEM_UI, false)
         set(hideSystemUI) = prefs.edit().putBoolean(HIDE_SYSTEM_UI, hideSystemUI).apply()
 
-    var deleteEmptyFolders: Boolean
-        get() = prefs.getBoolean(DELETE_EMPTY_FOLDERS, false)
-        set(deleteEmptyFolders) = prefs.edit().putBoolean(DELETE_EMPTY_FOLDERS, deleteEmptyFolders).apply()
+    val deleteEmptyFolders: Boolean = false
 
     var keepScreenOn: Boolean
         get() = prefs.getBoolean(KEEP_SCREEN_ON, true)
         set(keepScreenOn) = prefs.edit().putBoolean(KEEP_SCREEN_ON, keepScreenOn).apply()
 
-    var allowPhotoGestures: Boolean
-        get() = prefs.getBoolean(ALLOW_PHOTO_GESTURES, false)
-        set(allowPhotoGestures) = prefs.edit().putBoolean(ALLOW_PHOTO_GESTURES, allowPhotoGestures).apply()
+    val allowPhotoGestures: Boolean = false
 
     var allowVideoGestures: Boolean
         get() = prefs.getBoolean(ALLOW_VIDEO_GESTURES, true)
@@ -346,25 +278,15 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getString(TEMP_FOLDER_PATH, "")!!
         set(tempFolderPath) = prefs.edit().putString(TEMP_FOLDER_PATH, tempFolderPath).apply()
 
-    var viewTypeFolders: Int
-        get() = prefs.getInt(VIEW_TYPE_FOLDERS, VIEW_TYPE_GRID)
-        set(viewTypeFolders) = prefs.edit().putInt(VIEW_TYPE_FOLDERS, viewTypeFolders).apply()
+    val viewTypeFolders: Int = VIEW_TYPE_GRID
 
-    var viewTypeFiles: Int
-        get() = prefs.getInt(VIEW_TYPE_FILES, VIEW_TYPE_GRID)
-        set(viewTypeFiles) = prefs.edit().putInt(VIEW_TYPE_FILES, viewTypeFiles).apply()
+    val viewTypeFiles: Int = VIEW_TYPE_GRID
 
-    var showExtendedDetails: Boolean
-        get() = prefs.getBoolean(SHOW_EXTENDED_DETAILS, false)
-        set(showExtendedDetails) = prefs.edit().putBoolean(SHOW_EXTENDED_DETAILS, showExtendedDetails).apply()
+    val showExtendedDetails: Boolean = false
 
-    var hideExtendedDetails: Boolean
-        get() = prefs.getBoolean(HIDE_EXTENDED_DETAILS, true)
-        set(hideExtendedDetails) = prefs.edit().putBoolean(HIDE_EXTENDED_DETAILS, hideExtendedDetails).apply()
+    val hideExtendedDetails: Boolean = false
 
-    var extendedDetails: Int
-        get() = prefs.getInt(EXTENDED_DETAILS, EXT_RESOLUTION or EXT_LAST_MODIFIED or EXT_EXIF_PROPERTIES)
-        set(extendedDetails) = prefs.edit().putInt(EXTENDED_DETAILS, extendedDetails).apply()
+    val extendedDetails: Int = 0
 
     var wasNewAppShown: Boolean
         get() = prefs.getBoolean(WAS_NEW_APP_SHOWN, false)
@@ -454,25 +376,19 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_RECYCLE_BIN_AT_FOLDERS, true)
         set(showRecycleBinAtFolders) = prefs.edit().putBoolean(SHOW_RECYCLE_BIN_AT_FOLDERS, showRecycleBinAtFolders).apply()
 
-    var allowZoomingImages: Boolean
-        get() = prefs.getBoolean(ALLOW_ZOOMING_IMAGES, true)
-        set(allowZoomingImages) = prefs.edit().putBoolean(ALLOW_ZOOMING_IMAGES, allowZoomingImages).apply()
+    val allowZoomingImages: Boolean = false
 
     var lastBinCheck: Long
         get() = prefs.getLong(LAST_BIN_CHECK, 0L)
         set(lastBinCheck) = prefs.edit().putLong(LAST_BIN_CHECK, lastBinCheck).apply()
 
-    var showHighestQuality: Boolean
-        get() = prefs.getBoolean(SHOW_HIGHEST_QUALITY, false)
-        set(showHighestQuality) = prefs.edit().putBoolean(SHOW_HIGHEST_QUALITY, showHighestQuality).apply()
+    val showHighestQuality: Boolean = false
 
     var showRecycleBinLast: Boolean
         get() = prefs.getBoolean(SHOW_RECYCLE_BIN_LAST, false)
         set(showRecycleBinLast) = prefs.edit().putBoolean(SHOW_RECYCLE_BIN_LAST, showRecycleBinLast).apply()
 
-    var allowDownGesture: Boolean
-        get() = prefs.getBoolean(ALLOW_DOWN_GESTURE, true)
-        set(allowDownGesture) = prefs.edit().putBoolean(ALLOW_DOWN_GESTURE, allowDownGesture).apply()
+    val allowDownGesture: Boolean = false
 
     var lastEditorCropAspectRatio: Int
         get() = prefs.getInt(LAST_EDITOR_CROP_ASPECT_RATIO, ASPECT_RATIO_FREE)
@@ -494,13 +410,9 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(SHOW_WIDGET_FOLDER_NAME, true)
         set(showWidgetFolderName) = prefs.edit().putBoolean(SHOW_WIDGET_FOLDER_NAME, showWidgetFolderName).apply()
 
-    var allowOneToOneZoom: Boolean
-        get() = prefs.getBoolean(ALLOW_ONE_TO_ONE_ZOOM, false)
-        set(allowOneToOneZoom) = prefs.edit().putBoolean(ALLOW_ONE_TO_ONE_ZOOM, allowOneToOneZoom).apply()
+    val allowOneToOneZoom: Boolean = false
 
-    var allowRotatingWithGestures: Boolean
-        get() = prefs.getBoolean(ALLOW_ROTATING_WITH_GESTURES, true)
-        set(allowRotatingWithGestures) = prefs.edit().putBoolean(ALLOW_ROTATING_WITH_GESTURES, allowRotatingWithGestures).apply()
+    val allowRotatingWithGestures: Boolean = false
 
     var lastEditorDrawColor: Int
         get() = prefs.getInt(LAST_EDITOR_DRAW_COLOR, primaryColor)
@@ -532,25 +444,15 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getFloat(EDITOR_BRUSH_SIZE, 0.05f)
         set(editorBrushSize) = prefs.edit().putFloat(EDITOR_BRUSH_SIZE, editorBrushSize).apply()
 
-    var showFolderMediaCount: Int
-        get() = prefs.getInt(FOLDER_MEDIA_COUNT, FOLDER_MEDIA_CNT_LINE)
-        set(showFolderMediaCount) = prefs.edit().putInt(FOLDER_MEDIA_COUNT, showFolderMediaCount).apply()
+    val showFolderMediaCount: Int = FOLDER_MEDIA_CNT_LINE
 
-    var folderStyle: Int
-        get() = prefs.getInt(FOLDER_THUMBNAIL_STYLE, FOLDER_STYLE_SQUARE)
-        set(folderStyle) = prefs.edit().putInt(FOLDER_THUMBNAIL_STYLE, folderStyle).apply()
+    val folderStyle: Int = FOLDER_STYLE_ROUNDED_CORNERS
 
-    var limitFolderTitle: Boolean
-        get() = prefs.getBoolean(LIMIT_FOLDER_TITLE, false)
-        set(limitFolderTitle) = prefs.edit().putBoolean(LIMIT_FOLDER_TITLE, limitFolderTitle).apply()
+    val limitFolderTitle: Boolean = false
 
-    var thumbnailSpacing: Int
-        get() = prefs.getInt(THUMBNAIL_SPACING, 1)
-        set(thumbnailSpacing) = prefs.edit().putInt(THUMBNAIL_SPACING, thumbnailSpacing).apply()
+    val thumbnailSpacing: Int = 6
 
-    var fileRoundedCorners: Boolean
-        get() = prefs.getBoolean(FILE_ROUNDED_CORNERS, false)
-        set(fileRoundedCorners) = prefs.edit().putBoolean(FILE_ROUNDED_CORNERS, fileRoundedCorners).apply()
+    val fileRoundedCorners: Boolean = true
 
     var customFoldersOrder: String
         get() = prefs.getString(CUSTOM_FOLDERS_ORDER, "")!!
@@ -560,9 +462,7 @@ class Config(context: Context) : BaseConfig(context) {
         get() = prefs.getBoolean(AVOID_SHOWING_ALL_FILES_PROMPT, false)
         set(avoidShowingAllFilesPrompt) = prefs.edit().putBoolean(AVOID_SHOWING_ALL_FILES_PROMPT, avoidShowingAllFilesPrompt).apply()
 
-    var searchAllFilesByDefault: Boolean
-        get() = prefs.getBoolean(SEARCH_ALL_FILES_BY_DEFAULT, false)
-        set(searchAllFilesByDefault) = prefs.edit().putBoolean(SEARCH_ALL_FILES_BY_DEFAULT, searchAllFilesByDefault).apply()
+    val searchAllFilesByDefault: Boolean = false
 
     var showPermissionRationale: Boolean
         get() = prefs.getBoolean(SHOW_PERMISSION_RATIONALE, false)

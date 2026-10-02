@@ -30,7 +30,6 @@ import org.fossify.commons.extensions.getFormattedDuration
 import org.fossify.commons.extensions.getOTGPublicPath
 import org.fossify.commons.extensions.getParentPath
 import org.fossify.commons.extensions.getTimeFormat
-import org.fossify.commons.extensions.handleDeletePasswordProtection
 import org.fossify.commons.extensions.hasOTGConnected
 import org.fossify.commons.extensions.internalStoragePath
 import org.fossify.commons.extensions.isAStorageRootFolder
@@ -42,7 +41,6 @@ import org.fossify.commons.extensions.isRestrictedWithSAFSdk30
 import org.fossify.commons.extensions.needsStupidWritePermissions
 import org.fossify.commons.extensions.recycleBinPath
 import org.fossify.commons.extensions.toast
-import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isRPlus
 import org.fossify.commons.helpers.sumByLong
@@ -51,11 +49,8 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.gallery.R
 import org.fossify.gallery.activities.ViewPagerActivity
 import org.fossify.gallery.databinding.PhotoItemGridBinding
-import org.fossify.gallery.databinding.PhotoItemListBinding
 import org.fossify.gallery.databinding.ThumbnailSectionBinding
 import org.fossify.gallery.databinding.VideoItemGridBinding
-import org.fossify.gallery.databinding.VideoItemListBinding
-import org.fossify.gallery.dialogs.DeleteWithRememberDialog
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.fixDateTaken
 import org.fossify.gallery.extensions.getShortcutImage
@@ -103,13 +98,13 @@ class MediaAdapter(
     private val ITEM_MEDIUM_PHOTO = 2
 
     private val config = activity.config
-    private val viewType = config.getFolderViewType(path)
-    private val isListViewType = viewType == VIEW_TYPE_LIST
+    private val viewType = VIEW_TYPE_GRID
+
     private var rotatedImagePaths = ArrayList<String>()
     private var currentMediaHash = media.hashCode()
     private val hasOTGConnected = activity.hasOTGConnected()
 
-    private var scrollHorizontally = config.scrollHorizontally
+    private var scrollHorizontally = false
     private var animateGifs = config.animateGifs
     private var cropThumbnails = config.cropThumbnails
     private var displayFilenames = config.displayFileNames
@@ -129,19 +124,13 @@ class MediaAdapter(
         val binding = if (viewType == ITEM_SECTION) {
             ThumbnailSectionBinding.inflate(layoutInflater, parent, false)
         } else {
-            if (isListViewType) {
-                if (viewType == ITEM_MEDIUM_PHOTO) {
-                    PhotoItemListBinding.inflate(layoutInflater, parent, false)
-                } else {
-                    VideoItemListBinding.inflate(layoutInflater, parent, false)
-                }
-            } else {
+
                 if (viewType == ITEM_MEDIUM_PHOTO) {
                     PhotoItemGridBinding.inflate(layoutInflater, parent, false)
                 } else {
                     VideoItemGridBinding.inflate(layoutInflater, parent, false)
                 }
-            }
+
         }
         return createViewHolder(binding.root)
     }
@@ -420,9 +409,9 @@ class MediaAdapter(
     }
 
     private fun moveFilesTo() {
-        activity.handleDeletePasswordProtection {
+
             checkMediaManagementAndCopy(false)
-        }
+
     }
 
     private fun checkMediaManagementAndCopy(isCopyOperation: Boolean) {
@@ -470,15 +459,7 @@ class MediaAdapter(
 
     private fun checkDeleteConfirmation() {
         activity.handleMediaManagementPrompt {
-            if (config.isDeletePasswordProtectionOn) {
-                activity.handleDeletePasswordProtection {
-                    deleteFiles(config.tempSkipRecycleBin)
-                }
-            } else if (config.tempSkipDeleteConfirmation || config.skipDeleteConfirmation) {
-                deleteFiles(config.tempSkipRecycleBin)
-            } else {
-                askConfirmDelete()
-            }
+            askConfirmDelete()
         }
     }
 
@@ -506,17 +487,8 @@ class MediaAdapter(
         val baseString =
             if (config.useRecycleBin && !config.tempSkipRecycleBin && !isRecycleBin) org.fossify.commons.R.string.move_to_recycle_bin_confirmation else org.fossify.commons.R.string.deletion_confirmation
         val question = String.format(resources.getString(baseString), itemsAndSize)
-        val showSkipRecycleBinOption = config.useRecycleBin && !isRecycleBin
 
-        DeleteWithRememberDialog(activity, question, showSkipRecycleBinOption) { remember, skipRecycleBin ->
-            config.tempSkipDeleteConfirmation = remember
-
-            if (remember) {
-                config.tempSkipRecycleBin = skipRecycleBin
-            }
-
-            deleteFiles(skipRecycleBin)
-        }
+        ConfirmationDialog(activity, question) { deleteFiles(false) }
     }
 
     private fun deleteFiles(skipRecycleBin: Boolean) {
@@ -596,6 +568,7 @@ class MediaAdapter(
 
     private fun setupThumbnail(view: View, medium: Medium) {
         val isSelected = selectedKeys.contains(medium.path.hashCode())
+        view.findViewById<View>(R.id.video_filmstrip)?.beVisibleIf(medium.isVideo())
         bindItem(view, medium).apply {
             val padding = if (config.thumbnailSpacing <= 1) {
                 config.thumbnailSpacing
@@ -608,11 +581,9 @@ class MediaAdapter(
             playPortraitOutline?.beVisibleIf(medium.isVideo() || medium.isPortrait())
             if (medium.isVideo()) {
                 playPortraitOutline?.setImageResource(
-                    if (isListViewType) {
-                        org.fossify.commons.R.drawable.ic_play_outline_vector
-                    } else {
+
                         org.fossify.commons.R.drawable.ic_play_vector
-                    }
+
                 )
                 playPortraitOutline?.beVisible()
             } else if (medium.isPortrait()) {
@@ -633,7 +604,7 @@ class MediaAdapter(
                 fileType?.beGone()
             }
 
-            mediumName.beVisibleIf(displayFilenames || isListViewType)
+            mediumName.beVisibleIf(displayFilenames)
             mediumName.text = medium.name
             mediumName.tag = medium.path
 
@@ -642,18 +613,11 @@ class MediaAdapter(
                 videoDuration?.text = medium.videoDuration.getFormattedDuration()
             }
             videoDuration?.beVisibleIf(showVideoDuration)
-            if (isListViewType) {
-                videoDuration?.setTextColor(textColor)
-            }
 
             mediumCheck.beVisibleIf(isSelected)
             if (isSelected) {
                 mediumCheck.background?.applyColorFilter(properPrimaryColor)
                 mediumCheck.applyColorFilter(contrastColor)
-            }
-
-            if (isListViewType) {
-                mediaItemHolder.isSelected = isSelected
             }
 
             var path = medium.path
@@ -662,8 +626,7 @@ class MediaAdapter(
             }
 
             val roundedCorners = when {
-                isListViewType -> ROUNDED_CORNERS_SMALL
-                config.fileRoundedCorners -> ROUNDED_CORNERS_BIG
+                                config.fileRoundedCorners -> ROUNDED_CORNERS_BIG
                 else -> ROUNDED_CORNERS_NONE
             }
 
@@ -691,10 +654,6 @@ class MediaAdapter(
                 }
             )
 
-            if (isListViewType) {
-                mediumName.setTextColor(textColor)
-                playPortraitOutline?.applyColorFilter(textColor)
-            }
         }
     }
 
@@ -715,18 +674,12 @@ class MediaAdapter(
     }
 
     private fun bindItem(view: View, medium: Medium): MediaItemBinding {
-        return if (isListViewType) {
-            if (!medium.isVideo() && !medium.isPortrait()) {
-                PhotoItemListBinding.bind(view).toMediaItemBinding()
-            } else {
-                VideoItemListBinding.bind(view).toMediaItemBinding()
-            }
-        } else {
+        return
             if (!medium.isVideo() && !medium.isPortrait()) {
                 PhotoItemGridBinding.bind(view).toMediaItemBinding()
             } else {
                 VideoItemGridBinding.bind(view).toMediaItemBinding()
             }
-        }
+
     }
 }

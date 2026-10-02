@@ -20,6 +20,19 @@ import org.fossify.gallery.helpers.getPermissionsToRequest
 
 open class SimpleActivity : BaseSimpleActivity() {
 
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        config.apply {
+            isAppPasswordProtectionOn = false
+            isDeletePasswordProtectionOn = false
+            skipDeleteConfirmation = false
+            scrollHorizontally = false
+            enablePullToRefresh = false
+            use24HourFormat = android.text.format.DateFormat.is24HourFormat(this@SimpleActivity)
+            dateFormat = (java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT) as? java.text.SimpleDateFormat)?.toPattern() ?: "dd/MM/yyyy"
+        }
+        super.onCreate(savedInstanceState)
+    }
+
     private var dialog: AlertDialog? = null
 
     private val observer = object : ContentObserver(null) {

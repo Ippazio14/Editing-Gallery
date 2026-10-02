@@ -13,7 +13,7 @@ import org.fossify.gallery.databinding.ItemManageFolderBinding
 import org.fossify.gallery.extensions.config
 
 class ManageFoldersAdapter(
-    activity: BaseSimpleActivity, var folders: ArrayList<String>, val isShowingExcludedFolders: Boolean, val listener: RefreshRecyclerViewListener?,
+    activity: BaseSimpleActivity, var folders: ArrayList<String>, val listener: RefreshRecyclerViewListener?,
     recyclerView: MyRecyclerView, itemClick: (Any) -> Unit
 ) : MyRecyclerViewAdapter(activity, recyclerView, itemClick) {
 
@@ -115,11 +115,7 @@ class ManageFoldersAdapter(
 
         getSelectedItems().forEach {
             removeFolders.add(it)
-            if (isShowingExcludedFolders) {
-                config.removeExcludedFolder(it)
-            } else {
-                config.removeIncludedFolder(it)
-            }
+            config.removeIncludedFolder(it)
         }
 
         folders.removeAll(removeFolders)

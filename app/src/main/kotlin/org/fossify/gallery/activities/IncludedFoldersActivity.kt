@@ -43,7 +43,7 @@ class IncludedFoldersActivity : SimpleActivity(), RefreshRecyclerViewListener {
             setTextColor(getProperTextColor())
         }
 
-        val adapter = ManageFoldersAdapter(this, folders, false, this, binding.manageFoldersList) {}
+        val adapter = ManageFoldersAdapter(this, folders, this, binding.manageFoldersList) {}
         binding.manageFoldersList.adapter = adapter
     }
 

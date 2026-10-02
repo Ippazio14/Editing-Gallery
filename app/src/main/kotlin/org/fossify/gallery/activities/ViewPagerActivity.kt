@@ -12,7 +12,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -29,7 +28,6 @@ import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
-import androidx.exifinterface.media.ExifInterface
 import androidx.print.PrintHelper
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
@@ -58,9 +56,7 @@ import org.fossify.commons.extensions.getImageResolution
 import org.fossify.commons.extensions.getIsPathDirectory
 import org.fossify.commons.extensions.getParentPath
 import org.fossify.commons.extensions.getProperBackgroundColor
-import org.fossify.commons.extensions.getResolution
 import org.fossify.commons.extensions.getUriMimeType
-import org.fossify.commons.extensions.handleDeletePasswordProtection
 import org.fossify.commons.extensions.handleLockedFolderOpening
 import org.fossify.commons.extensions.hasPermission
 import org.fossify.commons.extensions.hideKeyboard
@@ -76,11 +72,9 @@ import org.fossify.commons.extensions.isVideoFast
 import org.fossify.commons.extensions.needsStupidWritePermissions
 import org.fossify.commons.extensions.onGlobalLayout
 import org.fossify.commons.extensions.recycleBinPath
-import org.fossify.commons.extensions.scanPathRecursively
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.extensions.tryGenericMimeType
-import org.fossify.commons.extensions.updateBrightness
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.commons.helpers.IS_FROM_GALLERY
 import org.fossify.commons.helpers.REAL_FILE_PATH
@@ -95,14 +89,12 @@ import org.fossify.gallery.R
 import org.fossify.gallery.adapters.MyPagerAdapter
 import org.fossify.gallery.asynctasks.GetMediaAsynctask
 import org.fossify.gallery.databinding.ActivityMediumBinding
-import org.fossify.gallery.dialogs.DeleteWithRememberDialog
 import org.fossify.gallery.dialogs.SaveAsDialog
 import org.fossify.gallery.dialogs.SlideshowDialog
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.getShortcutImage
 import org.fossify.gallery.extensions.handleMediaManagementPrompt
 import org.fossify.gallery.extensions.hideSystemUI
-import org.fossify.gallery.extensions.isDownloadsFolder
 import org.fossify.gallery.extensions.launchResizeImageDialog
 import org.fossify.gallery.extensions.launchSettings
 import org.fossify.gallery.extensions.mediaDB
@@ -135,7 +127,6 @@ import org.fossify.gallery.helpers.BOTTOM_ACTION_SHARE
 import org.fossify.gallery.helpers.BOTTOM_ACTION_SHOW_ON_MAP
 import org.fossify.gallery.helpers.BOTTOM_ACTION_SLIDESHOW
 import org.fossify.gallery.helpers.BOTTOM_ACTION_TOGGLE_VISIBILITY
-import org.fossify.gallery.helpers.ColorModeHelper
 import org.fossify.gallery.helpers.DefaultPageTransformer
 import org.fossify.gallery.helpers.FadePageTransformer
 import org.fossify.gallery.helpers.GO_TO_NEXT_ITEM
@@ -146,9 +137,6 @@ import org.fossify.gallery.helpers.MAX_PRINT_SIDE_SIZE
 import org.fossify.gallery.helpers.PATH
 import org.fossify.gallery.helpers.PORTRAIT_PATH
 import org.fossify.gallery.helpers.RECYCLE_BIN
-import org.fossify.gallery.helpers.ROTATE_BY_ASPECT_RATIO
-import org.fossify.gallery.helpers.ROTATE_BY_DEVICE_ROTATION
-import org.fossify.gallery.helpers.ROTATE_BY_SYSTEM_SETTING
 import org.fossify.gallery.helpers.SHOW_NEXT_ITEM
 import org.fossify.gallery.helpers.SHOW_PREV_ITEM
 import org.fossify.gallery.helpers.SHOW_RECYCLE_BIN
@@ -236,7 +224,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
 
         initBottomActions()
-        mOriginalBrightness = window.updateBrightness(config.maxBrightness, mOriginalBrightness)
+
         setupOrientation()
         refreshMenuItems()
 
@@ -251,7 +239,6 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     override fun onDestroy() {
         super.onDestroy()
-        ColorModeHelper.resetColorMode(this)
 
         if (intent.extras?.containsKey(IS_VIEW_INTENT) == true) {
         }
@@ -528,13 +515,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     }
 
     private fun setupOrientation() {
-        if (!mIsOrientationLocked) {
-            if (config.screenRotation == ROTATE_BY_DEVICE_ROTATION) {
-                requestedOrientation = SCREEN_ORIENTATION_SENSOR
-            } else if (config.screenRotation == ROTATE_BY_SYSTEM_SETTING) {
-                requestedOrientation = SCREEN_ORIENTATION_UNSPECIFIED
-            }
-        }
+        if (!mIsOrientationLocked) requestedOrientation = SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     private fun updatePagerItems(media: MutableList<Medium>) {
@@ -727,9 +708,9 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
     }
 
     private fun moveFileTo() {
-        handleDeletePasswordProtection {
+
             checkMediaManagementAndCopy(false)
-        }
+
     }
 
     private fun checkMediaManagementAndCopy(isCopyOperation: Boolean) {
@@ -1058,15 +1039,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
 
         handleMediaManagementPrompt {
-            if (config.isDeletePasswordProtectionOn) {
-                handleDeletePasswordProtection {
-                    deleteConfirmed(config.tempSkipRecycleBin)
-                }
-            } else if (config.tempSkipDeleteConfirmation || config.skipDeleteConfirmation) {
-                deleteConfirmed(config.tempSkipRecycleBin)
-            } else {
-                askConfirmDelete()
-            }
+            askConfirmDelete()
         }
     }
 
@@ -1084,17 +1057,8 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         }
 
         val message = String.format(resources.getString(baseString), filenameAndSize)
-        val showSkipRecycleBinOption = config.useRecycleBin && !isInRecycleBin
 
-        DeleteWithRememberDialog(this, message, showSkipRecycleBinOption) { remember, skipRecycleBin ->
-            config.tempSkipDeleteConfirmation = remember
-
-            if (remember) {
-                config.tempSkipRecycleBin = skipRecycleBin
-            }
-
-            deleteConfirmed(skipRecycleBin)
-        }
+        ConfirmationDialog(this, message) { deleteConfirmed(false) }
     }
 
     private fun deleteConfirmed(skipRecycleBin: Boolean) {
@@ -1128,7 +1092,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
                         tryDeleteFileDirItem(fileDirItem, false, false) {
                             mIgnoredPaths.remove(fileDirItem.path)
                             if (media.isEmpty()) {
-                                deleteDirectoryIfEmpty()
+
                                 finish()
                             }
                         }
@@ -1163,7 +1127,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
             tryDeleteFileDirItem(fileDirItem, false, true) {
                 mIgnoredPaths.remove(fileDirItem.path)
                 if (media.isEmpty()) {
-                    deleteDirectoryIfEmpty()
+
                     finish()
                 }
             }
@@ -1172,7 +1136,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     private fun isDirEmpty(media: ArrayList<Medium>): Boolean {
         return if (media.isEmpty()) {
-            deleteDirectoryIfEmpty()
+
             finish()
             true
         } else {
@@ -1249,7 +1213,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         updatePagerItems(mMediaFiles.toMutableList())
 
         refreshMenuItems()
-        checkOrientation()
+
         initBottomActions()
     }
 
@@ -1273,41 +1237,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
         return mPos
     }
 
-    private fun deleteDirectoryIfEmpty() {
-        if (config.deleteEmptyFolders) {
-            val fileDirItem = FileDirItem(mDirectory, mDirectory.getFilenameFromPath(), File(mDirectory).isDirectory)
-            if (!fileDirItem.isDownloadsFolder() && fileDirItem.isDirectory) {
-                ensureBackgroundThread {
-                    if (fileDirItem.getProperFileCount(this, true) == 0) {
-                        tryDeleteFileDirItem(fileDirItem, true, true)
-                        scanPathRecursively(mDirectory)
-                    }
-                }
-            }
-        }
-    }
-
     @SuppressLint("SourceLockedOrientationActivity")
-    private fun checkOrientation() {
-        if (!mIsOrientationLocked && config.screenRotation == ROTATE_BY_ASPECT_RATIO) {
-            var flipSides = false
-            try {
-                val pathToLoad = getCurrentPath()
-                val exif = ExifInterface(pathToLoad)
-                val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1)
-                flipSides = orientation == ExifInterface.ORIENTATION_ROTATE_90 || orientation == ExifInterface.ORIENTATION_ROTATE_270
-            } catch (e: Exception) {
-            }
-            val resolution = applicationContext.getResolution(getCurrentPath()) ?: return
-            val width = if (flipSides) resolution.y else resolution.x
-            val height = if (flipSides) resolution.x else resolution.y
-            if (width > height) {
-                requestedOrientation = SCREEN_ORIENTATION_LANDSCAPE
-            } else if (width < height) {
-                requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
-            }
-        }
-    }
 
     override fun fragmentClicked() {
         mIsFullScreen = !mIsFullScreen
@@ -1328,12 +1258,12 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     override fun goToPrevItem() {
         binding.viewPager.setCurrentItem(binding.viewPager.currentItem - 1, false)
-        checkOrientation()
+
     }
 
     override fun goToNextItem() {
         binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, false)
-        checkOrientation()
+
     }
 
     override fun launchViewVideoIntent(path: String) {
@@ -1425,7 +1355,7 @@ class ViewPagerActivity : BaseViewerActivity(), ViewPager.OnPageChangeListener, 
 
     override fun onPageScrollStateChanged(state: Int) {
         if (state == ViewPager.SCROLL_STATE_IDLE && getCurrentMedium() != null) {
-            checkOrientation()
+
         }
     }
 

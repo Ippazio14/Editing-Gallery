@@ -24,12 +24,12 @@ class PickMediumDialog(val activity: BaseSimpleActivity, val path: String, val c
     private var shownMedia = ArrayList<ThumbnailItem>()
     private val binding = DialogMediumPickerBinding.inflate(activity.layoutInflater)
     private val config = activity.config
-    private val viewType = config.getFolderViewType(path)
+    private val viewType = VIEW_TYPE_GRID
     private var isGridViewType = viewType == VIEW_TYPE_GRID
 
     init {
         (binding.mediaGrid.layoutManager as MyGridLayoutManager).apply {
-            orientation = if (config.scrollHorizontally && isGridViewType) RecyclerView.HORIZONTAL else RecyclerView.VERTICAL
+            orientation = if (false && isGridViewType) RecyclerView.HORIZONTAL else RecyclerView.VERTICAL
             spanCount = if (isGridViewType) config.mediaColumnCnt else 1
         }
 
@@ -78,7 +78,7 @@ class PickMediumDialog(val activity: BaseSimpleActivity, val path: String, val c
             }
         }
 
-        val scrollHorizontally = config.scrollHorizontally && isGridViewType
+        val scrollHorizontally = false && isGridViewType
         binding.apply {
             mediaGrid.adapter = adapter
             mediaFastscroller.setScrollVertically(!scrollHorizontally)
@@ -98,7 +98,7 @@ class PickMediumDialog(val activity: BaseSimpleActivity, val path: String, val c
                 currentGridDecoration.items = media
             }
 
-            val newGridDecoration = GridSpacingItemDecoration(spanCount, spacing, config.scrollHorizontally, config.fileRoundedCorners, media, useGridPosition)
+            val newGridDecoration = GridSpacingItemDecoration(spanCount, spacing, false, config.fileRoundedCorners, media, useGridPosition)
             if (currentGridDecoration.toString() != newGridDecoration.toString()) {
                 if (currentGridDecoration != null) {
                     binding.mediaGrid.removeItemDecoration(currentGridDecoration)

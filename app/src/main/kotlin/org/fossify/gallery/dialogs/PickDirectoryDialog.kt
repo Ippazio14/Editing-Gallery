@@ -50,7 +50,7 @@ class PickDirectoryDialog(
     private var allDirectories = ArrayList<Directory>()
     private var openedSubfolders = arrayListOf("")
     private var binding = DialogDirectoryPickerBinding.inflate(activity.layoutInflater)
-    private var isGridViewType = activity.config.viewTypeFolders == VIEW_TYPE_GRID
+    private var isGridViewType = VIEW_TYPE_GRID == VIEW_TYPE_GRID
     private var showHidden = activity.config.shouldShowHidden
     private var currentPathPrefix = ""
     private val config = activity.config
@@ -60,7 +60,7 @@ class PickDirectoryDialog(
 
     init {
         (binding.directoriesGrid.layoutManager as MyGridLayoutManager).apply {
-            orientation = if (activity.config.scrollHorizontally && isGridViewType) RecyclerView.HORIZONTAL else RecyclerView.VERTICAL
+            orientation = if (false && isGridViewType) RecyclerView.HORIZONTAL else RecyclerView.VERTICAL
             spanCount = if (isGridViewType) activity.config.dirColumnCnt else 1
         }
 
@@ -115,7 +115,7 @@ class PickDirectoryDialog(
         updateHintText(context.getString(org.fossify.commons.R.string.search_folders))
         searchEditText.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        toggleHideOnScroll(!config.scrollHorizontally)
+        toggleHideOnScroll(!false)
         setupMenu()
         setSearchViewListeners()
         updateSearchViewUi()
@@ -181,8 +181,8 @@ class PickDirectoryDialog(
         directoriesFastscroller.beVisibleIf(directoriesEmptyPlaceholder.isGone())
     }
 
-    private fun fetchDirectories(forceShowHiddenAndExcluded: Boolean) {
-        activity.getCachedDirectories(forceShowHidden = forceShowHiddenAndExcluded, forceShowExcluded = forceShowHiddenAndExcluded) {
+    private fun fetchDirectories(forceShowHidden: Boolean) {
+        activity.getCachedDirectories(forceShowHidden = forceShowHidden) {
             if (it.isNotEmpty()) {
                 it.forEach {
                     it.subfoldersMediaCount = it.mediaCnt
@@ -254,7 +254,7 @@ class PickDirectoryDialog(
             }
         }
 
-        val scrollHorizontally = activity.config.scrollHorizontally && isGridViewType
+        val scrollHorizontally = false && isGridViewType
         binding.apply {
             directoriesGrid.adapter = adapter
             directoriesFastscroller.setScrollVertically(!scrollHorizontally)

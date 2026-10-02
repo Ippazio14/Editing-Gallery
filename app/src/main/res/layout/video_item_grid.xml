@@ -3,7 +3,7 @@
 
     <org.fossify.commons.views.MySquareImageView android:id="@+id/medium_thumbnail" android:layout_width="match_parent" android:layout_height="match_parent" tools:src="@mipmap/ic_launcher"/>
 
-    <RelativeLayout android:id="@+id/play_icon_holder" android:layout_width="wrap_content" android:layout_height="@dimen/selection_check_size" android:layout_alignParentStart="true" android:layout_alignParentTop="true" android:layout_marginStart="@dimen/small_margin" android:layout_marginTop="@dimen/small_margin" android:background="@drawable/darkened_automatic_circle_background">
+    <org.fossify.gallery.views.FilmstripOverlay android:id="@+id/video_filmstrip" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_alignStart="@id/medium_thumbnail" android:layout_alignEnd="@id/medium_thumbnail" android:layout_alignTop="@id/medium_thumbnail" android:layout_alignBottom="@id/medium_thumbnail" android:clickable="false" android:focusable="false" android:visibility="gone"/><RelativeLayout android:id="@+id/play_icon_holder" android:layout_width="wrap_content" android:layout_height="@dimen/selection_check_size" android:layout_alignParentStart="true" android:layout_alignParentTop="true" android:layout_marginStart="@dimen/small_margin" android:layout_marginTop="@dimen/small_margin" android:background="@drawable/darkened_automatic_circle_background">
 
         <ImageView android:id="@+id/play_portrait_outline" android:layout_width="@dimen/selection_check_size" android:layout_height="@dimen/selection_check_size" android:layout_alignParentStart="true" android:layout_alignParentTop="true" android:layout_margin="0dp" android:visibility="gone" tools:src="@drawable/ic_play_vector" tools:visibility="visible"/>
 

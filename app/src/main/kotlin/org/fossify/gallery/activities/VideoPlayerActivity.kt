@@ -63,7 +63,6 @@ import org.fossify.commons.extensions.onGlobalLayout
 import org.fossify.commons.extensions.setDrawablesRelativeWithIntrinsicBounds
 import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
-import org.fossify.commons.extensions.updateBrightness
 import org.fossify.commons.extensions.updateTextColors
 import org.fossify.commons.extensions.viewBinding
 import org.fossify.gallery.R
@@ -176,7 +175,6 @@ open class VideoPlayerActivity : BaseViewerActivity(), SeekBar.OnSeekBarChangeLi
             binding.videoPlayerHolder.background = ColorDrawable(Color.BLACK)
         }
 
-        mOriginalBrightness = window.updateBrightness(config.maxBrightness, mOriginalBrightness)
         updateTextColors(binding.videoPlayerHolder)
     }
 

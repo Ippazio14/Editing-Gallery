@@ -26,7 +26,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.squareup.picasso.Picasso
 import org.fossify.commons.activities.BaseSimpleActivity
 import org.fossify.commons.dialogs.ConfirmationDialog
-import org.fossify.commons.dialogs.SecurityDialog
 import org.fossify.commons.extensions.*
 import org.fossify.commons.extensions.getCurrentFormattedDateTime
 import org.fossify.commons.extensions.internalStoragePath
@@ -930,18 +929,6 @@ fun Activity.showFileOnMap(path: String) {
         showLocationOnMap("${latLon[0]}, ${latLon[1]}")
     } else {
         toast(R.string.unknown_location)
-    }
-}
-
-fun Activity.handleExcludedFolderPasswordProtection(callback: () -> Unit) {
-    if (config.isExcludedPasswordProtectionOn) {
-        SecurityDialog(this, config.excludedPasswordHash, config.excludedProtectionType) { _, _, success ->
-            if (success) {
-                callback()
-            }
-        }
-    } else {
-        callback()
     }
 }
 

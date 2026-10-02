@@ -5,9 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import org.fossify.commons.views.MySquareImageView
 import org.fossify.gallery.databinding.PhotoItemGridBinding
-import org.fossify.gallery.databinding.PhotoItemListBinding
 import org.fossify.gallery.databinding.VideoItemGridBinding
-import org.fossify.gallery.databinding.VideoItemListBinding
 
 interface MediaItemBinding {
     val root: ViewGroup
@@ -19,19 +17,6 @@ interface MediaItemBinding {
     val mediumCheck: ImageView
     val mediumThumbnail: MySquareImageView
 }
-
-class PhotoListMediaItemBinding(val binding: PhotoItemListBinding) : MediaItemBinding {
-    override val root: ViewGroup = binding.root
-    override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val playPortraitOutline: ImageView? = null
-    override val fileType: TextView = binding.fileType
-    override val mediumName: TextView = binding.mediumName
-    override val videoDuration: TextView? = null
-    override val mediumCheck: ImageView = binding.mediumCheck
-    override val mediumThumbnail: MySquareImageView = binding.mediumThumbnail
-}
-
-fun PhotoItemListBinding.toMediaItemBinding() = PhotoListMediaItemBinding(this)
 
 class PhotoGridMediaItemBinding(val binding: PhotoItemGridBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root
@@ -45,19 +30,6 @@ class PhotoGridMediaItemBinding(val binding: PhotoItemGridBinding) : MediaItemBi
 }
 
 fun PhotoItemGridBinding.toMediaItemBinding() = PhotoGridMediaItemBinding(this)
-
-class VideoListMediaItemBinding(val binding: VideoItemListBinding) : MediaItemBinding {
-    override val root: ViewGroup = binding.root
-    override val mediaItemHolder: ViewGroup = binding.mediaItemHolder
-    override val playPortraitOutline: ImageView = binding.playPortraitOutline
-    override val fileType: TextView? = null
-    override val mediumName: TextView = binding.mediumName
-    override val videoDuration: TextView = binding.videoDuration
-    override val mediumCheck: ImageView = binding.mediumCheck
-    override val mediumThumbnail: MySquareImageView = binding.mediumThumbnail
-}
-
-fun VideoItemListBinding.toMediaItemBinding() = VideoListMediaItemBinding(this)
 
 class VideoGridMediaItemBinding(val binding: VideoItemGridBinding) : MediaItemBinding {
     override val root: ViewGroup = binding.root

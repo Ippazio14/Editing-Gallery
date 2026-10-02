@@ -6,12 +6,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -20,7 +17,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.graphics.drawable.toBitmapOrNull
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.updateLayoutParams
@@ -42,10 +38,6 @@ import com.bumptech.glide.load.resource.bitmap.Rotate
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.davemorrissey.labs.subscaleview.DecoderFactory
-import com.davemorrissey.labs.subscaleview.ImageDecoder
-import com.davemorrissey.labs.subscaleview.ImageRegionDecoder
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import com.github.penfeizhou.animation.apng.APNGDrawable
 import com.github.penfeizhou.animation.avif.AVIFDrawable
 import com.github.penfeizhou.animation.webp.WebPDrawable
@@ -59,46 +51,31 @@ import org.fossify.commons.extensions.beVisible
 import org.fossify.commons.extensions.beVisibleIf
 import org.fossify.commons.extensions.fadeIn
 import org.fossify.commons.extensions.fadeOut
-import org.fossify.commons.extensions.getProperBackgroundColor
 import org.fossify.commons.extensions.getProperTextColor
 import org.fossify.commons.extensions.getRealPathFromURI
 import org.fossify.commons.extensions.isExternalStorageManager
 import org.fossify.commons.extensions.isPathOnOTG
-import org.fossify.commons.extensions.isVisible
 import org.fossify.commons.extensions.isWebP
 import org.fossify.commons.extensions.onGlobalLayout
-import org.fossify.commons.extensions.portrait
 import org.fossify.commons.extensions.realScreenSize
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.helpers.DEFAULT_ANIMATION_DURATION
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isRPlus
 import org.fossify.gallery.R
-import org.fossify.gallery.activities.BaseViewerActivity
 import org.fossify.gallery.activities.PhotoActivity
-import org.fossify.gallery.activities.PhotoVideoActivity
-import org.fossify.gallery.activities.ViewPagerActivity
 import org.fossify.gallery.adapters.PortraitPhotosAdapter
 import org.fossify.gallery.databinding.PagerPhotoItemBinding
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.getBottomActionsHeight
-import org.fossify.gallery.extensions.sendFakeClick
-import org.fossify.gallery.helpers.ColorModeHelper
-import org.fossify.gallery.helpers.HIGH_TILE_DPI
-import org.fossify.gallery.helpers.LOW_TILE_DPI
 import org.fossify.gallery.helpers.MAX_ZOOM_EQUALITY_TOLERANCE
 import org.fossify.gallery.helpers.MEDIUM
-import org.fossify.gallery.helpers.MyGlideImageDecoder
-import org.fossify.gallery.helpers.NORMAL_TILE_DPI
-import org.fossify.gallery.helpers.PicassoRegionDecoder
 import org.fossify.gallery.helpers.SHOULD_INIT_FRAGMENT
-import org.fossify.gallery.helpers.WEIRD_TILE_DPI
 import org.fossify.gallery.models.Medium
 import org.fossify.gallery.svg.SvgSoftwareLayerSetter
 import pl.droidsonroids.gif.InputSource
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.ceil
 
@@ -118,23 +95,14 @@ class PhotoFragment : ViewPagerFragment() {
     private var mIsFullscreen = false
     private var mWasInit = false
     private var mIsPanorama = false
-    private var mIsSubsamplingVisible = false    // checking view.visibility is unreliable, use an extra variable for it
-    private var mShouldResetImage = false
     private var mCurrentPortraitPhotoPath = ""
     private var mOriginalPath = ""
     private var mImageOrientation = -1
-    private var mLoadZoomableViewHandler = Handler()
     private var mScreenWidth = 0
     private var mScreenHeight = 0
     private var mCurrentGestureViewZoom = 1f
     private var mInitialZoom = 1f
     private var mHasInitialZoom = false
-
-    private var mStoredShowExtendedDetails = false
-    private var mStoredHideExtendedDetails = false
-    private var mStoredAllowDeepZoomableImages = false
-    private var mStoredShowHighestQuality = false
-    private var mStoredExtendedDetails = 0
 
     private lateinit var mView: ViewGroup
     private lateinit var binding: PagerPhotoItemBinding
@@ -156,44 +124,23 @@ class PhotoFragment : ViewPagerFragment() {
         mOriginalPath = mMedium.path
 
         binding.apply {
-            subsamplingView.setOnClickListener { photoClicked() }
             gesturesView.setOnClickListener { photoClicked() }
             gifView.setOnClickListener { photoClicked() }
-            instantPrevItem.setOnClickListener { listener?.goToPrevItem() }
-            instantNextItem.setOnClickListener { listener?.goToNextItem() }
             panoramaOutline.setOnClickListener { openPanorama() }
 
-            instantPrevItem.parentView = container
-            instantNextItem.parentView = container
-
-            photoBrightnessController.initialize(activity, slideInfo, true, container, singleTap = { x, y ->
-                mView.apply {
-                    if (subsamplingView.isVisible()) {
-                        subsamplingView.sendFakeClick(x, y)
-                    } else {
-                        gesturesView.sendFakeClick(x, y)
-                    }
-                }
-            })
-
-            gifView.setOnTouchListener { v, event ->
-                if (context.config.allowDownGesture && gifViewFrame.controller.state.zoom == 1f) handleEvent(event)
-                false
+            gesturesView.controller.settings.apply {
+                isZoomEnabled = true
+                isDoubleTapEnabled = true
+                isRotationEnabled = false
+                maxZoom = 4f
             }
-
+            gifViewFrame.controller.settings.apply {
+                isDoubleTapEnabled = true
+                isRotationEnabled = false
+                maxZoom = 4f
+            }
             setupGesturesViewStateListener()
-            gesturesView.setOnTouchListener { v, event ->
-                val allowDownGesture = context.config.allowDownGesture
-                if (allowDownGesture && abs(mCurrentGestureViewZoom - mInitialZoom) < MAX_ZOOM_EQUALITY_TOLERANCE) {
-                    handleEvent(event)
-                }
-                false
-            }
 
-            subsamplingView.setOnTouchListener { v, event ->
-                if (subsamplingView.isZoomedOut() && context.config.allowDownGesture) handleEvent(event)
-                false
-            }
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.photoHolder) { _, insets ->
@@ -205,7 +152,7 @@ class PhotoFragment : ViewPagerFragment() {
         }
 
         checkScreenDimensions()
-        storeStateVariables()
+
         if (!mIsFragmentVisible && activity is PhotoActivity) {
             mIsFragmentVisible = true
         }
@@ -248,9 +195,8 @@ class PhotoFragment : ViewPagerFragment() {
             binding.bottomActionsDummy.beGone()
         }
         loadImage()
-        initExtendedDetails()
+
         mWasInit = true
-        updateInstantSwitchWidths()
 
         // TODO: Implement panorama using a FOSS library
         // ensureBackgroundThread {
@@ -260,56 +206,32 @@ class PhotoFragment : ViewPagerFragment() {
         return mView
     }
 
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        mIsFragmentVisible = menuVisible
+    }
+
     override fun onPause() {
         super.onPause()
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        storeStateVariables()
+
     }
 
     override fun onResume() {
         super.onResume()
         val config = requireContext().config
-        if (mWasInit && (config.showExtendedDetails != mStoredShowExtendedDetails || config.extendedDetails != mStoredExtendedDetails)) {
-            initExtendedDetails()
-        }
-
-        if (mWasInit) {
-            if (config.allowZoomingImages != mStoredAllowDeepZoomableImages || config.showHighestQuality != mStoredShowHighestQuality) {
-                mIsSubsamplingVisible = false
-                binding.subsamplingView.beGone()
-                loadImage()
-            } else if (mMedium.isGIF()) {
-                loadGif()
-            } else if (mIsSubsamplingVisible && mShouldResetImage) {
-                binding.subsamplingView.onGlobalLayout {
-                    binding.subsamplingView.resetView()
-                }
-            }
-            mShouldResetImage = false
-        }
-
+        if (mWasInit && mMedium.isGIF()) loadGif()
         val keepScreenOn = config.keepScreenOn
-        val allowPhotoGestures = config.allowPhotoGestures
-        val allowInstantChange = config.allowInstantChange
-
-        binding.apply {
-            photoBrightnessController.beVisibleIf(allowPhotoGestures)
-            instantPrevItem.beVisibleIf(allowInstantChange)
-            instantNextItem.beVisibleIf(allowInstantChange)
-        }
 
         if (keepScreenOn) {
             activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
-        reapplyColorModeIfNeeded()
-        storeStateVariables()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         if (activity?.isDestroyed == false) {
-            binding.subsamplingView.recycle()
 
             try {
                 if (context != null) {
@@ -319,7 +241,6 @@ class PhotoFragment : ViewPagerFragment() {
             }
         }
 
-        mLoadZoomableViewHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -340,36 +261,12 @@ class PhotoFragment : ViewPagerFragment() {
                 }
             }
         } else {
-            hideZoomableView()
+
             loadImage()
         }
 
         measureScreen()
-        initExtendedDetails()
-        updateInstantSwitchWidths()
-        mShouldResetImage = true
-    }
 
-    override fun setMenuVisibility(menuVisible: Boolean) {
-        super.setMenuVisibility(menuVisible)
-        mIsFragmentVisible = menuVisible
-        if (mWasInit) {
-            val isNotAnimatedContent =
-                !mMedium.isGIF() && !mMedium.isApng() && !mMedium.isAvif() && !mMedium.isWebP()
-            if (isNotAnimatedContent) {
-                photoFragmentVisibilityChanged(menuVisible)
-            }
-        }
-    }
-
-    private fun storeStateVariables() {
-        requireContext().config.apply {
-            mStoredShowExtendedDetails = showExtendedDetails
-            mStoredHideExtendedDetails = hideExtendedDetails
-            mStoredAllowDeepZoomableImages = allowZoomingImages
-            mStoredShowHighestQuality = showHighestQuality
-            mStoredExtendedDetails = extendedDetails
-        }
     }
 
     private fun checkScreenDimensions() {
@@ -383,16 +280,6 @@ class PhotoFragment : ViewPagerFragment() {
         activity?.windowManager?.defaultDisplay?.getRealMetrics(metrics)
         mScreenWidth = metrics.widthPixels
         mScreenHeight = metrics.heightPixels
-    }
-
-    private fun photoFragmentVisibilityChanged(isVisible: Boolean) {
-        if (isVisible) {
-            applyProperColorMode(binding.gesturesView.drawable)
-            scheduleZoomableView()
-        } else {
-            hideZoomableView()
-            ColorModeHelper.resetColorMode(activity)
-        }
     }
 
     private fun degreesForRotation(orientation: Int) = when (orientation) {
@@ -487,23 +374,23 @@ class PhotoFragment : ViewPagerFragment() {
         }
     }
 
-    private fun loadBitmap(addZoomableView: Boolean = true) {
+    private fun loadBitmap() {
         mHasInitialZoom = false
         if (context == null) return
         val path = getFilePathToShow()
         if (path.isWebP()) {
             val drawable = WebPDrawable.fromFile(path)
             if (drawable.intrinsicWidth == 0) {
-                loadWithGlide(path, addZoomableView)
+                loadWithGlide(path)
             } else {
                 binding.gesturesView.setImageDrawable(drawable)
             }
         } else {
-            loadWithGlide(path, addZoomableView)
+            loadWithGlide(path)
         }
     }
 
-    private fun loadWithGlide(path: String, addZoomableView: Boolean) {
+    private fun loadWithGlide(path: String) {
         val priority = if (mIsFragmentVisible) Priority.IMMEDIATE else Priority.NORMAL
         val options = RequestOptions()
             .signature(mMedium.getKey())
@@ -525,9 +412,9 @@ class PhotoFragment : ViewPagerFragment() {
             .apply(options)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
-                    resetColorModeIfVisible()
+
                     if (activity != null && !activity!!.isDestroyed && !activity!!.isFinishing) {
-                        tryLoadingWithPicasso(addZoomableView)
+                        tryLoadingWithPicasso()
                     }
                     return false
                 }
@@ -539,18 +426,14 @@ class PhotoFragment : ViewPagerFragment() {
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    applyProperColorMode(resource)
-                    val allowZoomingImages = context?.config?.allowZoomingImages ?: true
-                    binding.gesturesView.controller.settings.isZoomEnabled = mMedium.isRaw() || mCurrentRotationDegrees != 0 || allowZoomingImages == false
-                    if (mIsFragmentVisible && addZoomableView) {
-                        scheduleZoomableView()
-                    }
+
+                    binding.gesturesView.controller.settings.isZoomEnabled = true
                     return false
                 }
             }).into(binding.gesturesView)
     }
 
-    private fun tryLoadingWithPicasso(addZoomableView: Boolean) {
+    private fun tryLoadingWithPicasso() {
         var pathToLoad = if (getFilePathToShow().startsWith("content://")) getFilePathToShow() else "file://${getFilePathToShow()}"
         pathToLoad = pathToLoad.replace("%", "%25").replace("#", "%23")
 
@@ -569,16 +452,12 @@ class PhotoFragment : ViewPagerFragment() {
 
             picasso.into(binding.gesturesView, object : Callback {
                 override fun onSuccess() {
-                    applyProperColorMode(binding.gesturesView.drawable)
-                    binding.gesturesView.controller.settings.isZoomEnabled =
-                        mMedium.isRaw() || mCurrentRotationDegrees != 0 || context?.config?.allowZoomingImages == false
-                    if (mIsFragmentVisible && addZoomableView) {
-                        scheduleZoomableView()
-                    }
+
+                    binding.gesturesView.controller.settings.isZoomEnabled = true
                 }
 
                 override fun onError(e: Exception?) {
-                    resetColorModeIfVisible()
+
                     if (mMedium.path != mOriginalPath) {
                         mMedium.path = mOriginalPath
                         loadImage()
@@ -643,7 +522,7 @@ class PhotoFragment : ViewPagerFragment() {
                 binding.photoPortraitStripe.smoothScrollBy((x + itemWidth / 2) - screenWidth / 2, 0)
                 if (paths[position] != mCurrentPortraitPhotoPath) {
                     mCurrentPortraitPhotoPath = paths[position]
-                    hideZoomableView()
+
                     loadBitmap()
                 }
             }
@@ -729,102 +608,6 @@ class PhotoFragment : ViewPagerFragment() {
         TODO("Panorama is not yet implemented.")
     }
 
-    private fun scheduleZoomableView() {
-        mLoadZoomableViewHandler.removeCallbacksAndMessages(null)
-        mLoadZoomableViewHandler.postDelayed({
-            if (mIsFragmentVisible && context?.config?.allowZoomingImages == true && (mMedium.isImage() || mMedium.isPortrait()) && !mIsSubsamplingVisible) {
-                addZoomableView()
-            }
-        }, ZOOMABLE_VIEW_LOAD_DELAY)
-    }
-
-    private fun addZoomableView() {
-        val rotation = degreesForRotation(mImageOrientation)
-        mIsSubsamplingVisible = true
-        val config = requireContext().config
-        val showHighestQuality = config.showHighestQuality
-        val minTileDpi = if (showHighestQuality) -1 else getMinTileDpi()
-
-        val bitmapDecoder = object : DecoderFactory<ImageDecoder> {
-            override fun make() = MyGlideImageDecoder(rotation, mMedium.getKey())
-        }
-
-        val regionDecoder = object : DecoderFactory<ImageRegionDecoder> {
-            override fun make() = PicassoRegionDecoder(showHighestQuality, mScreenWidth, mScreenHeight, minTileDpi)
-        }
-
-        var newOrientation = (rotation + mCurrentRotationDegrees) % 360
-        if (newOrientation < 0) {
-            newOrientation += 360
-        }
-
-        binding.subsamplingView.apply {
-            setMaxTileSize(if (showHighestQuality) Integer.MAX_VALUE else 4096)
-            setMinimumTileDpi(minTileDpi)
-            background = ColorDrawable(Color.TRANSPARENT)
-            bitmapDecoderFactory = bitmapDecoder
-            regionDecoderFactory = regionDecoder
-            maxScale = 10f
-            beVisible()
-            rotationEnabled = config.allowRotatingWithGestures
-            isOneToOneZoomEnabled = config.allowOneToOneZoom
-            orientation = newOrientation
-            setImage(getFilePathToShow())
-
-            onImageEventListener = object : SubsamplingScaleImageView.OnImageEventListener {
-                override fun onReady() {
-                    background = ColorDrawable(
-                        if (config.blackBackground) {
-                            Color.BLACK
-                        } else {
-                            context.getProperBackgroundColor()
-                        }
-                    )
-
-                    val useWidth = if (mImageOrientation == ORIENTATION_ROTATE_90 || mImageOrientation == ORIENTATION_ROTATE_270) sHeight else sWidth
-                    val useHeight = if (mImageOrientation == ORIENTATION_ROTATE_90 || mImageOrientation == ORIENTATION_ROTATE_270) sWidth else sHeight
-                    doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
-                }
-
-                override fun onImageLoadError(e: Exception) {
-                    binding.gesturesView.controller.settings.isZoomEnabled = true
-                    background = ColorDrawable(Color.TRANSPARENT)
-                    mIsSubsamplingVisible = false
-                    beGone()
-                }
-
-                override fun onImageRotation(degrees: Int) {
-                    val fullRotation = (rotation + degrees) % 360
-                    val useWidth = if (fullRotation == 90 || fullRotation == 270) sHeight else sWidth
-                    val useHeight = if (fullRotation == 90 || fullRotation == 270) sWidth else sHeight
-                    doubleTapZoomScale = getDoubleTapZoomScale(useWidth, useHeight)
-                    mCurrentRotationDegrees = (mCurrentRotationDegrees + degrees) % 360
-                    loadBitmap(false)
-
-                    // ugly, but it works
-                    (activity as? ViewPagerActivity)?.refreshMenuItems()
-                    (activity as? PhotoVideoActivity)?.refreshMenuItems()
-                }
-
-                override fun onUpEvent() {
-                    mShouldResetImage = false
-                }
-            }
-        }
-    }
-
-    private fun getMinTileDpi(): Int {
-        val metrics = resources.displayMetrics
-        val averageDpi = (metrics.xdpi + metrics.ydpi) / 2
-        val device = "${Build.BRAND} ${Build.MODEL}".lowercase(Locale.getDefault())
-        return when {
-            WEIRD_DEVICES.contains(device) -> WEIRD_TILE_DPI
-            averageDpi > 400 -> HIGH_TILE_DPI
-            averageDpi > 300 -> NORMAL_TILE_DPI
-            else -> LOW_TILE_DPI
-        }
-    }
-
     private fun checkIfPanorama() {
         mIsPanorama = try {
             if (mMedium.path.startsWith("content:/")) {
@@ -882,83 +665,18 @@ class PhotoFragment : ViewPagerFragment() {
         return orient
     }
 
-    private fun getDoubleTapZoomScale(width: Int, height: Int): Float {
-        val bitmapAspectRatio = height / width.toFloat()
-        val screenAspectRatio = mScreenHeight / mScreenWidth.toFloat()
-
-        return if (context == null || Math.abs(bitmapAspectRatio - screenAspectRatio) < SAME_ASPECT_RATIO_THRESHOLD) {
-            DEFAULT_DOUBLE_TAP_ZOOM
-        } else if (requireContext().portrait && bitmapAspectRatio <= screenAspectRatio) {
-            mScreenHeight / height.toFloat()
-        } else if (requireContext().portrait && bitmapAspectRatio > screenAspectRatio) {
-            mScreenWidth / width.toFloat()
-        } else if (!requireContext().portrait && bitmapAspectRatio >= screenAspectRatio) {
-            mScreenWidth / width.toFloat()
-        } else if (!requireContext().portrait && bitmapAspectRatio < screenAspectRatio) {
-            mScreenHeight / height.toFloat()
-        } else {
-            DEFAULT_DOUBLE_TAP_ZOOM
-        }
-    }
-
     fun rotateImageViewBy(degrees: Int) {
-        if (mIsSubsamplingVisible) {
-            binding.subsamplingView.rotateBy(degrees)
-        } else {
-            mCurrentRotationDegrees = (mCurrentRotationDegrees + degrees) % 360
-            mLoadZoomableViewHandler.removeCallbacksAndMessages(null)
-            mIsSubsamplingVisible = false
-            loadBitmap()
-        }
-    }
-
-    private fun initExtendedDetails() {
-        if (requireContext().config.showExtendedDetails) {
-            ensureBackgroundThread {
-                val details = getMediumExtendedDetails(mMedium)
-                activity?.runOnUiThread {
-                    binding.photoDetails.apply {
-                        text = details
-                        beVisibleIf(text.isNotEmpty())
-                        val hideExtendedDetails = context?.config?.hideExtendedDetails == true
-                        alpha = if (!hideExtendedDetails || !mIsFullscreen) 1f else 0f
-                        (activity as? BaseViewerActivity)?.applyProperHorizontalInsets(this)
-                    }
-                }
-            }
-        } else {
-            binding.photoDetails.beGone()
-        }
-    }
-
-    private fun hideZoomableView() {
-        if (context?.config?.allowZoomingImages == true) {
-            mIsSubsamplingVisible = false
-            binding.subsamplingView.recycle()
-            binding.subsamplingView.beGone()
-            mLoadZoomableViewHandler.removeCallbacksAndMessages(null)
-        }
+        mCurrentRotationDegrees = (mCurrentRotationDegrees + degrees) % 360
+        loadBitmap()
     }
 
     private fun photoClicked() {
         listener?.fragmentClicked()
     }
 
-    private fun updateInstantSwitchWidths() {
-        binding.instantPrevItem.layoutParams.width = mScreenWidth / 7
-        binding.instantNextItem.layoutParams.width = mScreenWidth / 7
-    }
-
     override fun fullscreenToggled(isFullscreen: Boolean) {
         this.mIsFullscreen = isFullscreen
         binding.apply {
-            photoDetails.apply {
-                if (mStoredShowExtendedDetails && isVisible() && context != null && resources != null) {
-                    if (mStoredHideExtendedDetails) {
-                        animate().alpha(if (isFullscreen) 0f else 1f).start()
-                    }
-                }
-            }
 
             if (isFullscreen) {
                 bottomActionsDummy.fadeOut(DEFAULT_ANIMATION_DURATION)
@@ -977,30 +695,4 @@ class PhotoFragment : ViewPagerFragment() {
         }
     }
 
-    private fun applyProperColorMode(resource: Drawable?) {
-        if (mIsFragmentVisible && activity != null) {
-            ColorModeHelper.setColorModeForImage(
-                activity = requireActivity(),
-                bitmap = (resource as? BitmapDrawable)?.bitmap ?: resource?.toBitmapOrNull(),
-                ultraHdr = context?.config?.ultraHdrRendering ?: true
-            )
-        }
-    }
-
-    private fun resetColorModeIfVisible() {
-        if (mIsFragmentVisible) {
-            ColorModeHelper.resetColorMode(activity)
-        }
-    }
-
-    private fun reapplyColorModeIfNeeded() {
-        if (mWasInit && mIsFragmentVisible) {
-            val drawable = binding.gesturesView.drawable
-            if (drawable != null && binding.gesturesView.isVisible()) {
-                applyProperColorMode(drawable)
-            } else {
-                resetColorModeIfVisible()
-            }
-        }
-    }
 }

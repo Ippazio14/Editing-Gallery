@@ -83,7 +83,6 @@ class MediaFetcher(val context: Context) {
 
             val config = context.config
             val shouldShowHidden = config.shouldShowHidden
-            val excludedPaths = config.excludedFolders
 
             val includedPaths = config.includedFolders
 
@@ -106,7 +105,7 @@ class MediaFetcher(val context: Context) {
             }
 
             distinctPaths.filter {
-                it.shouldFolderBeVisible(excludedPaths, includedPaths, shouldShowHidden, folderNoMediaStatuses) { path, hasNoMedia ->
+                it.shouldFolderBeVisible(includedPaths, shouldShowHidden, folderNoMediaStatuses) { path, hasNoMedia ->
                     folderNoMediaStatuses[path] = hasNoMedia
                 }
             }.toMutableList() as ArrayList<String>
@@ -675,10 +674,6 @@ class MediaFetcher(val context: Context) {
         }
 
         val thumbnailItems = ArrayList<ThumbnailItem>()
-        if (context.config.scrollHorizontally) {
-            media.mapTo(thumbnailItems) { it }
-            return thumbnailItems
-        }
 
         val mediumGroups = LinkedHashMap<String, ArrayList<Medium>>()
         media.forEach {

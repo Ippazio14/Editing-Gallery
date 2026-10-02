@@ -19,7 +19,6 @@ import org.fossify.gallery.extensions.*
 import org.fossify.gallery.helpers.GridSpacingItemDecoration
 import org.fossify.gallery.helpers.MediaFetcher
 import org.fossify.gallery.helpers.PATH
-import org.fossify.gallery.helpers.SHOW_ALL
 import org.fossify.gallery.helpers.VIDEO_PLAYER_APP
 import org.fossify.gallery.helpers.VIDEO_PLAYER_SYSTEM
 import org.fossify.gallery.interfaces.MediaOperationsListener
@@ -139,17 +138,17 @@ class SearchActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun handleGridSpacing(media: ArrayList<ThumbnailItem>) {
-        val viewType = config.getFolderViewType(SHOW_ALL)
-        if (viewType == VIEW_TYPE_GRID) {
+        val viewType = VIEW_TYPE_GRID
+
             if (binding.searchGrid.itemDecorationCount > 0) {
                 binding.searchGrid.removeItemDecorationAt(0)
             }
 
             val spanCount = config.mediaColumnCnt
             val spacing = config.thumbnailSpacing
-            val decoration = GridSpacingItemDecoration(spanCount, spacing, config.scrollHorizontally, config.fileRoundedCorners, media, true)
+            val decoration = GridSpacingItemDecoration(spanCount, spacing, false, config.fileRoundedCorners, media, true)
             binding.searchGrid.addItemDecoration(decoration)
-        }
+
     }
 
     private fun getMediaAdapter() = binding.searchGrid.adapter as? MediaAdapter
@@ -181,23 +180,17 @@ class SearchActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun setupLayoutManager() {
-        val viewType = config.getFolderViewType(SHOW_ALL)
-        if (viewType == VIEW_TYPE_GRID) {
+        val viewType = VIEW_TYPE_GRID
+
             setupGridLayoutManager()
-        } else {
-            setupListLayoutManager()
-        }
+
     }
 
     private fun setupGridLayoutManager() {
         val layoutManager = binding.searchGrid.layoutManager as MyGridLayoutManager
-        if (config.scrollHorizontally) {
-            layoutManager.orientation = RecyclerView.HORIZONTAL
-            binding.searchGrid.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        } else {
+
             layoutManager.orientation = RecyclerView.VERTICAL
             binding.searchGrid.layoutParams = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        }
 
         layoutManager.spanCount = config.mediaColumnCnt
         val adapter = getMediaAdapter()
@@ -219,8 +212,8 @@ class SearchActivity : SimpleActivity(), MediaOperationsListener {
     }
 
     private fun setupScrollDirection() {
-        val viewType = config.getFolderViewType(SHOW_ALL)
-        val scrollHorizontally = config.scrollHorizontally && viewType == VIEW_TYPE_GRID
+        val viewType = VIEW_TYPE_GRID
+        val scrollHorizontally = false && viewType == VIEW_TYPE_GRID
         binding.searchFastscroller.setScrollVertically(!scrollHorizontally)
     }
 

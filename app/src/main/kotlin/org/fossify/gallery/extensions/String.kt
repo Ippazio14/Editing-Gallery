@@ -11,12 +11,9 @@ import java.util.Locale
 fun String.isThisOrParentIncluded(includedPaths: MutableSet<String>) =
     includedPaths.any { equals(it, true) } || includedPaths.any { "$this/".startsWith("$it/", true) }
 
-fun String.isThisOrParentExcluded(excludedPaths: MutableSet<String>) =
-    excludedPaths.any { equals(it, true) } || excludedPaths.any { "$this/".startsWith("$it/", true) }
-
 // cache which folders contain .nomedia files to avoid checking them over and over again
 fun String.shouldFolderBeVisible(
-    excludedPaths: MutableSet<String>, includedPaths: MutableSet<String>, showHidden: Boolean,
+    includedPaths: MutableSet<String>, showHidden: Boolean,
     folderNoMediaStatuses: HashMap<String, Boolean>, callback: (path: String, hasNoMedia: Boolean) -> Unit
 ): Boolean {
     if (isEmpty()) {
@@ -48,12 +45,8 @@ fun String.shouldFolderBeVisible(
 
     return if (!showHidden && containsNoMedia) {
         false
-    } else if (excludedPaths.contains(this)) {
-        false
     } else if (isThisOrParentIncluded(includedPaths)) {
         true
-    } else if (isThisOrParentExcluded(excludedPaths)) {
-        false
     } else if (!showHidden) {
         var containsNoMediaOrDot = containsNoMedia || contains("/.")
         if (!containsNoMediaOrDot) {

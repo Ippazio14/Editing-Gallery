@@ -100,8 +100,6 @@
 
         <activity android:name=".activities.IncludedFoldersActivity" android:configChanges="orientation" android:exported="false" android:label="@string/include_folders" android:parentActivityName=".activities.SettingsActivity"/>
 
-        <activity android:name=".activities.ExcludedFoldersActivity" android:configChanges="orientation" android:exported="false" android:label="@string/excluded_folders" android:parentActivityName=".activities.SettingsActivity"/>
-
         <activity android:name=".activities.HiddenFoldersActivity" android:configChanges="orientation" android:exported="false" android:label="@string/hidden_folders" android:parentActivityName=".activities.SettingsActivity"/>
 
         <activity android:name=".activities.PhotoActivity" android:configChanges="orientation|keyboardHidden|screenSize" android:exported="true">

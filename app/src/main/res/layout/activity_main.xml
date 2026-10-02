@@ -1,78 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/directories_coordinator"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<?xml version='1.0' encoding='utf-8'?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/directories_coordinator" android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <org.fossify.commons.views.MySearchMenu
-        android:id="@+id/main_menu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <org.fossify.commons.views.MySearchMenu android:id="@+id/main_menu" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-    <RelativeLayout
-        android:id="@+id/directories_holder"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <RelativeLayout android:id="@+id/directories_holder" android:layout_width="match_parent" android:layout_height="wrap_content" app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <org.fossify.commons.views.MyTextView
-            android:id="@+id/directories_switch_searching"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:padding="@dimen/activity_margin"
-            android:text="@string/switch_to_file_search"
-            android:visibility="gone" />
+        <LinearLayout android:id="@+id/folder_controls" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="8dp">
+<com.google.android.material.button.MaterialButton android:id="@+id/create_folder" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp" android:text="@string/create_new_folder" android:textSize="20sp" android:textAllCaps="false" android:drawableStart="@drawable/ic_folder_plus_accessible" android:drawablePadding="12dp"/>
+<com.google.android.material.checkbox.MaterialCheckBox android:id="@+id/group_subfolders" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp" android:padding="8dp" android:text="@string/group_subfolders_accessible" android:textSize="20sp"/>
+</LinearLayout><org.fossify.commons.views.MyTextView android:id="@+id/directories_switch_searching" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/selectableItemBackground" android:gravity="center" android:padding="@dimen/activity_margin" android:text="@string/switch_to_file_search" android:visibility="gone" android:layout_below="@id/folder_controls"/>
 
-        <org.fossify.commons.views.MyTextView
-            android:id="@+id/directories_empty_placeholder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/directories_switch_searching"
-            android:alpha="0.8"
-            android:gravity="center_horizontal"
-            android:paddingStart="@dimen/activity_margin"
-            android:paddingTop="@dimen/activity_margin"
-            android:paddingEnd="@dimen/activity_margin"
-            android:text="@string/no_items_found"
-            android:textSize="@dimen/bigger_text_size"
-            android:textStyle="italic"
-            android:visibility="gone" />
+        <org.fossify.commons.views.MyTextView android:id="@+id/directories_empty_placeholder" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/directories_switch_searching" android:alpha="0.8" android:gravity="center_horizontal" android:paddingStart="@dimen/activity_margin" android:paddingTop="@dimen/activity_margin" android:paddingEnd="@dimen/activity_margin" android:text="@string/no_items_found" android:textSize="@dimen/bigger_text_size" android:textStyle="italic" android:visibility="gone"/>
 
-        <org.fossify.commons.views.MyTextView
-            android:id="@+id/directories_empty_placeholder_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/directories_empty_placeholder"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/ripple_all_corners"
-            android:padding="@dimen/activity_margin"
-            android:text="@string/add_folder"
-            android:textSize="@dimen/bigger_text_size"
-            android:visibility="gone" />
+        <org.fossify.commons.views.MyTextView android:id="@+id/directories_empty_placeholder_2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/directories_empty_placeholder" android:layout_centerHorizontal="true" android:background="@drawable/ripple_all_corners" android:padding="@dimen/activity_margin" android:text="@string/add_folder" android:textSize="@dimen/bigger_text_size" android:visibility="gone"/>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/directories_refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/directories_switch_searching">
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:id="@+id/directories_refresh_layout" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_below="@+id/directories_switch_searching">
 
-            <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
-                android:id="@+id/directories_fastscroller"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:supportSwipeToRefresh="true">
+            <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller android:id="@+id/directories_fastscroller" android:layout_width="match_parent" android:layout_height="wrap_content" app:supportSwipeToRefresh="true">
 
-                <org.fossify.commons.views.MyRecyclerView
-                    android:id="@+id/directories_grid"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layoutAnimation="@anim/layout_animation"
-                    android:scrollbars="none"
-                    app:layoutManager="org.fossify.commons.views.MyGridLayoutManager"
-                    app:spanCount="@integer/directory_columns_vertical_scroll" />
+                <org.fossify.commons.views.MyRecyclerView android:id="@+id/directories_grid" android:layout_width="match_parent" android:layout_height="match_parent" android:scrollbars="none" app:layoutManager="org.fossify.commons.views.MyGridLayoutManager" app:spanCount="@integer/directory_columns_vertical_scroll"/>
 
             </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

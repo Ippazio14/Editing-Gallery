@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -38,7 +37,6 @@ import org.fossify.commons.extensions.getContrastColor
 import org.fossify.commons.extensions.getFilenameFromPath
 import org.fossify.commons.extensions.getProperBackgroundColor
 import org.fossify.commons.extensions.getTimeFormat
-import org.fossify.commons.extensions.handleDeletePasswordProtection
 import org.fossify.commons.extensions.handleLockedFolderOpening
 import org.fossify.commons.extensions.isAStorageRootFolder
 import org.fossify.commons.extensions.isExternalStorageManager
@@ -53,7 +51,6 @@ import org.fossify.commons.extensions.showErrorToast
 import org.fossify.commons.extensions.toast
 import org.fossify.commons.helpers.SHOW_ALL_TABS
 import org.fossify.commons.helpers.SORT_BY_CUSTOM
-import org.fossify.commons.helpers.VIEW_TYPE_LIST
 import org.fossify.commons.helpers.ensureBackgroundThread
 import org.fossify.commons.helpers.isRPlus
 import org.fossify.commons.interfaces.ItemMoveCallback
@@ -64,10 +61,7 @@ import org.fossify.commons.views.MyRecyclerView
 import org.fossify.gallery.R
 import org.fossify.gallery.activities.MediaActivity
 import org.fossify.gallery.databinding.DirectoryItemGridRoundedCornersBinding
-import org.fossify.gallery.databinding.DirectoryItemGridSquareBinding
-import org.fossify.gallery.databinding.DirectoryItemListBinding
 import org.fossify.gallery.dialogs.ConfirmDeleteFolderDialog
-import org.fossify.gallery.dialogs.ExcludeFolderDialog
 import org.fossify.gallery.dialogs.PickMediumDialog
 import org.fossify.gallery.extensions.addNoMedia
 import org.fossify.gallery.extensions.checkAppendingHidden
@@ -85,14 +79,10 @@ import org.fossify.gallery.extensions.tryCopyMoveFilesTo
 import org.fossify.gallery.helpers.DIRECTORY
 import org.fossify.gallery.helpers.FOLDER_MEDIA_CNT_BRACKETS
 import org.fossify.gallery.helpers.FOLDER_MEDIA_CNT_LINE
-import org.fossify.gallery.helpers.FOLDER_STYLE_ROUNDED_CORNERS
-import org.fossify.gallery.helpers.FOLDER_STYLE_SQUARE
 import org.fossify.gallery.helpers.LOCATION_INTERNAL
 import org.fossify.gallery.helpers.LOCATION_SD
-import org.fossify.gallery.helpers.PATH
 import org.fossify.gallery.helpers.RECYCLE_BIN
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_BIG
-import org.fossify.gallery.helpers.ROUNDED_CORNERS_NONE
 import org.fossify.gallery.helpers.ROUNDED_CORNERS_SMALL
 import org.fossify.gallery.helpers.TYPE_GIFS
 import org.fossify.gallery.helpers.TYPE_IMAGES
@@ -118,9 +108,9 @@ class DirectoryAdapter(
     RecyclerViewFastScroller.OnPopupTextUpdate {
 
     private val config = activity.config
-    private val isListViewType = config.viewTypeFolders == VIEW_TYPE_LIST
+
     private var pinnedFolders = config.pinnedFolders
-    private var scrollHorizontally = config.scrollHorizontally
+    private var scrollHorizontally = false
     private var animateGifs = config.animateGifs
     private var cropThumbnails = config.cropThumbnails
     private var groupDirectSubfolders = config.groupDirectSubfolders
@@ -144,11 +134,7 @@ class DirectoryAdapter(
     override fun getActionMenuId() = R.menu.cab_directories
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = when {
-            isListViewType -> DirectoryItemListBinding.inflate(layoutInflater, parent, false)
-            folderStyle == FOLDER_STYLE_SQUARE -> DirectoryItemGridSquareBinding.inflate(layoutInflater, parent, false)
-            else -> DirectoryItemGridRoundedCornersBinding.inflate(layoutInflater, parent, false)
-        }
+        val binding = DirectoryItemGridRoundedCornersBinding.inflate(layoutInflater, parent, false)
 
         return createViewHolder(binding.root)
     }
@@ -207,7 +193,6 @@ class DirectoryAdapter(
             R.id.cab_empty_disable_recycle_bin -> emptyAndDisableRecycleBin()
             R.id.cab_hide -> toggleFoldersVisibility(true)
             R.id.cab_unhide -> toggleFoldersVisibility(false)
-            R.id.cab_exclude -> tryExcludeFolder()
             R.id.cab_lock -> tryLockFolder()
             R.id.cab_unlock -> unlockFolder()
             R.id.cab_copy_to -> copyFilesTo()
@@ -473,29 +458,6 @@ class DirectoryAdapter(
         }
     }
 
-    private fun tryExcludeFolder() {
-        val selectedPaths = getSelectedPaths()
-        val paths = selectedPaths.filter { it != PATH && it != RECYCLE_BIN }.toSet()
-        if (selectedPaths.contains(RECYCLE_BIN)) {
-            config.showRecycleBinAtFolders = false
-            if (selectedPaths.size == 1) {
-                listener?.refreshItems()
-                finishActMode()
-            }
-        }
-
-        if (paths.size == 1) {
-            ExcludeFolderDialog(activity, paths.toMutableList()) {
-                listener?.refreshItems()
-                finishActMode()
-            }
-        } else if (paths.size > 1) {
-            config.addExcludedFolders(paths)
-            listener?.refreshItems()
-            finishActMode()
-        }
-    }
-
     private fun tryLockFolder() {
         if (config.wasFolderLockingNoticeShown) {
             lockFolder()
@@ -575,11 +537,11 @@ class DirectoryAdapter(
     }
 
     private fun moveFilesTo() {
-        activity.handleDeletePasswordProtection {
+
             handleLockedFolderOpeningForFolders(getSelectedPaths()) {
                 copyMoveTo(it, false)
             }
-        }
+
     }
 
     private fun copyMoveTo(selectedPaths: Collection<String>, isCopyOperation: Boolean) {
@@ -640,13 +602,7 @@ class DirectoryAdapter(
     }
 
     private fun askConfirmDelete() {
-        when {
-            config.isDeletePasswordProtectionOn -> activity.handleDeletePasswordProtection {
-                deleteFolders()
-            }
 
-            config.skipDeleteConfirmation -> deleteFolders()
-            else -> {
                 val itemsCnt = selectedKeys.size
                 if (itemsCnt == 1 && getSelectedItems().first().isRecycleBin()) {
                     ConfirmationDialog(
@@ -680,8 +636,7 @@ class DirectoryAdapter(
                 ConfirmDeleteFolderDialog(activity, question, warning) {
                     deleteFolders()
                 }
-            }
-        }
+
     }
 
     private fun deleteFolders() {
@@ -817,6 +772,12 @@ class DirectoryAdapter(
 
     private fun setupView(view: View, directory: Directory, holder: ViewHolder) {
         val isSelected = selectedKeys.contains(directory.path.hashCode())
+        view.findViewById<View>(R.id.directory_filmstrip).beVisibleIf(directory.tmb.isVideoFast())
+        view.background = android.graphics.drawable.GradientDrawable().apply {
+            setColor(activity.getProperBackgroundColor())
+            cornerRadius = 14f * resources.displayMetrics.density
+            setStroke((resources.displayMetrics.density).toInt().coerceAtLeast(1), textColor and 0x00FFFFFF or 0x66000000)
+        }
         bindItem(view).apply {
             dirPath?.text = "${directory.path.substringBeforeLast("/")}/"
             val thumbnailType = when {
@@ -833,27 +794,7 @@ class DirectoryAdapter(
                 dirCheck.applyColorFilter(contrastColor)
             }
 
-            if (isListViewType) {
-                dirHolder.isSelected = isSelected
-            }
 
-            if (scrollHorizontally && !isListViewType && folderStyle == FOLDER_STYLE_ROUNDED_CORNERS) {
-                (dirThumbnail.layoutParams as RelativeLayout.LayoutParams).addRule(RelativeLayout.ABOVE, dirName.id)
-
-                val photoCntParams = (photoCnt.layoutParams as RelativeLayout.LayoutParams)
-                val nameParams = (dirName.layoutParams as RelativeLayout.LayoutParams)
-                nameParams.removeRule(RelativeLayout.BELOW)
-
-                if (config.showFolderMediaCount == FOLDER_MEDIA_CNT_LINE) {
-                    nameParams.addRule(RelativeLayout.ABOVE, photoCnt.id)
-                    nameParams.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-
-                    photoCntParams.removeRule(RelativeLayout.BELOW)
-                    photoCntParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                } else {
-                    nameParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-                }
-            }
 
             if (lockedFolderPaths.contains(directory.path)) {
                 dirLock.beVisible()
@@ -861,11 +802,7 @@ class DirectoryAdapter(
                 dirLock.applyColorFilter(root.context.getProperBackgroundColor().getContrastColor())
             } else {
                 dirLock.beGone()
-                val roundedCorners = when {
-                    isListViewType -> ROUNDED_CORNERS_SMALL
-                    folderStyle == FOLDER_STYLE_SQUARE -> ROUNDED_CORNERS_NONE
-                    else -> ROUNDED_CORNERS_BIG
-                }
+                val roundedCorners = ROUNDED_CORNERS_BIG
 
                 dirThumbnail.setBackgroundResource(
                     when (roundedCorners) {
@@ -918,20 +855,12 @@ class DirectoryAdapter(
 
             dirName.text = nameCount
 
-            if (isListViewType || folderStyle == FOLDER_STYLE_ROUNDED_CORNERS) {
                 photoCnt.setTextColor(textColor)
                 dirName.setTextColor(textColor)
                 dirLocation.applyColorFilter(textColor)
-            }
 
-            if (isListViewType) {
-                dirPath?.setTextColor(textColor)
-                dirPin.applyColorFilter(textColor)
-                dirLocation.applyColorFilter(textColor)
-                dirDragHandle.beVisibleIf(isDragAndDropping)
-            } else {
+
                 dirDragHandleWrapper?.beVisibleIf(isDragAndDropping)
-            }
 
             if (isDragAndDropping) {
                 dirDragHandle.applyColorFilter(textColor)
@@ -964,16 +893,12 @@ class DirectoryAdapter(
     }
 
     override fun onRowClear(myViewHolder: ViewHolder?) {
-        swipeRefreshLayout?.isEnabled = activity.config.enablePullToRefresh
+        swipeRefreshLayout?.isEnabled = false
     }
 
     override fun onChange(position: Int) = dirs.getOrNull(position)?.getBubbleText(directorySorting, activity, dateFormat, timeFormat) ?: ""
 
-    private fun bindItem(view: View): DirectoryItemBinding {
-        return when {
-            isListViewType -> DirectoryItemListBinding.bind(view).toItemBinding()
-            folderStyle == FOLDER_STYLE_SQUARE -> DirectoryItemGridSquareBinding.bind(view).toItemBinding()
-            else -> DirectoryItemGridRoundedCornersBinding.bind(view).toItemBinding()
-        }
-    }
+    private fun bindItem(view: View): DirectoryItemBinding =
+        DirectoryItemGridRoundedCornersBinding.bind(view).toItemBinding()
+
 }

@@ -66,6 +66,9 @@ android {
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         release {
             isMinifyEnabled = true
@@ -155,7 +158,6 @@ dependencies {
     implementation(libs.sanselan)
     implementation(libs.androidsvg.aar)
     implementation(libs.gestureviews)
-    implementation(libs.subsamplingscaleimageview)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.awebp)
     implementation(libs.apng)
