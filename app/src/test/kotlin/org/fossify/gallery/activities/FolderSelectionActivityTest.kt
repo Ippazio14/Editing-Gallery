@@ -149,6 +149,9 @@ class FolderSelectionActivityTest {
             val activity = controller.get()
             val launched = shadowOf(activity).nextStartedActivityForResult
             assertEquals(FolderSelectionActivity::class.java.name, launched.intent.component!!.className)
+            // Robolectric records result launches in two independent queues. Consume the same
+            // initial navigation in both before checking that Continue does not launch it again.
+            assertEquals(launched.intent, shadowOf(activity).nextStartedActivity)
             assertEquals(0, reads.get())
             val access = FolderAccess(activity)
             access.add(tree("Pictures"), Intent.FLAG_GRANT_READ_URI_PERMISSION)
