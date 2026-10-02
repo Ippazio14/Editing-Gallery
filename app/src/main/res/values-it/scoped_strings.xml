@@ -38,7 +38,7 @@
     <string name="scoped_selection_cancelled">Selezione annullata. Puoi scegliere un’altra cartella oppure premere Continua.</string>
     <string name="scoped_saving_access">Salvataggio delle autorizzazioni…</string>
     <string name="scoped_checked_count">%1$d cartelle selezionate.</string>
-    <string name="scoped_more">Altro</string>
+    <string name="abc_action_menu_overflow_description">Altro</string>
     <string name="scoped_search">Cerca</string>
     <string name="scoped_sort_label">Ordina per</string>
     <string name="scoped_columns_label">Numero di colonne</string>

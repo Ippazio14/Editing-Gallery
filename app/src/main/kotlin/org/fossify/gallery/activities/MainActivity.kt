@@ -165,7 +165,6 @@ class MainActivity : SimpleActivity() {
         searchMenu.updateHintText(getString(R.string.scoped_search))
         searchMenu.requireToolbar().apply {
             inflateMenu(R.menu.menu_scoped_gallery)
-            overflowContentDescription = getString(R.string.scoped_more)
             setOnMenuItemClickListener { item ->
                 if (busy) return@setOnMenuItemClickListener true
                 when (item.itemId) {

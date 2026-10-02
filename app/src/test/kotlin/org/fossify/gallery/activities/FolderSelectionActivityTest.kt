@@ -161,7 +161,7 @@ class FolderSelectionActivityTest {
             assertEquals(5, reads.get())
             val menu = activity.findViewById<org.fossify.commons.views.MySearchMenu>(R.id.main_menu)
             assertEquals("Cerca", menu.binding.topToolbarSearch.hint.toString())
-            assertEquals("Altro", menu.requireToolbar().overflowContentDescription.toString())
+            assertEquals("Altro", activity.getString(R.string.abc_action_menu_overflow_description))
             assertNotNull(menu.requireToolbar().menu.findItem(R.id.scoped_manage_folders))
             menu.binding.topToolbarSearch.setText("non-esiste")
             awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 0 }

@@ -38,7 +38,7 @@
     <string name="scoped_selection_cancelled">Selection cancelled. Choose another folder or press Continue.</string>
     <string name="scoped_saving_access">Saving folder permissions…</string>
     <string name="scoped_checked_count">%1$d folders selected.</string>
-    <string name="scoped_more">More</string>
+    <string name="abc_action_menu_overflow_description">More</string>
     <string name="scoped_search">Search</string>
     <string name="scoped_sort_label">Sort by</string>
     <string name="scoped_columns_label">Number of columns</string>
