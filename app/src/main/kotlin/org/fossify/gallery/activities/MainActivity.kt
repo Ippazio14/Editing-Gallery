@@ -11,6 +11,14 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.ScrollView
+import android.database.ContentObserver
+import android.os.Handler
+import android.os.Looper
+import android.provider.DocumentsContract
+import org.fossify.gallery.scoped.MediaOrdering
 import androidx.appcompat.app.AlertDialog
 import org.fossify.commons.views.MySearchMenu
 import org.fossify.gallery.views.AccessibleGalleryTile
@@ -37,6 +45,25 @@ class MainActivity : SimpleActivity() {
     private var searchQuery = ""
     private var customColumns = 0
     private var descending = false
+    private var sortField = "name"
+    private val refreshHandler = Handler(Looper.getMainLooper())
+    private var resumed = false
+    private var scanning = false
+    private val refresh = object : Runnable {
+        override fun run() {
+            if (resumed) {
+                if (!busy && !folderSelectionOpen && !scanning) load(quiet = true)
+                refreshHandler.postDelayed(this, 15000)
+            }
+        }
+    }
+    private val changed = Runnable { if (resumed && !busy && !folderSelectionOpen && !scanning) load(quiet = true) }
+    private val observer = object : ContentObserver(refreshHandler) {
+        override fun onChange(selfChange: Boolean) {
+            refreshHandler.removeCallbacks(changed)
+            refreshHandler.postDelayed(changed, 700)
+        }
+    }
     private lateinit var paste: Button
     private lateinit var actions: LinearLayout
     private var albums = emptyList<FolderAccess.Album>()
@@ -72,7 +99,8 @@ class MainActivity : SimpleActivity() {
             FolderAccess.Media(Uri.parse(uris[it]), names[it], mimes[it])
         } else emptyList()
         cutting = savedInstanceState?.getBoolean("cutting") ?: false
-        customColumns = getPreferences(MODE_PRIVATE).getInt("scoped_columns", 0)
+        customColumns = getPreferences(MODE_PRIVATE).getInt("scoped_columns", 2).coerceIn(1, 5)
+        sortField = getPreferences(MODE_PRIVATE).getString("scoped_sort_field", "name") ?: "name"
         descending = getPreferences(MODE_PRIVATE).getBoolean("scoped_sort_descending", false)
         val root = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -128,7 +156,17 @@ class MainActivity : SimpleActivity() {
     override fun onResume() {
         super.onResume()
         searchMenu.updateColors()
+        resumed = true
+        refreshHandler.removeCallbacks(refresh)
+        refreshHandler.postDelayed(refresh, 15000)
         if (!busy && !folderSelectionOpen) load()
+    }
+
+    override fun onPause() {
+        resumed = false
+        refreshHandler.removeCallbacksAndMessages(null)
+        contentResolver.unregisterContentObserver(observer)
+        super.onPause()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -145,7 +183,7 @@ class MainActivity : SimpleActivity() {
         super.onConfigurationChanged(newConfig)
         (grid.layoutManager as GridLayoutManager).spanCount = columns()
     }
-    override fun onDestroy() { generation++; worker.shutdownNow(); super.onDestroy() }
+    override fun onDestroy() { generation++; refreshHandler.removeCallbacksAndMessages(null); contentResolver.unregisterContentObserver(observer); worker.shutdownNow(); super.onDestroy() }
     private fun columns() = if (customColumns > 0) customColumns else (resources.configuration.screenWidthDp / 180).coerceIn(1, 4)
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     private fun text() = TextView(this).apply { setTextColor(Color.WHITE); textSize = 20f }
@@ -164,27 +202,10 @@ class MainActivity : SimpleActivity() {
                 if (busy) return@setOnMenuItemClickListener true
                 when (item.itemId) {
                     R.id.scoped_manage_folders -> manage()
-                    R.id.scoped_reload -> load()
-                    R.id.scoped_sort -> AlertDialog.Builder(this@MainActivity)
-                        .setTitle(R.string.scoped_sort_label)
-                        .setSingleChoiceItems(arrayOf(getString(R.string.scoped_ascending), getString(R.string.scoped_descending)),
-                            if (descending) 1 else 0) { dialog, choice ->
-                            descending = choice == 1
-                            getPreferences(MODE_PRIVATE).edit().putBoolean("scoped_sort_descending", descending).apply()
-                            dialog.dismiss()
-                            show()
-                        }.setNegativeButton(R.string.scoped_cancel, null).show()
-                    R.id.scoped_columns -> AlertDialog.Builder(this@MainActivity)
-                        .setTitle(R.string.scoped_columns_label)
-                        .setSingleChoiceItems((1..6).map(Int::toString).toTypedArray(), columns() - 1) { dialog, choice ->
-                            customColumns = choice + 1
-                            getPreferences(MODE_PRIVATE).edit().putInt("scoped_columns", customColumns).apply()
-                            (grid.layoutManager as GridLayoutManager).spanCount = customColumns
-                            dialog.dismiss()
-                        }.setNegativeButton(R.string.scoped_cancel, null).show()
+                    R.id.scoped_sort -> sortingDialog()
                     R.id.scoped_about -> AlertDialog.Builder(this@MainActivity)
                         .setTitle("EasyVision Gallery")
-                        .setMessage(R.string.scoped_access_intro)
+                        .setMessage(R.string.scoped_help_body)
                         .setPositiveButton(android.R.string.ok, null).show()
                     else -> return@setOnMenuItemClickListener false
                 }
@@ -198,33 +219,87 @@ class MainActivity : SimpleActivity() {
         searchMenu.updateColors()
     }
 
+    private fun sortingDialog() {
+        val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(8), dp(16), dp(8)) }
+        fun group(labels: List<String>, chosen: Int, horizontal: Boolean = false, onChange: (Int) -> Unit) {
+            val group = RadioGroup(this).apply { orientation = if (horizontal) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL }
+            labels.forEachIndexed { index, label ->
+                group.addView(RadioButton(this).apply { id = View.generateViewId(); text = label; textSize = 18f; minHeight = dp(48) },
+                    if (horizontal) RadioGroup.LayoutParams(0, -2, 1f) else RadioGroup.LayoutParams(-1, -2))
+            }
+            group.check(group.getChildAt(chosen).id)
+            group.setOnCheckedChangeListener { _, id -> onChange((0 until group.childCount).first { group.getChildAt(it).id == id }) }
+            panel.addView(group)
+        }
+        fun persist() {
+            getPreferences(MODE_PRIVATE).edit().putBoolean("scoped_sort_descending", descending)
+                .putString("scoped_sort_field", sortField).putInt("scoped_columns", columns()).apply()
+        }
+        group(listOf(getString(R.string.scoped_ascending), getString(R.string.scoped_descending)), if (descending) 1 else 0) {
+            descending = it == 1; persist(); show()
+        }
+        val fields = listOf("name", "created", "size", "modified")
+        group(listOf(R.string.order_name, R.string.order_created, R.string.order_size, R.string.order_modified).map { getString(it) }, fields.indexOf(sortField).coerceAtLeast(0)) {
+            sortField = fields[it]; persist()
+            show(); if (sortField == "created") load(quiet = true)
+        }
+        panel.addView(TextView(this).apply { setText(R.string.scoped_columns_label); textSize = 18f })
+        group((1..5).map { it.toString() }, columns() - 1, true) {
+            customColumns = it + 1; persist(); (grid.layoutManager as GridLayoutManager).spanCount = customColumns
+        }
+        AlertDialog.Builder(this).setTitle(R.string.scoped_sort_label).setView(ScrollView(this).apply { addView(panel) })
+            .setPositiveButton(android.R.string.ok, null).show()
+    }
+
+    private fun observeFolders() {
+        contentResolver.unregisterContentObserver(observer)
+        if (!resumed) return
+        albums.forEach { album ->
+            runCatching {
+                contentResolver.registerContentObserver(DocumentsContract.buildChildDocumentsUriUsingTree(album.uri,
+                    DocumentsContract.getDocumentId(album.uri)), true, observer)
+            }
+        }
+    }
+
     private fun manage() {
         if (folderSelectionOpen) return
         generation++
         scanTask?.cancel(true)
+        scanning = false
         albums = emptyList()
         show()
         folderSelectionOpen = true
         folderSelection.launch(Intent(this, FolderSelectionActivity::class.java))
     }
 
-    private fun load() {
+    private fun load(quiet: Boolean = false) {
         val token = ++generation
         scanTask?.cancel(true)
         // Do not display cached media during a new permission check.
-        albums = emptyList(); selected.clear(); show()
-        status.setText(R.string.scoped_loading)
-        status.visibility = View.VISIBLE
+        if (!quiet) {
+            albums = emptyList(); selected.clear(); show()
+            status.setText(R.string.scoped_loading)
+            status.visibility = View.VISIBLE
+        }
+        scanning = true
+        val readCreation = sortField == "created"
         scanTask = worker.submit {
-            val result = runCatching { access.scan() }
+            val result = runCatching { access.scan(readCreation) }
             runOnUiThread {
                 if (isDestroyed || token != generation) return@runOnUiThread
+                scanning = false
+                val previous = albums
+                val previousError = scanError
                 result.onSuccess {
                     albums = it.albums
                     scanError = if (it.unavailable.isEmpty()) "" else getString(R.string.scoped_unavailable, it.unavailable.joinToString(", "))
                     if (current != null && albums.none { album -> album.uri == current }) current = null
-                }.onFailure { scanError = getString(R.string.scoped_scan_error) }
-                show()
+                }.onFailure { albums = emptyList(); scanError = getString(R.string.scoped_scan_error) }
+                val validUris = albums.flatMap { it.media }.map { it.uri }.toSet()
+                selected.removeAll { it.uri !in validUris }
+                observeFolders()
+                if (!quiet || previous != albums || previousError != scanError) show()
             }
         }
     }
@@ -251,8 +326,10 @@ class MainActivity : SimpleActivity() {
             }
             folders + files
         }
-        val sorted = entries.sortedBy { it.label.lowercase() }
-        return if (descending) sorted.reversed() else sorted
+        val folders = entries.filter { it.album != null }.sortedBy { it.label.lowercase() }
+        val files = entries.filter { it.media != null }
+        val byUri = files.associateBy { it.media!!.uri }
+        return folders + MediaOrdering.sort(files.map { it.media!! }, sortField, descending).mapNotNull { byUri[it.uri] }
     }
 
     private fun show() {
@@ -328,8 +405,8 @@ class MainActivity : SimpleActivity() {
             Glide.with(this@MainActivity).clear(tile.image)
             val name = "${if (item in selected) "✓ " else ""}${entry.label}"
             val counts = album?.let { "🖼️ ${it.images} - 🎬 ${it.videos}" }
-                ?: if (item?.isVideo == true) getString(R.string.scoped_video) else ""
-            tile.bindLabels(name, counts, videoAlbum = album != null && album.videos > 0,
+                ?: ""
+            tile.bindLabels(name, counts, videoAlbum = (album != null && album.videos > 0) || item?.isVideo == true,
                 emptyAlbum = album != null && album.media.isEmpty(), selected = item in selected)
             tile.contentDescription = listOf(name, album?.let { getString(R.string.scoped_counts, it.images, it.videos) } ?: counts).joinToString(", ")
             val preview = item?.uri ?: album?.media?.firstOrNull()?.uri

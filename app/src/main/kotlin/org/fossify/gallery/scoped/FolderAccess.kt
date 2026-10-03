@@ -14,7 +14,7 @@ class FolderAccess(private val context: Context) {
     private val resolver = context.contentResolver
 
     data class Root(val uri: Uri, val label: String)
-    data class Media(val uri: Uri, val name: String, val mime: String) {
+    data class Media(val uri: Uri, val name: String, val mime: String, val size: Long? = null, val modified: Long? = null, val created: Long? = null) {
         val isVideo: Boolean get() = mime.startsWith("video/")
     }
     data class Album(val uri: Uri, val label: String, val media: List<Media>) {
@@ -79,7 +79,7 @@ class FolderAccess(private val context: Context) {
     }
 
     /** Keep explicit roots, hide empty descendants, and deduplicate overlapping grants. */
-    fun scan(): Scan {
+    fun scan(includeCreation: Boolean = false): Scan {
         val unavailable = mutableListOf<String>()
         val readableRoots = roots().mapNotNull { root ->
             if (resolver.persistedUriPermissions.none { it.uri == root.uri && it.isReadPermission }) {
@@ -103,7 +103,8 @@ class FolderAccess(private val context: Context) {
                 val media = mutableListOf<Media>()
                 val directories = mutableListOf<FolderWalker.Node<Uri>>()
                 val projection = arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                    DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_MIME_TYPE)
+                    DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_MIME_TYPE,
+                    DocumentsContract.Document.COLUMN_SIZE, DocumentsContract.Document.COLUMN_LAST_MODIFIED)
                 val cursor = resolver.query(children, projection, null, null, null)
                     ?: throw IOException("Provider unavailable")
                 cursor.use {
@@ -119,7 +120,16 @@ class FolderAccess(private val context: Context) {
                         } else {
                             val mime = if (type.startsWith("image/") || type.startsWith("video/")) type else
                                 MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substringAfterLast('.', "").lowercase()).orEmpty()
-                            if (mime.startsWith("image/") || mime.startsWith("video/")) media.add(Media(uri, name, mime))
+                            if (mime.startsWith("image/") || mime.startsWith("video/")) {
+                                fun number(column: String): Long? {
+                                    val index = it.getColumnIndex(column)
+                                    return if (index < 0 || it.isNull(index)) null else it.getLong(index)
+                                }
+                                val size = number(DocumentsContract.Document.COLUMN_SIZE)
+                                val modified = number(DocumentsContract.Document.COLUMN_LAST_MODIFIED)?.takeIf { value -> value > 0 }
+                                val created = if (includeCreation) creationDate(uri, mime, size, modified) else null
+                                media.add(Media(uri, name, mime, size, modified, created))
+                            }
                         }
                     }
                 }
@@ -127,6 +137,38 @@ class FolderAccess(private val context: Context) {
             }, cancelled = { Thread.currentThread().isInterrupted })
         return Scan(result.albums.map { Album(it.node.value, it.node.label, it.media) }.sortedBy { it.label.lowercase() },
             (unavailable + result.unavailable).distinct())
+    }
+
+    private val dates = mutableMapOf<String, Long?>()
+    // SAF has no creation-date column. Use the original capture date when available;
+    // never relabel modification time as creation time.
+    private fun creationDate(uri: Uri, mime: String, size: Long?, modified: Long?): Long? {
+        val key = "$uri:$size:$modified"
+        if (dates.containsKey(key)) return dates[key]
+        val value = runCatching {
+            if (mime.startsWith("image/")) {
+                resolver.openInputStream(uri)?.use { input ->
+                    androidx.exifinterface.media.ExifInterface(input)
+                        .getAttribute(androidx.exifinterface.media.ExifInterface.TAG_DATETIME_ORIGINAL)?.let { raw ->
+                            java.text.SimpleDateFormat("yyyy:MM:dd HH:mm:ss", java.util.Locale.US).apply { isLenient = false }.parse(raw)?.time
+                        }
+                }
+            } else {
+                val reader = android.media.MediaMetadataRetriever()
+                try {
+                    reader.setDataSource(context, uri)
+                    reader.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_DATE)?.let { raw ->
+                        listOf("yyyyMMdd'T'HHmmss.SSS'Z'", "yyyyMMdd'T'HHmmss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").firstNotNullOfOrNull { pattern ->
+                            runCatching { java.text.SimpleDateFormat(pattern, java.util.Locale.US).apply {
+                                timeZone = java.util.TimeZone.getTimeZone("UTC"); isLenient = false
+                            }.parse(raw)?.time }.getOrNull()
+                        }
+                    }
+                } finally { reader.release() }
+            }
+        }.getOrNull()?.takeIf { it > 0 }
+        dates[key] = value
+        return value
     }
 
     fun canWrite(uri: Uri): Boolean = DocumentFile.fromSingleUri(context, uri)?.canWrite() == true

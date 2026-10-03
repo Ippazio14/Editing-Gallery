@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/scoped_manage_folders" android:title="@string/scoped_title" app:showAsAction="never" />
-    <item android:id="@+id/scoped_sort" android:title="@string/scoped_sort_label" app:showAsAction="never" />
-    <item android:id="@+id/scoped_columns" android:title="@string/scoped_columns_label" app:showAsAction="never" />
-    <item android:id="@+id/scoped_reload" android:title="@string/scoped_refresh" app:showAsAction="never" />
-    <item android:id="@+id/scoped_about" android:title="@string/scoped_about_label" app:showAsAction="never" />
+    <item android:id="@+id/scoped_sort" android:title="@string/scoped_sort_label" android:icon="@drawable/ic_easy_sort" app:showAsAction="always" />
+    <item android:id="@+id/scoped_manage_folders" android:title="@string/scoped_title" android:icon="@drawable/ic_easy_folder_check" app:showAsAction="always" />
+    <item android:id="@+id/scoped_about" android:title="@string/scoped_help" android:icon="@drawable/ic_easy_help" app:showAsAction="always" />
 </menu>

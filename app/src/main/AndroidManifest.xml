@@ -32,6 +32,8 @@
 
         <activity android:name=".activities.FolderSelectionActivity" android:configChanges="orientation|screenSize" android:exported="false"/>
 
+        <activity android:name=".activities.VideoEditActivity" android:exported="false" android:configChanges="orientation|screenSize|keyboardHidden"/>
+
         <activity android:name=".activities.ScopedViewerActivity" android:exported="false"/>
 
         <activity android:name=".activities.MainActivity" android:configChanges="orientation|screenSize" android:exported="true" android:resizeableActivity="true">

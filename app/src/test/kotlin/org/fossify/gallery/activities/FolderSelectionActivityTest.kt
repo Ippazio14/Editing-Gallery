@@ -135,7 +135,7 @@ class FolderSelectionActivityTest {
                 val result = MatrixCursor(projection)
                 if (DocumentsContract.getDocumentId(uri) == "primary:Pictures") {
                     for (name in listOf("a", "b", "c", "d")) {
-                        result.addRow(arrayOf("primary:Pictures/$name", name, DocumentsContract.Document.MIME_TYPE_DIR))
+                        result.addRow(arrayOf("primary:Pictures/$name", name, DocumentsContract.Document.MIME_TYPE_DIR, null, null))
                     }
                 }
                 return result
@@ -161,7 +161,7 @@ class FolderSelectionActivityTest {
             assertEquals(5, reads.get())
             val menu = activity.findViewById<org.fossify.commons.views.MySearchMenu>(R.id.main_menu)
             assertEquals("Cerca", menu.binding.topToolbarSearch.hint.toString())
-            assertEquals("Altro", activity.getString(R.string.abc_action_menu_overflow_description))
+            assertEquals(3, menu.requireToolbar().menu.size())
             assertNotNull(menu.requireToolbar().menu.findItem(R.id.scoped_manage_folders))
             menu.binding.topToolbarSearch.setText("non-esiste")
             awaitUi { views(activity).filterIsInstance<RecyclerView>().first().adapter?.itemCount == 0 }

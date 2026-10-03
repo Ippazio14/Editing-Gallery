@@ -64,7 +64,7 @@ class ScopedViewerActivity : SimpleActivity() {
         header.addView(action(R.drawable.ic_easy_back, R.string.scoped_back) { onBackPressedDispatcher.onBackPressed() }, LinearLayout.LayoutParams(dp(56), dp(56)))
         header.addView(GalleryChrome.filename(this, intent.getStringExtra("name").orEmpty()), LinearLayout.LayoutParams(0, dp(56), 1f))
         fun addAction(icon: Int, label: Int, click: () -> Unit) = action(icon, label, click).also {
-            actions.addView(it, LinearLayout.LayoutParams(dp(68), dp(68)).apply { setMargins(dp(12), 0, dp(12), 0) })
+            actions.addView(it, LinearLayout.LayoutParams(0, dp(68), 1f).apply { setMargins(dp(4), 0, dp(4), 0) })
         }
         val isVideo = intent.type?.startsWith("video/") == true
         if (isVideo) {
@@ -77,6 +77,10 @@ class ScopedViewerActivity : SimpleActivity() {
                 }
             }
             root.addView(video, FrameLayout.LayoutParams(-1, -1, Gravity.CENTER))
+            addAction(R.drawable.ic_easy_edit, R.string.scoped_edit) {
+                video?.pause()
+                startActivity(Intent(this, VideoEditActivity::class.java).setDataAndType(uri, intent.type).putExtra("name", intent.getStringExtra("name")))
+            }
             addAction(R.drawable.ic_easy_play, R.string.scoped_play_pause) {
                 video?.let { if (it.isPlaying) it.pause() else it.start() }
             }
