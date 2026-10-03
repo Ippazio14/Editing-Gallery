@@ -296,8 +296,9 @@ class MainActivity : SimpleActivity() {
                     scanError = if (it.unavailable.isEmpty()) "" else getString(R.string.scoped_unavailable, it.unavailable.joinToString(", "))
                     if (current != null && albums.none { album -> album.uri == current }) current = null
                 }.onFailure { albums = emptyList(); scanError = getString(R.string.scoped_scan_error) }
-                val validUris = albums.flatMap { it.media }.map { it.uri }.toSet()
-                selected.removeAll { it.uri !in validUris }
+                val byUri = albums.flatMap { it.media }.associateBy { it.uri }
+                val retained = selected.mapNotNull { byUri[it.uri] }
+                selected.clear(); selected.addAll(retained)
                 observeFolders()
                 if (!quiet || previous != albums || previousError != scanError) show()
             }

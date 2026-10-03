@@ -164,7 +164,12 @@ class VideoEditActivity : SimpleActivity() {
         header.addView(icon(R.drawable.ic_easy_save, R.string.easy_save_copy) { confirmExport() }, FrameLayout.LayoutParams(dp(64), dp(64), Gravity.CENTER))
         root.addView(header, LinearLayout.LayoutParams(-1, dp(64)))
         val photo = FrameLayout(this)
-        preview = PlayerView(this).apply { player = this@VideoEditActivity.player; setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING) }
+        preview = PlayerView(this).apply {
+            player = this@VideoEditActivity.player
+            setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+            setShowNextButton(false); setShowPreviousButton(false)
+            setShowFastForwardButton(false); setShowRewindButton(false)
+        }
         photo.addView(preview, FrameLayout.LayoutParams(-1, -1))
         val history = LinearLayout(this)
         undoButton = icon(R.drawable.ic_easy_undo, R.string.easy_undo) { if (undo.isNotEmpty()) { redo.add(state); state = undo.removeAt(undo.lastIndex); refreshPreview() } }
@@ -268,6 +273,12 @@ class VideoEditActivity : SimpleActivity() {
                 override fun afterTextChanged(s: android.text.Editable?) {}
             })
         }
+        for (bar in listOf(startBar, endBar)) {
+            bar.thumb = android.graphics.drawable.GradientDrawable().apply {
+                shape = android.graphics.drawable.GradientDrawable.OVAL
+                setColor(Color.WHITE); setStroke(dp(2), Color.DKGRAY); setSize(dp(30), dp(30))
+            }
+        }
         connect(startBar, start); connect(endBar, end)
         val dialog = AlertDialog.Builder(this).setTitle(R.string.video_trim).setView(panel).setNegativeButton(R.string.easy_cancel, null).setPositiveButton(R.string.easy_apply, null).create()
         dialog.setOnShowListener { dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -299,7 +310,11 @@ class VideoEditActivity : SimpleActivity() {
                 frameLoading = false; updateControls()
                 if (bitmap == null) { status.setText(R.string.video_preview_error); return@runOnUiThread }
                 cropBitmap = bitmap
-                val cropper = CropImageView(this).apply { setImageBitmap(bitmap); isAutoZoomEnabled = false }
+                val cropper = CropImageView(this).apply {
+                    setImageBitmap(bitmap); isAutoZoomEnabled = false
+                    cropRect = android.graphics.Rect((state.left * bitmap.width).roundToInt(), (state.top * bitmap.height).roundToInt(),
+                        (state.right * bitmap.width).roundToInt(), (state.bottom * bitmap.height).roundToInt())
+                }
                 val dialog = AlertDialog.Builder(this).setTitle(R.string.easy_crop).setView(cropper)
                     .setNegativeButton(R.string.easy_cancel, null).setPositiveButton(R.string.easy_apply) { _, _ ->
                         cropper.cropRect?.let { rect -> change(state.copy(left = rect.left.toFloat() / bitmap.width,
@@ -416,7 +431,7 @@ class VideoEditActivity : SimpleActivity() {
         handler.removeCallbacks(progressPoll); progressDialog?.dismiss(); progressDialog = null
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); updateControls()
     }
-    override fun onPause() { player.pause(); super.onPause() }
+    override fun onPause() { if (::player.isInitialized) player.pause(); super.onPause() }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putSerializable("video_state", state); outState.putSerializable("video_saved", saved)
         outState.putSerializable("video_undo", undo); outState.putSerializable("video_redo", redo)
@@ -424,7 +439,7 @@ class VideoEditActivity : SimpleActivity() {
         super.onSaveInstanceState(outState)
     }
     override fun onDestroy() {
-        cancelled.set(true); handler.removeCallbacksAndMessages(null); transformer?.cancel(); player.release()
+        cancelled.set(true); handler.removeCallbacksAndMessages(null); transformer?.cancel(); if (::player.isInitialized) player.release()
         if (!copying) { temporary?.delete(); removeDestination() }
         cropDialog?.dismiss(); progressDialog?.dismiss(); worker.shutdown(); super.onDestroy()
     }
