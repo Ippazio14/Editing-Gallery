@@ -1,0 +1,18 @@
+<resources>
+<string name="video_loading">Opening video…</string>
+<string name="video_resize">Resize</string>
+<string name="video_trim">Trim · video duration</string>
+<string name="video_start">Start (seconds)</string>
+<string name="video_end">End (seconds)</string>
+<string name="video_trim_error">Choose a valid start and end within the video duration.</string>
+<string name="video_original">Original resolution</string>
+<string name="video_confirm">Estimated time: about %1$s — Start processing?\n\nApproximate estimate; depends on the device and video.</string>
+<string name="video_start_export">Start</string>
+<string name="video_processing">Processing…</string>
+<string name="video_preview_error">Preview unavailable for this video or these edits.</string>
+<string name="video_export_error">Processing failed. Original preserved.</string>
+<string name="video_cancelled">Processing cancelled. Original preserved.</string>
+<string name="video_cancel_question">Stop processing?</string>
+<string name="video_stop">Stop</string>
+<string name="video_stopping">Stopping…</string>
+</resources>

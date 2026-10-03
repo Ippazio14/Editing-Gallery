@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:installLocation="auto">
 
-    <!-- override the android:maxSdkVersion="28" from PhotoEditorSDK with some higher number -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="40" tools:replace="android:maxSdkVersion"/>
 
     <uses-permission android:name="android.permission.SET_WALLPAPER"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
-    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" tools:node="remove"/>
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" tools:node="remove"/>
+    <uses-permission android:name="android.permission.MANAGE_MEDIA" tools:node="remove"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" tools:node="remove"/>
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:node="remove"/>
 
-    <uses-permission android:name="android.permission.MANAGE_MEDIA" tools:ignore="ProtectedPermissions"/>
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove"/>
 
@@ -26,11 +26,22 @@
 
     <uses-feature android:name="android.hardware.faketouch" android:required="false"/>
 
-    <application android:name="org.fossify.gallery.App" android:allowBackup="true" android:appCategory="image" android:icon="@mipmap/ic_launcher" android:label="@string/app_launcher_name" android:requestLegacyExternalStorage="true" android:roundIcon="@mipmap/ic_launcher" android:supportsRtl="true" android:theme="@style/AppTheme" tools:replace="android:label">
+    <application android:name="org.fossify.gallery.App" android:allowBackup="true" android:appCategory="image" android:icon="@mipmap/ic_launcher" android:label="@string/app_launcher_name" android:roundIcon="@mipmap/ic_launcher" android:supportsRtl="true" android:theme="@style/AppTheme" tools:replace="android:label">
 
         <activity android:name=".activities.SplashActivity" android:exported="false" android:theme="@style/SplashTheme"/>
 
-        <activity android:name=".activities.MainActivity" android:configChanges="orientation" android:exported="true" android:resizeableActivity="true">
+        <activity android:name=".activities.FolderSelectionActivity" android:configChanges="orientation|screenSize" android:exported="false"/>
+
+        <activity android:name=".activities.VideoEditActivity" android:exported="false" android:configChanges="orientation|screenSize|keyboardHidden"/>
+
+        <activity android:name=".activities.ScopedViewerActivity" android:exported="false"/>
+
+        <activity android:name=".activities.MainActivity" android:configChanges="orientation|screenSize" android:exported="true" android:resizeableActivity="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
 
             <intent-filter>
                 <action android:name="android.intent.action.PICK"/>
@@ -86,12 +97,9 @@
 
         <activity android:name="org.fossify.commons.activities.CustomizationActivity" android:configChanges="orientation" android:exported="false" android:label="@string/customize_colors" android:parentActivityName=".activities.SettingsActivity"/>
 
-        <activity android:name=".activities.SettingsActivity" android:configChanges="orientation" android:exported="true" android:label="@string/settings" android:parentActivityName=".activities.MainActivity">
+        <activity android:name=".activities.SettingsActivity" android:configChanges="orientation" android:exported="false" android:label="@string/settings" android:parentActivityName=".activities.MainActivity">
 
-            <intent-filter>
-                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
+
         </activity>
 
         <activity android:name=".activities.PhotoVideoActivity" android:configChanges="orientation|keyboardHidden|screenSize" android:exported="false" android:theme="@style/TranslucentTheme"/>
@@ -167,7 +175,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.WidgetConfigureActivity" android:exported="true" android:screenOrientation="portrait" android:theme="@style/MyWidgetConfigTheme">
+        <activity android:name=".activities.WidgetConfigureActivity" android:exported="false" android:screenOrientation="portrait" android:theme="@style/MyWidgetConfigTheme">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
@@ -177,13 +185,13 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/provider_paths"/>
         </provider>
 
-        <receiver android:name=".receivers.RefreshMediaReceiver" android:exported="true">
+        <receiver android:name=".receivers.RefreshMediaReceiver" android:enabled="false" android:exported="false">
             <intent-filter>
                 <action android:name="org.fossify.REFRESH_MEDIA"/>
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".helpers.MyWidgetProvider" android:exported="true" android:icon="@drawable/img_widget_preview" android:label="@string/folder">
+        <receiver android:name=".helpers.MyWidgetProvider" android:enabled="false" android:exported="false" android:icon="@drawable/img_widget_preview" android:label="@string/folder">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
@@ -191,14 +199,14 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_info"/>
         </receiver>
 
-        <receiver android:name=".receivers.BootCompletedReceiver" android:enabled="true" android:exported="true">
+        <receiver android:name=".receivers.BootCompletedReceiver" android:enabled="false" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
 
-        <service android:name=".jobs.NewPhotoFetcher" android:exported="true" android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service android:enabled="false" android:name=".jobs.NewPhotoFetcher" android:exported="true" android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <activity-alias android:name=".activities.SplashActivity.Red" android:enabled="false" android:exported="true" android:icon="@mipmap/ic_launcher_red" android:roundIcon="@mipmap/ic_launcher_red" android:targetActivity=".activities.SplashActivity">
 
