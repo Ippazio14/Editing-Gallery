@@ -49,3 +49,9 @@ La scansione dei media parte solo dopo la chiusura della schermata di selezione;
 I test Robolectric coprono introduzione e caselle prima di qualsiasi selettore di sistema, annullamento, autorizzazione e Continua, righe Download personalizzate e revoca, accesso perso, ritorno alla galleria e avvii successivi. Le dipendenze di test non entrano nell’APK.
 
 I test della griglia controllano le sovrapposizioni agli angoli opposti, i font grandi, il riuso delle celle e la spaziatura minima. La ricerca viene verificata senza nuove scansioni del provider.
+
+### Rifinitura interfaccia concordata
+
+Rimossi Torna alle cartelle e il suggerimento sulla selezione prolungata. Miniature a pieno riquadro; testi condensed da 16sp, trasparenti con ombra morbida, abbreviati al centro. I percorsi lunghi mantengono radice e ultima cartella; le descrizioni accessibili conservano nomi e conteggi completi. Conteggi visivi 🖼️ / 🎬 e pellicola perforata sui quattro lati.
+
+Il visualizzatore usa tutta l’area disponibile con nome e comandi vettoriali sovrapposti. Cerca/Altro restano solo nelle griglie. Freccia Indietro in visualizzazione ed editing. Nell’editor Salva copia è rappresentato da un’icona grande centrata in alto; conserva il comportamento di creazione copia e conferma uscita. Nuove icone vettoriali coerenti per ritaglio, ridimensionamento, rotazione, casuale e cronologia.

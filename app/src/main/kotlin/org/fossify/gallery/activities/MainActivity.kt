@@ -37,7 +37,6 @@ class MainActivity : SimpleActivity() {
     private var searchQuery = ""
     private var customColumns = 0
     private var descending = false
-    private lateinit var back: Button
     private lateinit var paste: Button
     private lateinit var actions: LinearLayout
     private var albums = emptyList<FolderAccess.Album>()
@@ -90,10 +89,6 @@ class MainActivity : SimpleActivity() {
         root.addView(searchMenu)
         title = text().apply { textSize = 24f }
         root.addView(title)
-        val navigation = LinearLayout(this)
-        back = button(getString(R.string.scoped_back)) { current = null; selected.clear(); searchMenu.closeSearch(); show() }
-        navigation.addView(back, LinearLayout.LayoutParams(0, -2, 1f))
-        root.addView(navigation)
         status = text().apply { textSize = 18f; setPadding(0, dp(8), 0, dp(8)) }
         root.addView(status)
         actions = LinearLayout(this)
@@ -265,7 +260,6 @@ class MainActivity : SimpleActivity() {
         val entries = shownEntries(album)
         title.text = album?.label.orEmpty()
         title.visibility = if (current == null) View.GONE else View.VISIBLE
-        back.visibility = if (current == null) View.GONE else View.VISIBLE
         actions.visibility = if (selected.isEmpty() || picking) View.GONE else View.VISIBLE
         paste.visibility = if (album != null && clipboard.isNotEmpty() && !picking) View.VISIBLE else View.GONE
         paste.isEnabled = !busy
@@ -276,7 +270,6 @@ class MainActivity : SimpleActivity() {
             selected.isNotEmpty() -> getString(R.string.scoped_selected, selected.size)
             searchQuery.isNotEmpty() && entries.isEmpty() -> getString(R.string.scoped_no_results)
             album != null && visibleMedia(album).isEmpty() -> getString(R.string.scoped_album_empty)
-            album != null && !picking -> getString(R.string.scoped_selection_hint)
             else -> ""
         }
         status.visibility = if (status.text.isEmpty()) View.GONE else View.VISIBLE
@@ -334,10 +327,11 @@ class MainActivity : SimpleActivity() {
             val tile = holder.tile
             Glide.with(this@MainActivity).clear(tile.image)
             val name = "${if (item in selected) "✓ " else ""}${entry.label}"
-            val counts = album?.let { getString(R.string.scoped_counts, it.images, it.videos) }
+            val counts = album?.let { "🖼️ ${it.images} - 🎬 ${it.videos}" }
                 ?: if (item?.isVideo == true) getString(R.string.scoped_video) else ""
             tile.bindLabels(name, counts, videoAlbum = album != null && album.videos > 0,
                 emptyAlbum = album != null && album.media.isEmpty(), selected = item in selected)
+            tile.contentDescription = listOf(name, album?.let { getString(R.string.scoped_counts, it.images, it.videos) } ?: counts).joinToString(", ")
             val preview = item?.uri ?: album?.media?.firstOrNull()?.uri
             if (preview != null) Glide.with(this@MainActivity).load(preview).centerCrop().dontAnimate()
                 .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.NONE).skipMemoryCache(true).into(tile.image)

@@ -27,10 +27,10 @@ class AccessibleGalleryTileTest {
         val tile = AccessibleGalleryTile(RuntimeEnvironment.getApplication())
         tile.bindLabels("dcim/cartella1", "3 immagini, 5 video", true, false, false)
         layout(tile)
-        assertEquals(tile.image.left, tile.nameOverlay.left)
-        assertEquals(tile.image.top, tile.nameOverlay.top)
-        assertEquals(tile.image.right, tile.countOverlay.right)
-        assertEquals(tile.image.bottom, tile.countOverlay.bottom)
+        assertTrue(tile.nameOverlay.left >= tile.image.left)
+        assertTrue(tile.nameOverlay.top >= tile.image.top)
+        assertTrue(tile.countOverlay.right <= tile.image.right)
+        assertTrue(tile.countOverlay.bottom <= tile.image.bottom)
         assertTrue(tile.nameOverlay.bottom < tile.countOverlay.top)
         assertTrue(tile.hasFilmBorder)
     }
@@ -44,7 +44,14 @@ class AccessibleGalleryTileTest {
         assertTrue(tile.nameOverlay.bottom < tile.countOverlay.top)
         assertTrue(tile.countOverlay.right <= tile.image.right)
         assertTrue(tile.countOverlay.bottom <= tile.image.bottom)
-        assertTrue(tile.nameOverlay.lineCount > 1)
+        assertEquals(1, tile.nameOverlay.lineCount)
+        assertTrue(tile.nameOverlay.text.contains("/…/"))
+        assertTrue(tile.contentDescription.contains("cartella-con-nome-molto-lungo"))
+        assertEquals(android.text.TextUtils.TruncateAt.MIDDLE, tile.nameOverlay.ellipsize)
+        assertEquals(0, tile.image.left)
+        assertEquals(0, tile.image.top)
+        assertEquals(tile.width, tile.image.width)
+        assertEquals(tile.height, tile.image.height)
     }
 
     @Test fun recycledTileRemovesFilmAndRestoresOpacityForImageOnlyAlbum() {

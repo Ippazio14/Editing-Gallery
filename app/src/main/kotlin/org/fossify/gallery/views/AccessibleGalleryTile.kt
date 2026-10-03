@@ -11,6 +11,7 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -31,6 +32,7 @@ class AccessibleGalleryTile(context: Context) : FrameLayout(context) {
         setTypeface(typeface, Typeface.BOLD)
     }
     val countOverlay = overlay().apply { gravity = Gravity.RIGHT }
+    private var fullName = ""
     var hasFilmBorder = false
         private set
     var isEmptyAlbum = false
@@ -47,14 +49,19 @@ class AccessibleGalleryTile(context: Context) : FrameLayout(context) {
     private fun dp(value: Int) = (value * resources.displayMetrics.density).toInt()
     private fun overlay() = TextView(context).apply {
         setTextColor(Color.WHITE)
-        setBackgroundColor(Color.argb(230, 0, 0, 0))
-        textSize = 20f
+        setBackgroundColor(Color.TRANSPARENT)
+        textSize = 16f
+        typeface = Typeface.create("sans-serif-condensed", Typeface.BOLD)
+        setShadowLayer(dp(5).toFloat(), 0f, 0f, Color.BLACK)
+        setSingleLine(true)
+        ellipsize = TextUtils.TruncateAt.MIDDLE
         setPadding(dp(6), dp(4), dp(6), dp(4))
         importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-        // Full paths and counts wrap; neither is ellipsized or drawn over the other.
+        // Full labels remain in the tile accessibility description.
     }
 
     fun bindLabels(name: String, counts: String, videoAlbum: Boolean, emptyAlbum: Boolean, selected: Boolean) {
+        fullName = name
         nameOverlay.text = name
         countOverlay.text = counts
         countOverlay.visibility = if (counts.isEmpty()) View.GONE else View.VISIBLE
@@ -63,8 +70,15 @@ class AccessibleGalleryTile(context: Context) : FrameLayout(context) {
         hasFilmBorder = videoAlbum
         isEmptyAlbum = emptyAlbum
         val rail = if (videoAlbum) dp(12) else 0
-        val edge = if (videoAlbum) dp(4) else 0
-        setPadding(rail, edge, rail, edge)
+        setPadding(0, 0, 0, 0)
+        (nameOverlay.layoutParams as LayoutParams).apply {
+            setMargins(rail, rail, rail, 0)
+            nameOverlay.layoutParams = this
+        }
+        (countOverlay.layoutParams as LayoutParams).apply {
+            setMargins(rail, 0, rail, rail)
+            countOverlay.layoutParams = this
+        }
         foreground = if (videoAlbum || selected) FilmFrame(resources.displayMetrics.density, videoAlbum, selected) else null
         image.alpha = if (emptyAlbum) 0.45f else 1f
         if (emptyAlbum) image.setImageBitmap(emptyPreview)
@@ -74,7 +88,13 @@ class AccessibleGalleryTile(context: Context) : FrameLayout(context) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = MeasureSpec.getSize(widthMeasureSpec)
-        val innerWidth = (width - paddingLeft - paddingRight).coerceAtLeast(1)
+        val margin = if (hasFilmBorder) dp(24) else 0
+        val innerWidth = (width - margin).coerceAtLeast(1)
+        val available = (innerWidth - nameOverlay.paddingLeft - nameOverlay.paddingRight).coerceAtLeast(1)
+        val parts = fullName.split('/')
+        nameOverlay.text = if (parts.size > 2 && nameOverlay.paint.measureText(fullName) > available) {
+            "${parts.first()}/…/${parts.last()}"
+        } else fullName
         nameOverlay.measure(MeasureSpec.makeMeasureSpec(innerWidth, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED))
         countOverlay.measure(MeasureSpec.makeMeasureSpec(innerWidth, MeasureSpec.AT_MOST),
@@ -96,11 +116,17 @@ class AccessibleGalleryTile(context: Context) : FrameLayout(context) {
                 paint.style = Paint.Style.FILL
                 canvas.drawRect(0f, 0f, rail, h, paint)
                 canvas.drawRect(w - rail, 0f, w, h, paint)
-                canvas.drawRect(0f, 0f, w, 4f * density, paint)
-                canvas.drawRect(0f, h - 4f * density, w, h, paint)
+                canvas.drawRect(0f, 0f, w, rail, paint)
+                canvas.drawRect(0f, h - rail, w, h, paint)
                 paint.color = Color.LTGRAY
-                var y = 6f * density
-                while (y + 7f * density < h) {
+                var x = 17f * density
+                while (x + 7f * density < w - rail) {
+                    canvas.drawRoundRect(x, 3f * density, x + 7f * density, 9f * density, density, density, paint)
+                    canvas.drawRoundRect(x, h - 9f * density, x + 7f * density, h - 3f * density, density, density, paint)
+                    x += 14f * density
+                }
+                var y = 17f * density
+                while (y + 7f * density < h - rail) {
                     canvas.drawRoundRect(3f * density, y, 9f * density, y + 7f * density, density, density, paint)
                     canvas.drawRoundRect(w - 9f * density, y, w - 3f * density, y + 7f * density, density, density, paint)
                     y += 14f * density
