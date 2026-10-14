@@ -182,7 +182,11 @@ class MediaAdapter(
         menu.apply {
             findItem(R.id.cab_rename).isVisible = !isInRecycleBin
             findItem(R.id.cab_fix_date_taken).isVisible = !isInRecycleBin
-            findItem(R.id.cab_move_to).isVisible = !isInRecycleBin
+            val isExternalMultiplePick = isAGetIntent && allowMultiplePicks
+            findItem(R.id.cab_copy_to).isVisible = !isInRecycleBin && !isExternalMultiplePick
+            findItem(R.id.cab_move_to).isVisible = !isInRecycleBin && !isExternalMultiplePick
+            findItem(R.id.cab_delete).isVisible = !isExternalMultiplePick
+            findItem(R.id.cab_cancel_selection).isVisible = true
             findItem(R.id.cab_open_with).isVisible = isOneItemSelected
             findItem(R.id.cab_edit).isVisible = isOneItemSelected
             findItem(R.id.cab_set_as).isVisible = isOneItemSelected
@@ -201,6 +205,7 @@ class MediaAdapter(
         }
 
         when (id) {
+            R.id.cab_cancel_selection -> finishActMode()
             R.id.cab_confirm_selection -> confirmSelection()
             R.id.cab_properties -> showProperties()
             R.id.cab_rename -> checkMediaManagementAndRename()
