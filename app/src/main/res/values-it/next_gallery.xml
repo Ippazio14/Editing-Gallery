@@ -1,0 +1,8 @@
+<resources>
+    <string name="scoped_help">Guida</string>
+    <string name="order_name">Nome</string>
+    <string name="order_created">Data creazione</string>
+    <string name="order_size">Dimensione</string>
+    <string name="order_modified">Data ultima modifica</string>
+    <string name="scoped_help_body">Seleziona le cartelle con il pulsante cartella. Le cartelle sono sempre in ordine alfabetico. Il pulsante ordinamento cambia ordine dei media e numero di colonne per tutte le griglie. I contenuti si aggiornano automaticamente. Tieni premuto un media per selezionarlo. La pellicola indica un video. La data di creazione usa la data di acquisizione registrata nel file, quando disponibile; le date sconosciute vengono dopo quelle note. Le modifiche si salvano in una copia.</string>
+</resources>

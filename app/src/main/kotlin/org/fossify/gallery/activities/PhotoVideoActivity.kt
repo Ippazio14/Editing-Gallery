@@ -105,9 +105,7 @@ open class PhotoVideoActivity : BaseViewerActivity(), ViewPagerFragment.Fragment
 
         setupOptionsMenu()
         refreshMenuItems()
-        requestMediaPermissions {
-            checkIntent(savedInstanceState)
-        }
+        checkIntent(savedInstanceState)
     }
 
     override fun onResume() {

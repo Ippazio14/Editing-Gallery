@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.view.Gravity
+import android.view.View
+import org.fossify.gallery.views.GalleryChrome
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.exifinterface.media.ExifInterface
@@ -39,13 +41,13 @@ class EditActivity : SimpleActivity() {
     private var rendering = false
     private var ready = false
     private lateinit var image: ImageView
-    private lateinit var undoButton: Button
-    private lateinit var redoButton: Button
-    private lateinit var saveButton: Button
+    private lateinit var undoButton: ImageButton
+    private lateinit var redoButton: ImageButton
+    private lateinit var saveButton: ImageButton
     private lateinit var status: TextView
     private lateinit var root: LinearLayout
     private val values = HashMap<String, TextView>()
-    private val editButtons = ArrayList<Button>()
+    private val editButtons = ArrayList<View>()
     private var editorBackgroundColor = Color.BLACK
     private var editorTextColor = Color.WHITE
     private var editorSurfaceColor = Color.DKGRAY
@@ -120,6 +122,9 @@ class EditActivity : SimpleActivity() {
         editButtons.add(this)
     }
 
+    private fun icon(drawable: Int, description: Int, action: () -> Unit) =
+        GalleryChrome.icon(this, drawable, description) { if (!saving) action() }.also { editButtons.add(it) }
+
     private fun buildUi() {
         val dark = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
         editorBackgroundColor = if (dark) Color.rgb(20, 23, 21) else Color.rgb(247, 248, 245)
@@ -133,6 +138,16 @@ class EditActivity : SimpleActivity() {
         }
         setContentView(root)
         root.requestApplyInsets()
+        val header = FrameLayout(this).apply { setBackgroundColor(Color.BLACK) }
+        val nameRow = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
+        val back = GalleryChrome.icon(this, R.drawable.ic_easy_back, R.string.scoped_back) { onBackPressed() }
+        nameRow.addView(back, LinearLayout.LayoutParams(dp(56), dp(64)))
+        nameRow.addView(GalleryChrome.filename(this, intent.getStringExtra("name") ?: uri?.lastPathSegment?.substringAfterLast('/').orEmpty()), LinearLayout.LayoutParams(0, dp(64), 1f))
+        // Reserve the centre for Save; the file name abbreviates within the left half.
+        header.addView(nameRow, FrameLayout.LayoutParams((resources.configuration.screenWidthDp * resources.displayMetrics.density / 2).toInt() - dp(36), dp(64), Gravity.START))
+        saveButton = icon(R.drawable.ic_easy_save, R.string.easy_save_copy) { chooseOutput() }
+        header.addView(saveButton, FrameLayout.LayoutParams(dp(64), dp(64), Gravity.CENTER))
+        root.addView(header, LinearLayout.LayoutParams(-1, dp(64)))
         val landscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && resources.configuration.screenWidthDp >= 680
         val workspace = LinearLayout(this).apply { orientation = if (landscape) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL }
         root.addView(workspace, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -140,17 +155,17 @@ class EditActivity : SimpleActivity() {
         image = ImageView(this).apply { scaleType = ImageView.ScaleType.FIT_CENTER; contentDescription = label(R.string.easy_preview) }
         photo.addView(image, FrameLayout.LayoutParams(-1, -1))
         val history = LinearLayout(this)
-        undoButton = button("↶", label(R.string.easy_undo)) { if (undo.isNotEmpty()) { redo.add(state); state = undo.removeAt(undo.lastIndex); renderPreview() } }
-        redoButton = button("↷", label(R.string.easy_redo)) { if (redo.isNotEmpty()) { undo.add(state); state = redo.removeAt(redo.lastIndex); renderPreview() } }
-        val auto = button("✦", label(R.string.easy_auto)) { applyAuto() }
+        undoButton = icon(R.drawable.ic_easy_undo, R.string.easy_undo) { if (undo.isNotEmpty()) { redo.add(state); state = undo.removeAt(undo.lastIndex); renderPreview() } }
+        redoButton = icon(R.drawable.ic_easy_redo, R.string.easy_redo) { if (redo.isNotEmpty()) { undo.add(state); state = redo.removeAt(redo.lastIndex); renderPreview() } }
+        val auto = icon(R.drawable.ic_easy_auto, R.string.easy_auto) { applyAuto() }
         listOf(undoButton, redoButton, auto).forEach { history.addView(it, LinearLayout.LayoutParams(dp(48), dp(60)).apply { marginEnd = dp(3) }) }
         photo.addView(history, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.START).apply { setMargins(dp(6), dp(6), 0, 0) })
         val tools = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
         val upper = LinearLayout(this); val lower = LinearLayout(this)
-        upper.addView(button("⌗", label(R.string.easy_crop)) { cropDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)))
-        upper.addView(button("⤢", label(R.string.easy_resize)) { resizeDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
-        lower.addView(button("⟳", label(R.string.easy_rotate)) { change(state.copy(geometry = state.geometry + Geometry(rotation = true), width = 0)) }, LinearLayout.LayoutParams(dp(52), dp(60)))
-        lower.addView(button("⚄", label(R.string.easy_random)) { change(state.copy(saturation = Random.nextInt(-25, 36), temperature = Random.nextInt(-25, 26), brightness = Random.nextInt(-15, 16), contrast = Random.nextInt(-10, 26))) }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
+        upper.addView(icon(R.drawable.ic_easy_crop, R.string.easy_crop) { cropDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)))
+        upper.addView(icon(R.drawable.ic_easy_resize, R.string.easy_resize) { resizeDialog() }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
+        lower.addView(icon(R.drawable.ic_easy_rotate, R.string.easy_rotate) { change(state.copy(geometry = state.geometry + Geometry(rotation = true), width = 0)) }, LinearLayout.LayoutParams(dp(52), dp(60)))
+        lower.addView(icon(R.drawable.ic_easy_random, R.string.easy_random) { change(state.copy(saturation = Random.nextInt(-25, 36), temperature = Random.nextInt(-25, 26), brightness = Random.nextInt(-15, 16), contrast = Random.nextInt(-10, 26))) }, LinearLayout.LayoutParams(dp(52), dp(60)).apply { marginStart = dp(4) })
         tools.addView(upper); tools.addView(lower, LinearLayout.LayoutParams(-2, -2).apply { topMargin = dp(4) })
         photo.addView(tools, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply { setMargins(0, dp(6), dp(6), 0) })
         val panel = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(10), dp(8), dp(10), dp(8)) }
@@ -177,8 +192,6 @@ class EditActivity : SimpleActivity() {
         }
         status = TextView(this).apply { textSize = 16f; gravity = Gravity.CENTER; setTextColor(editorTextColor); setPadding(dp(8), dp(4), dp(8), dp(4)); text = label(R.string.easy_loading) }
         root.addView(status, LinearLayout.LayoutParams(-1, -2))
-        saveButton = button(label(R.string.easy_save_copy)) { chooseOutput() }
-        root.addView(saveButton, LinearLayout.LayoutParams(-1, dp(60)).apply { setMargins(dp(10), dp(4), dp(10), dp(8)) })
         updateControls()
     }
 

@@ -1,0 +1,8 @@
+<resources>
+    <string name="scoped_help">Help</string>
+    <string name="order_name">Name</string>
+    <string name="order_created">Creation date</string>
+    <string name="order_size">Size</string>
+    <string name="order_modified">Last modified</string>
+    <string name="scoped_help_body">Choose folders with the folder button. Folders always appear alphabetically. Sorting changes media order and the number of columns globally. Contents refresh automatically. Long press media to select it. A film border identifies video. Creation date uses the recorded capture date when available; unknown dates appear last. Edits are saved as a copy.</string>
+</resources>

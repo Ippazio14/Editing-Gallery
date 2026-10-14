@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scoped_delete_selected_confirm">Eliminare definitivamente %1$d elementi selezionati? L’operazione non può essere annullata.</string>
+  <string name="scoped_delete_done">Eliminazione completata.</string>
+</resources>

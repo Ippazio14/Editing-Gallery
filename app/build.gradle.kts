@@ -58,6 +58,23 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.jvmArgs(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "--add-opens=java.base/java.io=ALL-UNNAMED",
+                "--add-opens=java.base/java.net=ALL-UNNAMED",
+                "--add-opens=java.base/java.security=ALL-UNNAMED",
+                "--add-opens=java.base/java.text=ALL-UNNAMED",
+                "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+                "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED"
+            )
+        }
+    }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -143,6 +160,8 @@ detekt {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.17")
     implementation(libs.fossify.commons)
     implementation(libs.androidx.print)
     implementation(libs.android.image.cropper)
@@ -152,6 +171,9 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.media3.exoplayer)
+    implementation("androidx.media3:media3-transformer:${libs.versions.media3Exoplayer.get()}")
+    implementation("androidx.media3:media3-effect:${libs.versions.media3Exoplayer.get()}")
+    implementation("androidx.media3:media3-ui:${libs.versions.media3Exoplayer.get()}")
     implementation(libs.sanselan)
     implementation(libs.androidsvg.aar)
     implementation(libs.gestureviews)
