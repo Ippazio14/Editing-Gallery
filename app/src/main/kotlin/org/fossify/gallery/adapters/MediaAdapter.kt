@@ -56,6 +56,9 @@ import org.fossify.gallery.databinding.ThumbnailSectionBinding
 import org.fossify.gallery.databinding.VideoItemGridBinding
 import org.fossify.gallery.databinding.VideoItemListBinding
 import org.fossify.gallery.dialogs.DeleteWithRememberDialog
+import org.fossify.commons.extensions.getContrastColor
+import org.fossify.commons.extensions.isDynamicTheme
+import org.fossify.gallery.extensions.pasteMediaTransfer
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.fixDateTaken
 import org.fossify.gallery.extensions.getShortcutImage
@@ -172,26 +175,49 @@ class MediaAdapter(
 
     override fun prepareActionMode(menu: Menu) {
         val selectedItems = getSelectedItems()
-        if (selectedItems.isEmpty()) {
-            return
+        if (selectedItems.isEmpty()) return
+        val isInRecycleBin = selectedItems.first().getIsInRecycleBin()
+        val isPicker = isAGetIntent && allowMultiplePicks
+        val actions = setOf(R.id.cab_delete, R.id.cab_move_to, R.id.cab_copy_to, R.id.cab_paste)
+        val backgroundColor = if (activity.isDynamicTheme()) {
+            resources.getColor(org.fossify.commons.R.color.you_contextual_status_bar_color, activity.theme)
+        } else {
+            resources.getColor(org.fossify.commons.R.color.dark_grey, activity.theme)
         }
-
-        val isOneItemSelected = isOneItemSelected()
-        val selectedPaths = selectedItems.map { it.path } as ArrayList<String>
-        val isInRecycleBin = selectedItems.firstOrNull()?.getIsInRecycleBin() == true
-        menu.apply {
-            findItem(R.id.cab_rename).isVisible = !isInRecycleBin
-            findItem(R.id.cab_fix_date_taken).isVisible = !isInRecycleBin
-            findItem(R.id.cab_move_to).isVisible = !isInRecycleBin
-            findItem(R.id.cab_open_with).isVisible = isOneItemSelected
-            findItem(R.id.cab_edit).isVisible = isOneItemSelected
-            findItem(R.id.cab_set_as).isVisible = isOneItemSelected
-            findItem(R.id.cab_resize).isVisible = canResize(selectedItems)
-            findItem(R.id.cab_confirm_selection).isVisible = isAGetIntent && allowMultiplePicks && selectedKeys.isNotEmpty()
-            findItem(R.id.cab_restore_recycle_bin_files).isVisible = selectedPaths.all { it.startsWith(activity.recycleBinPath) }
-            findItem(R.id.cab_create_shortcut).isVisible = isOneItemSelected
-
-            checkHideBtnVisibility(this, selectedItems)
+        val iconColor = backgroundColor.getContrastColor()
+        val iconResources = mapOf(
+            R.id.cab_delete to R.drawable.ic_media_delete,
+            R.id.cab_move_to to R.drawable.ic_media_cut,
+            R.id.cab_copy_to to R.drawable.ic_media_copy,
+            R.id.cab_paste to R.drawable.ic_media_paste
+        )
+        for (index in 0 until menu.size()) {
+            val item = menu.getItem(index)
+            item.isVisible = when {
+                isPicker -> item.itemId == R.id.cab_confirm_selection
+                isInRecycleBin -> item.itemId == R.id.cab_delete || item.itemId == R.id.cab_restore_recycle_bin_files
+                else -> item.itemId in actions
+            }
+            if (item.itemId !in actions) continue
+            item.isEnabled = !MediaTransferClipboard.busy &&
+                (item.itemId != R.id.cab_paste ||
+                    (MediaTransferClipboard.hasItems && path.isNotEmpty() && path != RECYCLE_BIN))
+            val button = (item.actionView as? androidx.appcompat.widget.AppCompatImageButton)
+                ?: androidx.appcompat.widget.AppCompatImageButton(activity, null, android.R.attr.actionButtonStyle).apply {
+                    val density = resources.displayMetrics.density
+                    layoutParams = android.view.ViewGroup.LayoutParams((48 * density).toInt(), (56 * density).toInt())
+                    val padding = (8 * density).toInt()
+                    setPadding(padding, padding, padding, padding)
+                    scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    item.actionView = this
+                }
+            button.setImageResource(iconResources.getValue(item.itemId))
+            button.contentDescription = item.title
+            androidx.appcompat.widget.TooltipCompat.setTooltipText(button, item.title)
+            button.imageTintList = android.content.res.ColorStateList.valueOf(iconColor)
+            button.isEnabled = item.isEnabled
+            button.alpha = if (item.isEnabled) 1f else 0.38f
+            button.setOnClickListener { if (item.isEnabled) actionItemPressed(item.itemId) }
         }
     }
 
@@ -214,6 +240,15 @@ class MediaAdapter(
             R.id.cab_rotate_one_eighty -> rotateSelection(180)
             R.id.cab_copy_to -> checkMediaManagementAndCopy(true)
             R.id.cab_move_to -> moveFilesTo()
+            R.id.cab_paste -> {
+                if (MediaTransferClipboard.hasItems && !MediaTransferClipboard.busy && path.isNotEmpty() && path != RECYCLE_BIN) {
+                    finishActMode()
+                    activity.pasteMediaTransfer(path) {
+                        listener?.refreshItems()
+                        (activity as? org.fossify.gallery.activities.MediaActivity)?.refreshTransferMenu()
+                    }
+                }
+            }
             R.id.cab_create_shortcut -> createShortcut()
             R.id.cab_select_all -> selectAll()
             R.id.cab_open_with -> openPath()

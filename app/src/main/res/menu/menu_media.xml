@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" tools:ignore="AppCompatResource">
-    <item android:id="@+id/transfer_paste" android:title="@string/transfer_paste" app:showAsAction="always"/>
+    <item android:id="@+id/transfer_paste" android:title="@string/transfer_paste" app:showAsAction="always" android:icon="@drawable/ic_media_paste"/>
     <item android:id="@+id/transfer_cancel" android:title="@string/transfer_cancel" app:showAsAction="never"/>
     <item android:id="@+id/toggle_filename" android:icon="@drawable/ic_label_vector" android:title="@string/toggle_filename" app:showAsAction="always"/>
     <item android:id="@+id/sort" android:icon="@drawable/ic_sort_vector" android:title="@string/sort_by" app:showAsAction="ifRoom"/>
